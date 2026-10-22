@@ -222,7 +222,7 @@ export function act(world: World, a: Action) {
       world.emit({ type: 'cutscene', id: a.id });
       break;
     case 'spawn_units':
-      if (a.relief && world.scenario) spawnRelief(world, world.scenario);
+      if (a.relief && world.scenario) noteSpawn(world, spawnRelief(world, world.scenario));
       for (const u of a.units ?? []) noteSpawn(world, spawnGroup(world, u));
       if (a.fleet) noteSpawn(world, spawnFleet(world, a.fleet));
       break;

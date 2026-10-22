@@ -18,6 +18,8 @@ const chapter = Number(arg('chapter', '2'));
 const runs = Number(arg('runs', '20'));
 const difficulty = arg('difficulty', 'normal') as Difficulty;
 const json = process.argv.includes('--json');
+// Stage 6 acceptance stops at the milestone; otherwise play to the chapter's outcome.
+const stopAtMilestone = process.argv.includes('--milestone');
 
 const data = loadGameData();
 const map = loadMap();
@@ -35,6 +37,7 @@ export interface RunResult {
   vocEnd: number;
   zhengLossAtMilestone: number | null;
   outcome: string;
+  winner?: string;
 }
 
 function runOne(seed: number): RunResult {
@@ -45,7 +48,7 @@ function runOne(seed: number): RunResult {
   const V = 'faction_voc';
   const zhengStart = armyPop(w, Z) + 0;
   const vocStart = armyPop(w, V);
-  const limit = sc.timerMinutes * 60 * w.ticksPerSecond;
+  const limit = sc.timerMinutes * 60 * w.ticksPerSecond + 10;
   let milestone: number | null = null;
   let zhengLossAtMilestone: number | null = null;
   let outcome = 'timeout';
@@ -60,12 +63,11 @@ function runOne(seed: number): RunResult {
         outcome = 'milestone';
       }
     }
-    if (milestone !== null && chapter !== 4) break;
-    if (armyPop(w, Z) === 0 || armyPop(w, V) === 0) {
-      outcome = armyPop(w, Z) === 0 ? 'voc_wiped_zheng' : 'zheng_wiped_voc';
+    if (w.ext.flags.missionOver) {
+      outcome = `Z:${w.ext.flags['outcome:faction_zheng']} V:${w.ext.flags['outcome:faction_voc']}`;
       break;
     }
-    if (chapter === 4 && milestone !== null) break;
+    if (stopAtMilestone && milestone !== null) break;
   }
   return {
     seed,
@@ -109,5 +111,7 @@ const summary = {
   aiDecisionMsMaxIncludingWarmup: aiTiming.samples.reduce((m, x) => Math.max(m, x), 0),
   aiDecisionMsP99: aiTiming.samples.length ? [...aiTiming.samples].sort((a, b) => a - b)[Math.floor(aiTiming.samples.length * 0.99)] : 0,
   wallSeconds: (performance.now() - t0) / 1000,
+  outcomes: results.reduce<Record<string, number>>((m, r) => ((m[r.outcome] = (m[r.outcome] ?? 0) + 1), m), {}),
+  zhengWinRate: results.filter((r) => /Z:(victory|historical)/.test(r.outcome) && !/V:victory/.test(r.outcome)).length / runs,
 };
 console.log(json ? JSON.stringify({ summary, results }) : summary);

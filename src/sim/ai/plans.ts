@@ -4,7 +4,7 @@
 import { distToEntity, distToRect } from '../geometry';
 import { onBattery } from '../systems/combat';
 import { checkPlacement } from '../systems/build';
-import { detectedMines } from '../systems/fog';
+import { detectedMines, isVisibleTo } from '../systems/fog';
 import { capacityOf, cargoPop } from '../systems/transport';
 import { buildingAttack } from '../stats';
 import type { Entity } from '../types';
@@ -166,14 +166,19 @@ const move: Handler = (ctx, region) => {
   const src = centroid(ashore.length ? ashore : group);
   const pick = landingPoint(w, 'small_craft', src[0], src[1]) ?? src;
   const state = (pm.ferry as Record<string, string>) ?? {};
+  const assigned = new Set<number>();
   for (const b of boats) {
     const s = state[b.id] ?? 'load';
     const cap = capacityOf(w, b);
     if (s === 'load') {
       const room = cap - cargoPop(w, b);
-      const waiting = ashore.filter((u) => u.order?.type !== 'embark');
+      const waiting = ashore.filter((u) => u.order?.type !== 'embark' && !assigned.has(u.id));
       if (room > 0 && waiting.length && Math.hypot(b.x - pick[0], b.y - pick[1]) > 3 && !isMoving(b)) issue(ctx, { type: 'move', ids: [b.id], x: pick[0], y: pick[1] });
-      if (room > 0 && waiting.length) issue(ctx, { type: 'embark', ids: ids(waiting.slice(0, room)), target: b.id });
+      if (room > 0 && waiting.length) {
+        const batch = waiting.slice(0, room);
+        for (const u of batch) assigned.add(u.id);
+        issue(ctx, { type: 'embark', ids: ids(batch), target: b.id });
+      }
       const boarding = ashore.some((u) => u.order?.type === 'embark' && u.order.target === b.id);
       if ((room <= 0 || (!waiting.length && !boarding)) && b.cargo?.length) {
         issue(ctx, { type: 'unload', ids: [b.id], x: drop[0], y: drop[1] });
@@ -279,9 +284,15 @@ const suppress: Handler = (ctx) => {
   const targets = guns.length ? guns : bats;
   if (!targets.length || elapsed(ctx) > 150) return 'done';
   for (const s of warships(ctx)) {
-    if (s.order?.type === 'attack') continue;
+    if (s.order?.type === 'attack' || isMoving(s)) continue;
     const t = nearest(targets, s.x, s.y);
-    if (t) issue(ctx, { type: 'attack', ids: [s.id], target: t.id });
+    if (!t) continue;
+    if (isVisibleTo(w, ctx.owner, t)) issue(ctx, { type: 'attack', ids: [s.id], target: t.id });
+    else {
+      // Not yet spotted: sail along the channel towards it until it comes into view.
+      const p = landingPoint(w, s.moveClass as 'ship' | 'small_craft', t.x, t.y);
+      if (p) issue(ctx, { type: 'attack_move', ids: [s.id], x: p[0], y: p[1] });
+    }
   }
   return 'running';
 };
@@ -536,7 +547,24 @@ function isMineDetected(ctx: AiCtx, b: Entity) {
   return !!detectedMines.get(ctx.world)?.get(ctx.owner)?.has(b.id);
 }
 
+/**
+ * Sends the field army against enemy foot soldiers in a region whenever they can be reached on
+ * foot (e.g. across the lagoon at low tide). Plans know where the enemy landed even if unseen.
+ */
+const strike: Handler = (ctx, region) => {
+  const w = ctx.world;
+  const foes = units(w, ctx.owner === 'faction_zheng' ? 'faction_voc' : 'faction_zheng', (e) => e.moveClass === 'foot' && !e.insideOf && inRegion(w, region, e));
+  if (!foes.length) return 'persist';
+  const [fx, fy] = centroid(foes);
+  const force = army(w, ctx.owner).filter((u) => !isGun(w, u) && !isHero(w, u) && u.order?.type !== 'tuntian');
+  const ready = force.filter((u) => !isMoving(u) && u.attackTarget === undefined);
+  const reachable = ready.filter((u) => w.nav.connected('foot', Math.floor(u.x), Math.floor(u.y), Math.floor(fx), Math.floor(fy)));
+  if (reachable.length >= 10) issue(ctx, { type: 'attack_move', ids: ids(reachable), x: fx, y: fy });
+  return 'persist';
+};
+
 export const STEP_HANDLERS: Record<string, Handler> = {
+  strike,
   wait_tide_high: (ctx) => (ctx.world.tidePhaseId === 'rising' ? 'done' : 'running'),
   move_fleet,
   unload,

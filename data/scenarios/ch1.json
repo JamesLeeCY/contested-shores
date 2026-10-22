@@ -144,7 +144,8 @@
       "home": [
         114,
         40
-      ]
+      ],
+      "defensive": true
     },
     "faction_voc": {
       "plans": [
@@ -647,6 +648,24 @@
           "faction": "faction_voc",
           "rating": "victory",
           "reasonKey": "ch1.end.timeout"
+        }
+      ]
+    },
+    {
+      "id": "ch1_counter",
+      "when": {
+        "type": "area_entered",
+        "region": "baxemboy",
+        "owner": "faction_voc",
+        "pop": 5
+      },
+      "do": [
+        {
+          "type": "set_ai_plan",
+          "faction": "faction_zheng",
+          "plans": [
+            "counter_sortie"
+          ]
         }
       ]
     }

@@ -108,5 +108,15 @@
     "steps": [
       "assault:zeelandia_castle"
     ]
+  },
+  {
+    "id": "counter_sortie",
+    "faction": "faction_zheng",
+    "chapters": [
+      1
+    ],
+    "steps": [
+      "strike:baxemboy"
+    ]
   }
 ]

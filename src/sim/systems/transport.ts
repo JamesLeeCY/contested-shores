@@ -106,7 +106,7 @@ export function transportSystem(world: World) {
         if (p) moveUnitTo(world, u, p[0] + 0.5, p[1] + 0.5);
       }
     } else if (o?.type === 'unload' && u.cargo?.length) {
-      const close = Math.hypot(o.x - u.x, o.y - u.y) < 6;
+      const close = Math.hypot(o.x - u.x, o.y - u.y) < 3;
       if ((close || !isMoving(u)) && nearShore(world, u)) {
         clearMove(world, u);
         unloadAll(world, u);
