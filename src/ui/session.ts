@@ -10,6 +10,9 @@ import { colorOf, cssHex, ownerColors } from '../render/colors';
 import { EntityRenderer } from '../render/entities';
 import { buildTerrain } from '../render/terrain';
 import { CameraInput } from './camera-input';
+import { CommandPanel, economyContextOrder } from './commands';
+import { Messages, ResourceBar, SelectionPanel, eventMessage } from './panels';
+import { Placement } from './placement';
 import { Controls, SPEEDS, type ControlHost } from './controls';
 import { ClockHud } from './hud';
 import { Minimap } from './minimap';
@@ -35,6 +38,11 @@ export class Session implements ControlHost {
   readonly clocks: ClockHud;
   readonly minimap: Minimap;
   readonly cameraInput: CameraInput;
+  readonly resourceBar: ResourceBar;
+  readonly messages: Messages;
+  readonly selectionPanel: SelectionPanel;
+  readonly commandPanel: CommandPanel;
+  readonly placement: Placement;
   /** Hooks for later stages (HUD panels, fog, effects) called every frame. */
   readonly frameHooks: ((s: Session, dt: number) => void)[] = [];
   readonly eventHooks: ((s: Session, ev: SimEvent) => void)[] = [];
@@ -74,6 +82,21 @@ export class Session implements ControlHost {
     this.clocks = new ClockHud(ui, this.world);
     this.minimap = new Minimap(map, colors, this.camera);
     ui.appendChild(this.minimap.el);
+    this.resourceBar = new ResourceBar(ui);
+    this.messages = new Messages(ui);
+    this.selectionPanel = new SelectionPanel(ui);
+    this.selectionPanel.onPick = (id) => {
+      this.selected.clear();
+      this.selected.add(id);
+    };
+    this.selectionPanel.onCancel = (building, index) => this.issue({ type: 'cancel', owner: this.player, building, index });
+    this.commandPanel = new CommandPanel(ui, this);
+    this.placement = new Placement(this);
+    this.contextOrder = (target, x, y, ids) => economyContextOrder(this, target, x, y, ids);
+    this.eventHooks.push((s, ev) => {
+      const m = eventMessage(s.world, s.player, ev);
+      if (m) s.messages.push(m[0], m[1]);
+    });
     this.fpsEl = document.createElement('div');
     this.fpsEl.className = 'fps';
     ui.appendChild(this.fpsEl);
@@ -102,6 +125,10 @@ export class Session implements ControlHost {
       for (const id of this.selected) if (!this.world.get(id)) this.selected.delete(id);
       this.entities.sync(this.world, this.stepper.paused ? 1 : this.stepper.alpha, this.selected);
       this.clocks.update(this.world, this.stepper.speed, this.stepper.paused, this.timerSeconds);
+      this.resourceBar.update(this.world, this.player);
+      this.selectionPanel.update(this.world, [...this.selected]);
+      this.commandPanel.update();
+      this.placement.update();
       for (const h of this.frameHooks) h(this, dt);
       this.minimap.draw(
         [...this.world.all()]
@@ -123,6 +150,15 @@ export class Session implements ControlHost {
 
   get fpsValue() {
     return this.fps.value;
+  }
+
+  startPlacement(building: string, builders: number[]) {
+    this.placement.start(building, builders);
+  }
+
+  cancelPending() {
+    this.pendingClick = null;
+    this.placement.cancel();
   }
 
   issue(cmd: Command) {

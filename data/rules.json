@@ -38,7 +38,9 @@
       "amount": 200,
       "regenPerDay": 5
     },
-    "forestTileWood": 150
+    "forestTileWood": 150,
+    "workRange": 0.9,
+    "autoNextRadius": 6
   },
   "powder": {
     "musketPerShot": 0.2,
@@ -58,7 +60,8 @@
     "starvation": {
       "grainPerStep": 10,
       "moralePerStep": -5
-    }
+    },
+    "workerTrait": "gatherer"
   },
   "tuntian": {
     "grainPerDay": 2,
@@ -242,7 +245,10 @@
     "strandedDamageTakenMul": 1.5
   },
   "naval": {
-    "smallCraftShallowSpeedMul": 1
+    "smallCraftShallowSpeedMul": {
+      "faction_zheng": 1,
+      "faction_voc": 1
+    }
   },
   "diplomacy": {
     "favorMin": 0,
@@ -501,5 +507,29 @@
         "color": "#c2a878"
       }
     }
+  },
+  "production": {
+    "maxQueue": 5,
+    "spawnSearchRadius": 6
+  },
+  "build": {
+    "builderSpeedMul": 1,
+    "extraBuilderEfficiency": 0.75,
+    "startHpFraction": 0.1
+  },
+  "stages": {
+    "buildings": {
+      "faction_zheng": {
+        "tuntian": 2,
+        "trench": 2,
+        "battery": 2,
+        "powder_mill": 1
+      },
+      "faction_voc": {
+        "trench": 1,
+        "battery": 1
+      }
+    },
+    "finalDefenseStage": 4
   }
 }

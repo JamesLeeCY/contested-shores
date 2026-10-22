@@ -1,5 +1,5 @@
 // World state: entity storage, factions, tide, and the command queue (spec §10.2–10.3).
-import type { GameMap, MapObject } from './map';
+import { T, type GameMap, type MapObject } from './map';
 import { NavGrids, type MoveClass } from './path/navgrid';
 import { PathService } from './path/pathing';
 import { Rng } from './rng';
@@ -39,19 +39,27 @@ export class World {
   readonly commandLog: { tick: number; cmd: Command }[] = [];
   /** Events produced during the last tick, drained by the client. */
   events: SimEvent[] = [];
+  /** Wood left per forest tile (spec §4.1). */
+  readonly woodLeft: Float32Array;
+  /** Building id occupying each tile (0 = none), including walkable ones (farms, trenches). */
+  readonly occupancy: Int32Array;
   /** Spatial hash for units: cell → ids. */
   private grid = new Map<number, number[]>();
   static readonly CELL = 2;
 
+  readonly map: GameMap;
+
   constructor(
     readonly data: SimData,
-    readonly map: GameMap,
+    map: GameMap,
     readonly opts: WorldOptions,
   ) {
+    // Terrain can change during play (forests are cut down), so each world owns a copy.
+    this.map = { ...map, terrain: new Uint8Array(map.terrain) };
     this.rng = new Rng(opts.seed);
     this.rules = clone(data.rules);
     this.chapter = opts.chapter ?? 1;
-    this.nav = new NavGrids(map, this.rules.terrain);
+    this.nav = new NavGrids(this.map, this.rules.terrain);
     this.paths = new PathService(this.nav);
     for (const f of data.factions.playable) {
       this.factions.set(f.id, {
@@ -62,10 +70,17 @@ export class World {
         stage: 1,
         castleMorale: f.id === 'faction_voc' ? this.rules.morale.castle.start : 0,
         defeated: false,
+        unitMods: {},
+        buildingMods: {},
+        revealTerrain: [],
+        starvingUntil: 0,
       });
     }
+    this.woodLeft = new Float32Array(map.width * map.height);
+    this.occupancy = new Int32Array(map.width * map.height);
+    for (let i = 0; i < map.terrain.length; i++) if (this.map.terrain[i] === T.forest) this.woodLeft[i] = this.rules.terrain.types.forest.woodPerTile;
     this.nav.setTide(this.tideHigh);
-    if (!opts.emptyMap) for (const o of map.objects) this.spawnMapObject(o);
+    if (!opts.emptyMap) for (const o of this.map.objects) this.spawnMapObject(o);
   }
 
   // --- tide -----------------------------------------------------------------------------------
@@ -114,7 +129,10 @@ export class World {
     const e = this.entities.get(id);
     if (!e) return;
     e.dead = true;
-    if (e.kind === 'building' && e.blocks) this.nav.setBlocked(e.tx!, e.ty!, e.w!, e.h!, false);
+    if (e.kind === 'building') {
+      if (e.blocks) this.nav.setBlocked(e.tx!, e.ty!, e.w!, e.h!, false);
+      this.setOccupancy(e, 0);
+    }
     this.entities.delete(id);
     this.sortedDirty = true;
   }
@@ -158,7 +176,7 @@ export class World {
     if (!def) throw new Error(`unknown building ${type}`);
     const size = sizeOverride ?? def.size;
     const terrain = this.map.terrain[ty * this.map.width + tx];
-    const hpMul = terrain === 3 /* sand */ ? this.rules.siege.sandBuildingHpMul : 1;
+    const hpMul = terrain === T.sand ? this.rules.siege.sandBuildingHpMul : 1;
     const maxHp = Math.round(def.hp * hpMul);
     const e = this.add({
       id: this.nextId++,
@@ -184,9 +202,23 @@ export class World {
       cooldown: 0,
     });
     // Farms are walkable gather points; everything else blocks movement.
-    e.blocks = !('gatherPoint' in def);
+    e.blocks = !('gatherPoint' in def) && !('walkable' in def);
     if (e.blocks) this.nav.setBlocked(tx, ty, size, size, true);
+    this.setOccupancy(e, e.id);
     return e;
+  }
+
+  private setOccupancy(e: Entity, value: number) {
+    for (let y = e.ty!; y < e.ty! + e.h!; y++)
+      for (let x = e.tx!; x < e.tx! + e.w!; x++)
+        if (x >= 0 && y >= 0 && x < this.map.width && y < this.map.height) this.occupancy[y * this.map.width + x] = value;
+  }
+
+  /** Building occupying a tile, if any. */
+  buildingAt(x: number, y: number): Entity | undefined {
+    if (x < 0 || y < 0 || x >= this.map.width || y >= this.map.height) return undefined;
+    const id = this.occupancy[y * this.map.width + x];
+    return id ? this.get(id) : undefined;
   }
 
   spawnResource(type: 'deer_herd', x: number, y: number, amount: number, village?: string): Entity {
@@ -218,6 +250,13 @@ export class World {
       o.type === 'village_center' ? `village_${o.props.village}` : ((o.props.owner as string | undefined) ?? 'faction_neutral');
     const e = this.spawnBuilding(o.type, owner, o.x, o.y, 1, o.name || undefined, o.w);
     if (o.type === 'village_center') e.village = String(o.props.village);
+  }
+
+  /** Changes a tile's terrain (e.g. depleted forest → plain) and updates navigation. */
+  setTerrain(i: number, terrain: number) {
+    this.map.terrain[i] = terrain;
+    this.nav.updateTile(i, this.rules.terrain);
+    this.emit({ type: 'terrain', tile: i });
   }
 
   // --- factions -------------------------------------------------------------------------------

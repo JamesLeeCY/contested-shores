@@ -1,25 +1,10 @@
 // Fixed 20 Hz simulation step and a wall-clock accumulator for the client (spec §10.3).
 import { executeCommand } from './commands';
-import { movementSystem } from './systems/movement';
-import { tideSystem } from './systems/tide';
+import { SYSTEMS } from './systems';
 import type { World } from './world';
 
-export type System = (world: World) => void;
-
-/** Ordered systems run every tick after commands. Later stages insert theirs via `addSystem`. */
-const systems: { name: string; fn: System; order: number }[] = [
-  { name: 'tide', fn: tideSystem, order: 10 },
-  { name: 'movement', fn: movementSystem, order: 20 },
-];
-
-export function addSystem(name: string, fn: System, order: number) {
-  if (systems.some((s) => s.name === name)) return;
-  systems.push({ name, fn, order });
-  systems.sort((a, b) => a.order - b.order);
-}
-
 export function systemNames() {
-  return systems.map((s) => s.name);
+  return SYSTEMS.map((s) => s.name);
 }
 
 /** Advances the world by exactly one tick. */
@@ -28,7 +13,7 @@ export function step(world: World) {
   const cmds = world.pending;
   world.pending = [];
   for (const c of cmds) executeCommand(world, c);
-  for (const s of systems) s.fn(world);
+  for (const s of SYSTEMS) s.fn(world);
   world.tick++;
 }
 

@@ -67,7 +67,7 @@
       },
       {
         "type": "set_rule",
-        "path": "naval.smallCraftShallowSpeedMul",
+        "path": "naval.smallCraftShallowSpeedMul.faction_zheng",
         "value": 1.2
       }
     ]

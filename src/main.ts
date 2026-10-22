@@ -19,7 +19,7 @@ async function main() {
     map,
     player,
     seed: Number(params.get('seed') ?? 1661),
-    setup: setupSandbox,
+    setup: (w) => setupSandbox(w, params.get('mode') === 'economy' ? 'economy' : 'armies'),
   });
   // Debug/e2e handle.
   (window as unknown as { __game: Session }).__game = session;

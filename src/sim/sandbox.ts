@@ -1,10 +1,16 @@
-// Sandbox setup used before the scenario system exists, and by perf checks: both sides with a
-// mixed army, fleets in the sea lanes.
+// Sandbox setups used before the scenario system exists, and by perf checks.
+//  - 'armies': both sides with a mixed army and fleets in the sea lanes.
+//  - 'economy': Zheng starts from one camp in Saccam with labourers (stage 3 acceptance).
 import type { World } from './world';
 
-export function setupSandbox(world: World) {
-  const Z = 'faction_zheng';
-  const V = 'faction_voc';
+const Z = 'faction_zheng';
+const V = 'faction_voc';
+
+export type SandboxMode = 'armies' | 'economy';
+
+export function setupSandbox(world: World, mode: SandboxMode = 'armies') {
+  if (mode === 'economy') return setupEconomy(world);
+  for (const f of world.factions.values()) f.stage = 4;
   world.spawnUnit('koxinga', Z, 40.5, 36.5);
   const zTypes = ['shield_soldier', 'archer_zheng', 'iron_man', 'musketeer_zheng'];
   for (let i = 0; i < 80; i++) world.spawnUnit(zTypes[i % 4], Z, 33 + (i % 16) * 0.9, 32.5 + Math.floor(i / 16) * 0.9);
@@ -17,4 +23,13 @@ export function setupSandbox(world: World) {
   world.spawnUnit('yacht', V, 36, 47.5);
   world.spawnUnit('longboat', V, 42, 48.5);
   world.spawnUnit('longboat', V, 44, 47.5);
+}
+
+function setupEconomy(world: World) {
+  const f = world.faction(Z)!;
+  f.resources = { grain: 300, wood: 200, powder: 0, deerskin: 0 };
+  // A camp on open plain in north Saccam, near the eastern woods.
+  world.spawnBuilding('camp_zheng', Z, 124, 38);
+  for (let i = 0; i < 6; i++) world.spawnUnit('laborer', Z, 123.5 + (i % 3), 43.5 + Math.floor(i / 3));
+  world.spawnUnit('koxinga', Z, 122.5, 41.5);
 }

@@ -503,5 +503,59 @@
     "attack": null,
     "capturable": false,
     "attackFavorPenalty": -50
+  },
+  {
+    "id": "trench",
+    "faction": "any",
+    "nameKey": "building.trench.name",
+    "hp": 200,
+    "armor": 2,
+    "cost": {
+      "grain": 0,
+      "wood": 10,
+      "powder": 0,
+      "deerskin": 0
+    },
+    "buildTime": 8,
+    "size": 1,
+    "armorType": "building",
+    "preset": false,
+    "popCap": 0,
+    "sight": 4,
+    "dropoff": false,
+    "produces": [],
+    "researches": [],
+    "garrison": 0,
+    "diseaseShelter": false,
+    "attack": null,
+    "walkable": true,
+    "cover": true
+  },
+  {
+    "id": "battery",
+    "faction": "any",
+    "nameKey": "building.battery.name",
+    "hp": 600,
+    "armor": 4,
+    "cost": {
+      "grain": 0,
+      "wood": 80,
+      "powder": 0,
+      "deerskin": 0
+    },
+    "buildTime": 30,
+    "size": 2,
+    "armorType": "building",
+    "preset": false,
+    "popCap": 0,
+    "sight": 4,
+    "dropoff": false,
+    "produces": [],
+    "researches": [],
+    "garrison": 0,
+    "diseaseShelter": false,
+    "attack": null,
+    "walkable": true,
+    "battery": true
   }
 ]

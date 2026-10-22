@@ -26,7 +26,15 @@ export type Order =
   | { type: 'move'; x: number; y: number; attackMove?: boolean }
   | { type: 'attack'; target: number }
   | { type: 'attack_ground'; x: number; y: number }
-  | { type: 'gather'; target: number; resource: ResourceId; phase: 'to_resource' | 'gathering' | 'to_dropoff' }
+  | {
+      type: 'gather';
+      resource: ResourceId;
+      /** Entity source (farm, deer herd) or forest tile index. */
+      target?: number;
+      tile?: number;
+      phase: 'to_resource' | 'gathering' | 'to_dropoff';
+      dropoff?: number;
+    }
   | { type: 'build'; target: number }
   | { type: 'garrison'; target: number }
   | { type: 'tuntian'; target: number }
@@ -43,6 +51,9 @@ export interface ProductionItem {
   /** Ticks remaining. */
   remaining: number;
   total: number;
+  /** Set once population was reserved and training began. */
+  started: boolean;
+  cost: Resources;
 }
 
 export interface Entity {
@@ -81,6 +92,8 @@ export interface Entity {
   carrying?: { resource: ResourceId; amount: number };
   cargo?: number[];
   insideOf?: number | null;
+  /** Tick at which a garrisoned unit leaves its building (tuntian recall delay). */
+  releaseAt?: number;
   facing?: number;
 
   // --- buildings / resources ---
@@ -94,6 +107,8 @@ export interface Entity {
   blocks?: boolean;
   queue?: ProductionItem[];
   rally?: { x: number; y: number } | null;
+  /** Head of the production queue is waiting for population room. */
+  popBlocked?: boolean;
   garrisoned?: number[];
   amount?: number;
   maxAmount?: number;
@@ -109,6 +124,14 @@ export interface FactionState {
   /** VOC only: castle morale 0–100 (spec §4.6). */
   castleMorale: number;
   defeated: boolean;
+  /** Tech modifiers: unit type → stat → {add, set}. */
+  unitMods: Record<string, Record<string, { add: number; set?: number }>>;
+  /** Tech modifiers for building guns. */
+  buildingMods: Record<string, { range: number; atk: number; traits: string[] }>;
+  /** Terrain types revealed on the map for this faction (何斌海圖). */
+  revealTerrain: string[];
+  /** Ticks of the current starvation warning (UI flash). */
+  starvingUntil: number;
 }
 
 export type SimEvent =

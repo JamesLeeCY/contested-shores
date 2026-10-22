@@ -22,6 +22,7 @@ export interface ControlHost {
   /** Pending ability that wants the next left click (e.g. "A" attack-ground, build placement). */
   pendingClick?: ((x: number, y: number, target: Entity | null) => boolean) | null;
   onSelectionChange?(): void;
+  cancelPending?(): void;
 }
 
 export class Controls {
@@ -52,7 +53,10 @@ export class Controls {
         this.dragNow = { ...this.dragStart };
         canvas.setPointerCapture(e.pointerId);
       } else if (e.button === 2) {
-        host.pendingClick = null;
+        if (host.pendingClick) {
+          host.cancelPending?.();
+          return;
+        }
         this.rightClick(e);
       }
     });

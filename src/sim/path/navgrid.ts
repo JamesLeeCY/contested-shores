@@ -36,20 +36,25 @@ export class NavGrids {
     const mk = (): [Float32Array, Float32Array] => [new Float32Array(n), new Float32Array(n)];
     this.grids = { foot: mk(), small_craft: mk(), ship: mk() };
     this.blocked = new Uint8Array(n);
-    const rules = TERRAIN_IDS.map((id) => {
-      const r = terrainRules.types[id];
-      if (!r) throw new Error(`rules.terrain missing ${id}`);
-      return r;
-    });
-    for (let i = 0; i < n; i++) {
-      const r = rules[map.terrain[i]];
-      this.grids.foot[0][i] = r.foot.high;
-      this.grids.foot[1][i] = r.foot.low;
-      this.grids.small_craft[0][i] = r.smallCraft.high ? 1 : 0;
-      this.grids.small_craft[1][i] = r.smallCraft.low ? 1 : 0;
-      this.grids.ship[0][i] = r.ship.high ? 1 : 0;
-      this.grids.ship[1][i] = r.ship.low ? 1 : 0;
-    }
+    for (let i = 0; i < n; i++) this.writeTile(i, terrainRules);
+  }
+
+  private writeTile(i: number, terrainRules: TerrainRules) {
+    const id = TERRAIN_IDS[this.map.terrain[i]];
+    const r = terrainRules.types[id];
+    if (!r) throw new Error(`rules.terrain missing ${id}`);
+    this.grids.foot[0][i] = r.foot.high;
+    this.grids.foot[1][i] = r.foot.low;
+    this.grids.small_craft[0][i] = r.smallCraft.high ? 1 : 0;
+    this.grids.small_craft[1][i] = r.smallCraft.low ? 1 : 0;
+    this.grids.ship[0][i] = r.ship.high ? 1 : 0;
+    this.grids.ship[1][i] = r.ship.low ? 1 : 0;
+  }
+
+  /** Recomputes one tile after a terrain change. */
+  updateTile(i: number, terrainRules: TerrainRules) {
+    this.writeTile(i, terrainRules);
+    this.version++;
   }
 
   setTide(high: boolean) {

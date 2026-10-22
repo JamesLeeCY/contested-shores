@@ -1,5 +1,6 @@
 // Unit movement: per-unit A* paths, shared flow fields for big groups, local separation,
 // and stranding/flood handling (spec §4.8, §10.4).
+import { T } from '../map';
 import { lineWalkable } from '../path/astar';
 import { PathService } from '../path/pathing';
 import type { MoveClass } from '../path/navgrid';
@@ -112,8 +113,8 @@ export function terrainSpeed(world: World, e: Entity): number {
   let s = world.nav.speedAt(cls, tx, ty);
   // Leaving a tile that just became impassable (e.g. flooded flats): wade out slowly.
   if (s <= 0) s = 0.5;
-  if (cls === 'small_craft' && world.map.terrain[ty * world.map.width + tx] === 1 /* shallow */)
-    s *= world.rules.naval.smallCraftShallowSpeedMul;
+  if (cls === 'small_craft' && world.map.terrain[ty * world.map.width + tx] === T.shallow)
+    s *= (world.rules.naval.smallCraftShallowSpeedMul as Record<string, number>)[e.owner] ?? 1;
   return s;
 }
 

@@ -5,7 +5,16 @@ import type { World } from './world';
 
 export type Command =
   | { type: 'move'; owner: Owner; ids: number[]; x: number; y: number }
-  | { type: 'stop'; owner: Owner; ids: number[] };
+  | { type: 'stop'; owner: Owner; ids: number[] }
+  | { type: 'gather'; owner: Owner; ids: number[]; target?: number; tile?: number }
+  | { type: 'place'; owner: Owner; building: string; tx: number; ty: number; builders: number[] }
+  | { type: 'build'; owner: Owner; ids: number[]; target: number }
+  | { type: 'produce'; owner: Owner; building: number; unit: string }
+  | { type: 'research'; owner: Owner; building: number; tech: string }
+  | { type: 'cancel'; owner: Owner; building: number; index: number }
+  | { type: 'rally'; owner: Owner; building: number; x: number; y: number }
+  | { type: 'garrison'; owner: Owner; ids: number[]; target: number }
+  | { type: 'ungarrison'; owner: Owner; building: number; ids?: number[] };
 
 export type CommandHandler<C extends Command = Command> = (world: World, cmd: C) => void;
 const handlers = new Map<string, CommandHandler>();
