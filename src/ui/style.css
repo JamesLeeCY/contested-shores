@@ -17,3 +17,17 @@ html, body { margin: 0; height: 100%; overflow: hidden; background: var(--bg); c
 .minimap { position: absolute; left: 8px; bottom: 8px; width: 200px; height: 150px;
   border: 2px solid var(--panel-border); background: #000; image-rendering: pixelated; cursor: pointer; }
 .fps { position: absolute; right: 8px; bottom: 8px; color: var(--muted); font: 11px monospace; pointer-events: none; }
+
+.panel { background: var(--panel); border: 1px solid var(--panel-border); border-radius: 4px; box-shadow: 0 2px 8px rgba(0,0,0,.4); }
+.clocks { position: absolute; right: 8px; top: 44px; width: 180px; height: 80px; display: flex; align-items: center; gap: 8px; padding: 6px; }
+.tide-ring { width: 66px; height: 66px; flex: none; }
+.clock-info { display: flex; flex-direction: column; gap: 2px; font-size: 13px; line-height: 1.2; }
+.tide-text { font-weight: bold; }
+.timer-text { color: var(--accent); font-variant-numeric: tabular-nums; }
+.speed-text { color: var(--muted); font-size: 12px; }
+.speed-text.paused { color: #ff6b6b; font-weight: bold; }
+.clock-extra { position: absolute; right: 8px; top: 130px; width: 180px; display: flex; flex-direction: column; gap: 4px; pointer-events: none; }
+.select-box { position: absolute; display: none; border: 1px solid #7CFC00; background: rgba(124, 252, 0, 0.08); pointer-events: none; }
+.order-marker { position: absolute; width: 14px; height: 14px; margin: -7px 0 0 -7px; border: 2px solid #7CFC00; border-radius: 50%;
+  pointer-events: none; animation: marker .4s ease-out forwards; }
+@keyframes marker { to { transform: scale(.2); opacity: 0; } }

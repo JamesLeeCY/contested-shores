@@ -13,6 +13,11 @@ export default tseslint.config(
     },
   },
   {
+    // e2e tests poke at the page's debug handle.
+    files: ['tests/e2e/**/*.ts'],
+    rules: { '@typescript-eslint/no-explicit-any': 'off' },
+  },
+  {
     // Simulation must be deterministic and DOM-free (spec §10.3).
     files: ['src/sim/**/*.ts'],
     rules: {

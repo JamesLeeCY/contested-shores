@@ -5,16 +5,11 @@ import rules from '../../data/rules.json';
 import factions from '../../data/factions.json';
 import aiPlans from '../../data/ai_plans.json';
 import zhTW from '../../i18n/zh-TW.json';
-import type { BuildingDef, FactionsDef, Rules, TechDef, UnitDef } from './schema';
+import type { SimData } from '../sim/types';
+import type { BuildingDef, FactionsDef, TechDef, UnitDef } from './schema';
 import { validateData } from './validate';
 
-export interface GameData {
-  units: Map<string, UnitDef>;
-  buildings: Map<string, BuildingDef>;
-  techs: Map<string, TechDef>;
-  rules: Rules;
-  factions: FactionsDef;
-}
+export type GameData = SimData;
 
 export const RAW = { units, buildings, techs, rules, factions, aiPlans, i18n: zhTW as Record<string, string> };
 
@@ -27,7 +22,7 @@ export function loadGameData(): GameData {
     units: byId(units as UnitDef[]),
     buildings: byId(buildings as BuildingDef[]),
     techs: byId(techs as TechDef[]),
-    rules: rules as unknown as Rules,
+    rules,
     factions: factions as unknown as FactionsDef,
   };
 }

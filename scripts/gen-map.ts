@@ -50,7 +50,6 @@ const line = (ax: number, ay: number, bx: number, by: number, t: number, onto: n
     if (onto.includes(get(x, y))) set(x, y, t);
   }
 };
-const LAND = [T.plain, T.sand, T.forest, T.farmland, T.hill];
 
 // --- Terrain, painted back to front (later strokes win). ---------------------------------
 // North coast and everything not otherwise specified: plain, with woods.

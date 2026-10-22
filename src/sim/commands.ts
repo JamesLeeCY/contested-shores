@@ -1,0 +1,44 @@
+// Player and AI commands: the only way game state changes from outside the simulation (spec §10.3).
+import { clearMove, moveGroup } from './systems/movement';
+import type { Owner } from './types';
+import type { World } from './world';
+
+export type Command =
+  | { type: 'move'; owner: Owner; ids: number[]; x: number; y: number }
+  | { type: 'stop'; owner: Owner; ids: number[] };
+
+export type CommandHandler<C extends Command = Command> = (world: World, cmd: C) => void;
+const handlers = new Map<string, CommandHandler>();
+
+/** Later systems register their command types here. */
+export function registerCommand<T extends Command['type']>(type: T, fn: CommandHandler<Extract<Command, { type: T }>>) {
+  handlers.set(type, fn as CommandHandler);
+}
+
+/** Live units in `ids` that belong to `owner`, ascending id. */
+export function ownedUnits(world: World, owner: Owner, ids: number[]) {
+  return [...new Set(ids)]
+    .sort((a, b) => a - b)
+    .map((id) => world.get(id))
+    .filter((e) => e && e.kind === 'unit' && e.owner === owner && !e.insideOf) as NonNullable<ReturnType<World['get']>>[];
+}
+
+registerCommand('move', (world, cmd) => {
+  const units = ownedUnits(world, cmd.owner, cmd.ids).filter((u) => !u.stranded);
+  for (const u of units) u.order = { type: 'move', x: cmd.x, y: cmd.y };
+  moveGroup(world, units, cmd.x, cmd.y);
+});
+
+registerCommand('stop', (world, cmd) => {
+  for (const u of ownedUnits(world, cmd.owner, cmd.ids)) {
+    clearMove(world, u);
+    u.order = { type: 'idle' };
+  }
+});
+
+export function executeCommand(world: World, cmd: Command) {
+  const h = handlers.get(cmd.type);
+  if (!h) throw new Error(`no handler for command ${cmd.type}`);
+  world.commandLog.push({ tick: world.tick, cmd });
+  h(world, cmd);
+}
