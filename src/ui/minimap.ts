@@ -7,6 +7,8 @@ export interface MinimapDot {
   y: number;
   color: string;
   size: number;
+  /** Colour-blind mode: distinct shapes per side. */
+  shape?: 'square' | 'triangle' | 'circle';
 }
 
 /** 200×150 top-down minimap (spec §9.1). Click or drag to move the camera. */
@@ -70,7 +72,20 @@ export class Minimap {
     }
     for (const d of dots) {
       ctx.fillStyle = d.color;
-      ctx.fillRect(d.x * sx - d.size / 2, d.y * sy - d.size / 2, d.size, d.size);
+      const x = d.x * sx;
+      const y = d.y * sy;
+      const s = d.size;
+      if (d.shape === 'triangle') {
+        ctx.beginPath();
+        ctx.moveTo(x, y - s);
+        ctx.lineTo(x + s, y + s * 0.7);
+        ctx.lineTo(x - s, y + s * 0.7);
+        ctx.fill();
+      } else if (d.shape === 'circle') {
+        ctx.beginPath();
+        ctx.arc(x, y, s * 0.8, 0, Math.PI * 2);
+        ctx.fill();
+      } else ctx.fillRect(x - s / 2, y - s / 2, s, s);
     }
     ctx.strokeStyle = '#fff';
     ctx.lineWidth = 1;

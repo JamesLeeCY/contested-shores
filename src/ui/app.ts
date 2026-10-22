@@ -1,7 +1,9 @@
 // Game flow: title menu → chapter / side / difficulty → chapter (cutscenes, objectives) → result
 // screen → next chapter, carrying the campaign state; ending after chapter 4 (spec §7, §11 stage 7).
 import type { Application } from 'pixi.js';
-import { SCENARIOS } from '../data/scenarios';
+import { SCENARIOS, scenarioById } from '../data/scenarios';
+import type { World } from '../sim/world';
+import { buildSave, downloadSave, loadSave, pickSaveFile, readStoredSave, storeSave, type SaveFile, type SaveMeta } from './save';
 import { setupSandbox, type SandboxMode } from '../sim/sandbox';
 import type { Rating } from '../sim/scenario/triggers';
 import type { Difficulty } from '../sim/state';
@@ -99,6 +101,16 @@ export class GameApp {
     drawChapters();
 
     const extra = el('div', 'menu-row menu-extra', card);
+    const stored = readStoredSave();
+    if (stored) {
+      const load = el('button', 'menu-btn primary', extra, t('menu.load'));
+      load.onclick = () => this.loadGame(stored);
+    }
+    const imp = el('button', 'menu-btn', extra, t('menu.import'));
+    imp.onclick = async () => {
+      const f = await pickSaveFile();
+      if (f) this.loadGame(f);
+    };
     const sandbox = el('button', 'menu-btn', extra, t('menu.sandbox'));
     sandbox.onclick = () => this.startSandbox('armies', player);
     const eco = el('button', 'menu-btn', extra, t('menu.sandbox_economy'));
@@ -119,7 +131,7 @@ export class GameApp {
   /** Extra menu entries (codex, settings, load) added by later modules. */
   readonly menuHooks: ((card: HTMLElement, app: GameApp) => void)[] = [];
 
-  startSandbox(mode: SandboxMode, player: string) {
+  startSandbox(mode: SandboxMode, player: string, restored?: World) {
     this.clear();
     this.session = new Session(this.app, this.ui, {
       data: this.data,
@@ -128,16 +140,49 @@ export class GameApp {
       seed: 1661,
       sandbox: true,
       setup: (w) => setupSandbox(w, mode),
+      restored,
     });
-    this.addBackButton();
+    this.addGameMenu({ kind: 'sandbox', sandboxMode: mode, player, difficulty: 'normal' });
   }
 
-  private addBackButton() {
-    const b = el('button', 'menu-back', this.ui, t('menu.back'));
-    b.onclick = () => this.showMenu();
+  /** In-game menu: save, export, settings, main menu. */
+  private addGameMenu(meta: Omit<SaveMeta, 'savedAt'>) {
+    const bar = el('div', 'game-menu', this.ui);
+    const save = el('button', 'gm-btn', bar, t('menu.save'));
+    save.onclick = () => {
+      const s = this.session;
+      if (!s) return;
+      const file = buildSave(s.world, s.snapshots, meta);
+      if (storeSave(file)) s.messages.push(t('msg.saved'), 'good');
+      else {
+        s.messages.push(t('msg.save_failed'), 'warn');
+        downloadSave(file);
+      }
+    };
+    const exp = el('button', 'gm-btn', bar, t('menu.export'));
+    exp.onclick = () => this.session && downloadSave(buildSave(this.session.world, this.session.snapshots, meta));
+    for (const fn of this.gameMenuHooks) fn(bar, this);
+    const back = el('button', 'gm-btn', bar, t('menu.back'));
+    back.onclick = () => this.showMenu();
   }
 
-  async startChapter(o: StartOptions) {
+  readonly gameMenuHooks: ((bar: HTMLElement, app: GameApp) => void)[] = [];
+
+  /** Restores a save and continues it. */
+  loadGame(file: SaveFile) {
+    let w: World;
+    try {
+      w = loadSave(file, this.data, this.map, scenarioById);
+    } catch (e) {
+      alert(`${t('msg.load_failed')}\n${String(e)}`);
+      return;
+    }
+    const m = file.meta;
+    if (m.kind === 'chapter') void this.startChapter({ chapter: m.chapter!, player: m.player, difficulty: m.difficulty as Difficulty, skipCutscenes: true }, w);
+    else this.startSandbox((m.sandboxMode as SandboxMode) ?? 'armies', m.player, w);
+  }
+
+  async startChapter(o: StartOptions, restored?: World) {
     this.clear();
     const sc = SCENARIOS.find((s) => s.chapter === o.chapter)!;
     const s = (this.session = new Session(this.app, this.ui, {
@@ -149,10 +194,11 @@ export class GameApp {
       campaign: this.campaign,
       difficulty: o.difficulty,
       spectate: o.spectate,
+      restored,
     }));
     const objectives = new ObjectivePanel(s);
     s.frameHooks.push(() => objectives.update());
-    this.addBackButton();
+    this.addGameMenu({ kind: 'chapter', chapter: o.chapter, player: o.player, difficulty: o.difficulty });
     let ended = false;
     s.eventHooks.push((ss, ev) => {
       if (ev.type === 'cutscene' && !o.skipCutscenes) {

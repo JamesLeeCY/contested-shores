@@ -5,6 +5,9 @@ import type { World } from '../sim/world';
 import { t } from '../ui/i18n';
 import { colorOf, ownerColors } from './colors';
 import { TILE_H, toScreen } from './iso';
+import { crenellate, drawFigure, drawGun, drawShipArt } from './art';
+
+const FORTS = new Set(['zeelandia_castle', 'bastion', 'utrecht_redoubt', 'provintia_fort', 'lower_town_wall']);
 
 interface View {
   root: Container;
@@ -35,6 +38,25 @@ export class EntityRenderer {
   private colors: Map<string, [number, number]>;
   /** Entities hidden by fog of war (set by the fog renderer); not drawn. */
   hidden: (e: Entity) => boolean = () => false;
+  private colorblind = false;
+
+  /** Colour-blind mode adds a faction-specific flag shape to every unit (spec §9.3). */
+  setColorblind(on: boolean) {
+    if (on === this.colorblind) return;
+    this.colorblind = on;
+    for (const v of this.views.values()) v.root.destroy({ children: true });
+    this.views.clear();
+  }
+
+  private marker(owner: string): Graphics {
+    const g = new Graphics();
+    g.moveTo(0, -26).lineTo(0, -38).stroke({ color: 0x222222, width: 1.5 });
+    if (owner === 'faction_zheng') g.poly([0, -38, 12, -34, 0, -30]).fill(0xffffff).stroke({ color: 0x000000, width: 1 });
+    else if (owner === 'faction_voc') g.rect(0, -38, 11, 7).fill(0xffffff).stroke({ color: 0x000000, width: 1 }).rect(0, -35.5, 11, 2).fill(0x000000);
+    else if (owner.startsWith('village_')) g.circle(5, -34, 4).fill(0xffffff).stroke({ color: 0x000000, width: 1 });
+    else g.poly([5, -39, 10, -34, 5, -29, 0, -34]).fill(0xffffff).stroke({ color: 0x000000, width: 1 });
+    return g;
+  }
 
   constructor(private readonly data: SimData) {
     this.layer.sortableChildren = true;
@@ -95,13 +117,8 @@ export class EntityRenderer {
       if (naval) this.drawShip(v, e);
       else {
         const def = this.data.units.get(e.type)!;
-        const hero = def.traits.includes('hero');
-        body.ellipse(0, 0, 8, 4).fill({ color: 0x000000, alpha: 0.25 });
-        body.roundRect(-7, -22, 14, 20, 4).fill(c1).stroke({ color: hero ? 0xffd700 : c2, width: hero ? 2.5 : 1.5 });
-        const glyph = new Text({ text: t(def.nameKey).slice(0, 1), style: { fontSize: 11, fill: 0xffffff, fontWeight: 'bold' } });
-        glyph.anchor.set(0.5);
-        glyph.position.set(0, -12);
-        root.addChild(glyph);
+        if (def.class === 'siege') drawGun(body, e.type, c1);
+        else drawFigure(body, e.type, c1, c2, def.traits.includes('hero'));
       }
     } else if (e.kind === 'building') {
       this.drawBuilding(v, e, c1, c2);
@@ -109,6 +126,7 @@ export class EntityRenderer {
       // Deer herd.
       for (const [dx, dy] of [[-6, -2], [5, -4], [0, 3]]) body.ellipse(dx, dy, 5, 3).fill(0x8b5a2b);
     }
+    if (this.colorblind && e.kind === 'unit') root.addChild(this.marker(e.owner));
     ring.visible = false;
     return v;
   }
@@ -117,19 +135,9 @@ export class EntityRenderer {
     const [c1, c2] = colorOf(this.colors, e.owner);
     const g = v.body;
     g.clear();
-    const len = 14 + e.radius * 22;
-    const wid = len * 0.32;
-    // Hull outline in tile space, rotated by facing, then projected.
-    const a = e.facing ?? 0;
-    const pts: [number, number][] = [[len * 0.55, 0], [len * 0.2, wid * 0.5], [-len * 0.45, wid * 0.45], [-len * 0.45, -wid * 0.45], [len * 0.2, -wid * 0.5]];
-    const proj = pts.flatMap(([px, py]) => {
-      const rx = px * Math.cos(a) - py * Math.sin(a);
-      const ry = px * Math.sin(a) + py * Math.cos(a);
-      return [(rx - ry) * 0.7, (rx + ry) * 0.35];
-    });
-    g.poly(proj).fill(e.stranded ? 0x6d5a3a : 0x5b3a1e).stroke({ color: c2, width: 1.5 });
-    g.rect(-2, -len * 0.7, 3, len * 0.7).fill(0x3b2a1a);
-    g.poly([1, -len * 0.68, len * 0.35, -len * 0.45, 1, -len * 0.22]).fill(c1);
+    // Junk ~96 px, warship ~128 px long (spec §9.3), scaled by hull radius.
+    const len = 20 + e.radius * 34;
+    drawShipArt(g, e.type, e.facing ?? 0, len, c1, c2, !!e.stranded);
   }
 
   private drawBuilding(v: View, e: Entity, c1: number, c2: number) {
@@ -164,6 +172,8 @@ export class EntityRenderer {
     g.poly([base[6], base[7], base[4], base[5], top[4], top[5], top[6], top[7]]).fill(shade(c2, 1.1));
     g.poly([base[4], base[5], base[2], base[3], top[2], top[3], top[4], top[5]]).fill(shade(c2, 0.8));
     g.poly(top).fill(e.built !== undefined && e.built < 1 ? 0x9a8a6a : c1).stroke({ color: 0x1a1a1a, width: 1 });
+    if (FORTS.has(e.type) && (e.built ?? 1) >= 1) crenellate(g, top, shade(c2, 0.9));
+    if (e.type === 'battery' || e.type === 'trench') g.poly(top).fill({ color: 0x6b5a3a, alpha: 0.6 });
     v.ring.poly([nx, ny, ex, ey, sx, sy, wx, wy]).stroke({ color: 0x7CFC00, width: 2 });
     if (w >= 3) {
       const label = new Text({ text: t(this.data.buildings.get(e.type)?.nameKey ?? e.type), style: { fontSize: 12, fill: 0xffffff, stroke: { color: 0x000000, width: 3 } } });

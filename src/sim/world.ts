@@ -233,6 +233,22 @@ export class World {
         if (x >= 0 && y >= 0 && x < this.map.width && y < this.map.height) this.occupancy[y * this.map.width + x] = value;
   }
 
+  /** Replaces all entities (save restore): re-derives blocking footprints and occupancy. */
+  restoreEntities(list: Entity[]) {
+    this.entities.clear();
+    this.occupancy.fill(0);
+    this.nav.blocked.fill(0);
+    for (const e of list) {
+      this.entities.set(e.id, e);
+      if (e.kind !== 'building') continue;
+      if (e.blocks) this.nav.setBlocked(e.tx!, e.ty!, e.w!, e.h!, true);
+      if (e.type !== 'mine') this.setOccupancy(e, e.id);
+    }
+    this.sortedDirty = true;
+    this.buildingCache = null;
+    this.heroCache = { tick: -1, list: [] };
+  }
+
   /** Building occupying a tile, if any. */
   buildingAt(x: number, y: number): Entity | undefined {
     if (x < 0 || y < 0 || x >= this.map.width || y >= this.map.height) return undefined;

@@ -1,0 +1,396 @@
+[
+  {
+    "id": "laborer",
+    "category": "units",
+    "dispute": false,
+    "sources": [
+      "src.wiki"
+    ]
+  },
+  {
+    "id": "shield_soldier",
+    "category": "units",
+    "dispute": false,
+    "sources": [
+      "src.andrade"
+    ]
+  },
+  {
+    "id": "archer_zheng",
+    "category": "units",
+    "dispute": false,
+    "sources": [
+      "src.wiki",
+      "src.andrade"
+    ]
+  },
+  {
+    "id": "iron_man",
+    "category": "units",
+    "dispute": true,
+    "sources": [
+      "src.andrade"
+    ]
+  },
+  {
+    "id": "musketeer_zheng",
+    "category": "units",
+    "dispute": false,
+    "sources": [
+      "src.andrade"
+    ]
+  },
+  {
+    "id": "light_cannon",
+    "category": "units",
+    "dispute": false,
+    "sources": [
+      "src.wiki"
+    ]
+  },
+  {
+    "id": "heavy_cannon",
+    "category": "units",
+    "dispute": false,
+    "sources": [
+      "src.wiki"
+    ]
+  },
+  {
+    "id": "junk",
+    "category": "units",
+    "dispute": false,
+    "sources": [
+      "src.wiki"
+    ]
+  },
+  {
+    "id": "fire_ship",
+    "category": "units",
+    "dispute": false,
+    "sources": [
+      "src.andrade"
+    ]
+  },
+  {
+    "id": "company_worker",
+    "category": "units",
+    "dispute": false,
+    "sources": [
+      "src.andrade"
+    ]
+  },
+  {
+    "id": "musketeer_voc",
+    "category": "units",
+    "dispute": false,
+    "sources": [
+      "src.wiki"
+    ]
+  },
+  {
+    "id": "pikeman",
+    "category": "units",
+    "dispute": false,
+    "sources": [
+      "src.andrade"
+    ]
+  },
+  {
+    "id": "grenadier",
+    "category": "units",
+    "dispute": false,
+    "sources": [
+      "src.andrade"
+    ]
+  },
+  {
+    "id": "field_cannon",
+    "category": "units",
+    "dispute": false,
+    "sources": [
+      "src.andrade"
+    ]
+  },
+  {
+    "id": "longboat",
+    "category": "units",
+    "dispute": false,
+    "sources": [
+      "src.wiki"
+    ]
+  },
+  {
+    "id": "yacht",
+    "category": "units",
+    "dispute": false,
+    "sources": [
+      "src.andrade"
+    ]
+  },
+  {
+    "id": "warship",
+    "category": "units",
+    "dispute": false,
+    "sources": [
+      "src.wiki"
+    ]
+  },
+  {
+    "id": "village_warrior",
+    "category": "units",
+    "dispute": false,
+    "sources": [
+      "src.wiki",
+      "src.andrade_ch11"
+    ]
+  },
+  {
+    "id": "zeelandia_castle",
+    "category": "buildings",
+    "dispute": false,
+    "sources": [
+      "src.wiki"
+    ]
+  },
+  {
+    "id": "bastion",
+    "category": "buildings",
+    "dispute": false,
+    "sources": [
+      "src.wiki"
+    ]
+  },
+  {
+    "id": "utrecht_redoubt",
+    "category": "buildings",
+    "dispute": true,
+    "sources": [
+      "src.wiki"
+    ]
+  },
+  {
+    "id": "provintia_fort",
+    "category": "buildings",
+    "dispute": false,
+    "sources": [
+      "src.amh",
+      "src.wiki"
+    ]
+  },
+  {
+    "id": "camp_zheng",
+    "category": "buildings",
+    "dispute": false,
+    "sources": [
+      "src.wiki"
+    ]
+  },
+  {
+    "id": "tuntian",
+    "category": "buildings",
+    "dispute": false,
+    "sources": [
+      "src.andrade"
+    ]
+  },
+  {
+    "id": "sugar_mill",
+    "category": "buildings",
+    "dispute": false,
+    "sources": [
+      "src.andrade"
+    ]
+  },
+  {
+    "id": "village_center",
+    "category": "buildings",
+    "dispute": false,
+    "sources": [
+      "src.andrade"
+    ]
+  },
+  {
+    "id": "siege_works",
+    "category": "buildings",
+    "dispute": false,
+    "sources": [
+      "src.andrade"
+    ]
+  },
+  {
+    "id": "koxinga",
+    "category": "people",
+    "dispute": false,
+    "sources": [
+      "src.wiki"
+    ]
+  },
+  {
+    "id": "hebin",
+    "category": "people",
+    "dispute": false,
+    "sources": [
+      "src.wiki",
+      "src.andrade"
+    ]
+  },
+  {
+    "id": "coyett",
+    "category": "people",
+    "dispute": false,
+    "sources": [
+      "src.coyett",
+      "src.wiki"
+    ]
+  },
+  {
+    "id": "pedel",
+    "category": "people",
+    "dispute": false,
+    "sources": [
+      "src.wiki"
+    ]
+  },
+  {
+    "id": "valentyn",
+    "category": "people",
+    "dispute": false,
+    "sources": [
+      "src.wiki",
+      "src.amh"
+    ]
+  },
+  {
+    "id": "caeuw",
+    "category": "people",
+    "dispute": false,
+    "sources": [
+      "src.wiki"
+    ]
+  },
+  {
+    "id": "hambroek",
+    "category": "people",
+    "dispute": false,
+    "sources": [
+      "src.wiki"
+    ]
+  },
+  {
+    "id": "radis",
+    "category": "people",
+    "dispute": true,
+    "sources": [
+      "src.coyett",
+      "src.wiki"
+    ]
+  },
+  {
+    "id": "tayouan",
+    "category": "places",
+    "dispute": false,
+    "sources": [
+      "src.wiki"
+    ]
+  },
+  {
+    "id": "baxemboy",
+    "category": "places",
+    "dispute": false,
+    "sources": [
+      "src.wiki"
+    ]
+  },
+  {
+    "id": "luermen",
+    "category": "places",
+    "dispute": false,
+    "sources": [
+      "src.wiki"
+    ]
+  },
+  {
+    "id": "taijiang",
+    "category": "places",
+    "dispute": false,
+    "sources": [
+      "src.wiki"
+    ]
+  },
+  {
+    "id": "saccam",
+    "category": "places",
+    "dispute": false,
+    "sources": [
+      "src.wiki",
+      "src.amh"
+    ]
+  },
+  {
+    "id": "heliao",
+    "category": "places",
+    "dispute": false,
+    "sources": [
+      "src.wiki"
+    ]
+  },
+  {
+    "id": "sinkan",
+    "category": "places",
+    "dispute": false,
+    "sources": [
+      "src.wiki",
+      "src.andrade"
+    ]
+  },
+  {
+    "id": "mattau",
+    "category": "places",
+    "dispute": false,
+    "sources": [
+      "src.andrade"
+    ]
+  },
+  {
+    "id": "soulang",
+    "category": "places",
+    "dispute": false,
+    "sources": [
+      "src.andrade"
+    ]
+  },
+  {
+    "id": "bakloan",
+    "category": "places",
+    "dispute": false,
+    "sources": [
+      "src.andrade"
+    ]
+  },
+  {
+    "id": "middag",
+    "category": "places",
+    "dispute": false,
+    "sources": [
+      "src.wiki"
+    ]
+  },
+  {
+    "id": "numbers",
+    "category": "disputes",
+    "dispute": true,
+    "sources": [
+      "src.wiki",
+      "src.andrade"
+    ]
+  },
+  {
+    "id": "dates",
+    "category": "disputes",
+    "dispute": true,
+    "sources": [
+      "src.wiki"
+    ]
+  }
+]

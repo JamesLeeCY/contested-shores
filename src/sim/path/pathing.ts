@@ -55,8 +55,9 @@ export class PathService {
     const key = `${cls}:${goal[0]},${goal[1]}`;
     let f = this.flows.get(key);
     if (!f || f.version !== this.nav.version) {
+      // Flow fields are a pure function of the nav grids: cached, but never counted in the A*
+      // budget, so cache contents (eviction, a restored save) cannot change the simulation.
       f = new FlowField(this.nav, cls, goal[0], goal[1], this.nav.version);
-      this.expandedThisTick += f.expanded;
       this.flows.set(key, f);
       if (this.flows.size > 32) this.flows.delete(this.flows.keys().next().value!);
     }
@@ -65,8 +66,19 @@ export class PathService {
 
   flowByKey(key: string): FlowField | undefined {
     const f = this.flows.get(key);
-    if (!f) return undefined;
-    return f.version === this.nav.version ? f : this.flow(f.cls, f.gx, f.gy);
+    if (f) return f.version === this.nav.version ? f : this.flow(f.cls, f.gx, f.gy);
+    // Evicted, or restored from a save: rebuild it from the key.
+    const m = /^(\w+):(\d+),(\d+)$/.exec(key);
+    return m ? this.flow(m[1] as MoveClass, Number(m[2]), Number(m[3])) : undefined;
+  }
+
+  /** Pending A* requests (part of the saved state). */
+  get pending(): PathRequest[] {
+    return this.queue;
+  }
+
+  set pending(q: PathRequest[]) {
+    this.queue = q.map((r) => ({ ...r }));
   }
 
   static key(f: FlowField) {

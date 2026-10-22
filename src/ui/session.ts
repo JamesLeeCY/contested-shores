@@ -22,6 +22,9 @@ import { Controls, SPEEDS, type ControlHost } from './controls';
 import { ClockHud } from './hud';
 import { Minimap } from './minimap';
 import { life } from './lifecycle';
+import { SnapshotKeeper } from './save';
+import { onSettings, settings } from './settings';
+import { audio } from './audio';
 import type { CampaignState, Scenario } from '../sim/scenario/types';
 import type { Difficulty } from '../sim/state';
 import { applyScenario } from '../sim/scenario/setup';
@@ -40,6 +43,8 @@ export interface SessionOptions {
   difficulty?: Difficulty;
   /** Play both sides by AI (spectator / tests). */
   spectate?: boolean;
+  /** Continue a world restored from a save instead of building a new one. */
+  restored?: World;
 }
 
 export class Session implements ControlHost {
@@ -81,6 +86,7 @@ export class Session implements ControlHost {
   /** Set while a modal (cutscene, end screen) is open: the simulation does not advance. */
   modal = false;
   private readonly abort = new AbortController();
+  readonly snapshots: SnapshotKeeper;
   private tickFn?: (tk: { deltaMS: number }) => void;
 
   constructor(
@@ -91,9 +97,9 @@ export class Session implements ControlHost {
     life.signal = this.abort.signal;
     const { data, map } = opts;
     this.player = opts.player;
-    this.world = new World(data, map, { seed: opts.seed, sandbox: opts.sandbox, player: opts.player });
-    opts.setup?.(this.world);
-    if (opts.scenario) {
+    this.world = opts.restored ?? new World(data, map, { seed: opts.seed, sandbox: opts.sandbox, player: opts.player });
+    if (!opts.restored) opts.setup?.(this.world);
+    if (opts.scenario && !opts.restored) {
       const w = this.world;
       applyScenario(w, opts.scenario, opts.campaign);
       w.ext.flags.player = opts.spectate ? '' : this.player;
@@ -105,6 +111,9 @@ export class Session implements ControlHost {
       if (relief) this.reliefSeconds = () => (w.ext.flags.relief_spawned_ui || w.tick / w.ticksPerSecond >= relief.atSeconds ? null : relief.atSeconds - w.tick / w.ticksPerSecond);
     }
     this.stepper = new FixedStepper(1000 / this.world.rules.sim.tickHz);
+    this.snapshots = new SnapshotKeeper(this.world);
+    // A loaded game starts paused so the player can get their bearings.
+    if (opts.restored) this.stepper.paused = true;
 
     const colors = Object.fromEntries(Object.entries(this.world.rules.terrain.types).map(([k, v]) => [k, v.color]));
     app.stage.addChild(this.worldLayer);
@@ -149,6 +158,7 @@ export class Session implements ControlHost {
       if (m) s.messages.push(m[0], m[1]);
     });
     installCampaignUi(this);
+    this.eventHooks.push((s, ev) => s.soundFor(ev));
     this.fpsEl = document.createElement('div');
     this.fpsEl.className = 'fps';
     ui.appendChild(this.fpsEl);
@@ -168,6 +178,7 @@ export class Session implements ControlHost {
       const t0 = performance.now();
       for (let i = 0; i < n; i++) {
         step(this.world);
+        this.snapshots.tick(this.world);
         for (const ev of this.world.events) for (const h of this.eventHooks) h(this, ev);
       }
       this.simMs = performance.now() - t0;
@@ -179,6 +190,7 @@ export class Session implements ControlHost {
       this.entities.sync(this.world, this.stepper.paused ? 1 : this.stepper.alpha, this.selected);
       this.clocks.update(this.world, this.stepper.speed, this.stepper.paused, this.timerSeconds);
       this.resourceBar.update(this.world, this.player);
+      this.updateAudio();
       this.selectionPanel.update(this.world, [...this.selected]);
       this.commandPanel.update();
       this.placement.update();
@@ -192,7 +204,13 @@ export class Session implements ControlHost {
       this.minimap.draw(
         [...this.world.all()]
           .filter((e) => e.kind !== 'resource' && !e.insideOf && !this.entities.hidden(e))
-          .map((e) => ({ x: e.x, y: e.y, color: colorFor(e.owner), size: e.kind === 'building' ? 4 : 2 })),
+          .map((e) => ({
+            x: e.x,
+            y: e.y,
+            color: colorFor(e.owner),
+            size: e.kind === 'building' ? 4 : this.colorblind ? 3 : 2,
+            shape: !this.colorblind || e.kind === 'building' ? ('square' as const) : e.owner === 'faction_zheng' ? ('triangle' as const) : e.owner === 'faction_voc' ? ('square' as const) : ('circle' as const),
+          })),
         this.fogForMinimap?.(),
       );
       this.fps.acc += tk.deltaMS / 1000;
@@ -204,10 +222,24 @@ export class Session implements ControlHost {
       }
     };
     app.ticker.add(this.tickFn);
+    this.unsubscribe = onSettings((st) => {
+      this.cameraInput.scrollSpeed = st.scrollSpeed;
+      this.cameraInput.edgeScroll = st.edgeScroll;
+      this.colorblind = st.colorblind;
+      this.entities.setColorblind(st.colorblind);
+    });
+    this.speedIdx = Math.max(0, SPEEDS.indexOf(settings.gameSpeed));
+    this.stepper.speed = SPEEDS[this.speedIdx];
   }
+
+  colorblind = false;
+  private unsubscribe: () => void;
 
   /** Stops the game and removes its rendering, panels and listeners. */
   destroy() {
+    audio.setMood('silent');
+    audio.setStorm(false);
+    this.unsubscribe();
     this.abort.abort();
     if (this.tickFn) this.app.ticker.remove(this.tickFn);
     this.app.stage.removeChild(this.worldLayer);
@@ -232,6 +264,31 @@ export class Session implements ControlHost {
 
   issue(cmd: Command) {
     this.world.enqueue(cmd);
+    if (['move', 'attack', 'attack_move', 'gather', 'build', 'garrison', 'embark', 'patrol'].includes(cmd.type)) audio.respond(this.player, this.world.tick);
+  }
+
+  private lastBattle = -1e9;
+
+  /** Positional sound for simulation events; volume falls off with distance from the view centre. */
+  soundFor(ev: SimEvent) {
+    const x = (ev.x as number | undefined) ?? (ev.tx as number | undefined);
+    const y = (ev.y as number | undefined) ?? (ev.ty as number | undefined);
+    if (x === undefined || y === undefined) return;
+    if (!this.effects.visibleAt(x, y)) return;
+    const d = Math.hypot(x - this.camera.cx, y - this.camera.cy);
+    const vol = Math.max(0, 1 - d / 30) * this.camera.zoom;
+    if (vol <= 0.02) return;
+    if (ev.type === 'shot') {
+      this.lastBattle = performance.now();
+      if (ev.atkType === 'musket') audio.musket(vol);
+      else if (ev.atkType === 'cannon') audio.cannon(vol);
+    } else if (ev.type === 'explosion' || (ev.type === 'death' && ev.kind === 'building')) audio.explosion(vol);
+  }
+
+  /** Music mood and storm ambience, called every frame. */
+  updateAudio() {
+    audio.setMood(this.modal ? 'cutscene' : performance.now() - this.lastBattle < 8000 ? 'battle' : 'explore');
+    audio.setStorm(this.world.weather.active);
   }
 
   togglePause() {

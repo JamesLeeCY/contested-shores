@@ -3,6 +3,12 @@ import { loadGameData } from './data/load';
 import { loadMap } from './data/map';
 import type { Difficulty } from './sim/state';
 import { GameApp } from './ui/app';
+import { hashWorld } from './sim/hash';
+import { openCodex } from './ui/codex';
+import { openSettings } from './ui/settings';
+import { installAudio } from './ui/audio';
+import { el } from './ui/dom';
+import { t } from './ui/i18n';
 import type { Session } from './ui/session';
 
 async function main() {
@@ -14,11 +20,39 @@ async function main() {
   await app.init({ resizeTo: window, background: '#0d1418', antialias: true });
   document.getElementById('game')!.appendChild(app.canvas);
 
+  installAudio();
   const game = new GameApp(app, document.getElementById('ui')!, document.getElementById('overlay')!, data, map);
   // Debug/e2e handles.
   const w = window as unknown as { __app: GameApp; __game: Session | null };
   w.__app = game;
+  (window as unknown as { __hash: typeof hashWorld }).__hash = hashWorld;
   Object.defineProperty(window, '__game', { get: () => game.session });
+
+  // Codex in the main menu and in the in-game menu (pauses the game while open).
+  game.menuHooks.push((card, g) => {
+    const b = el('button', 'menu-btn', card.querySelector('.menu-extra') as HTMLElement, t('codex.title'));
+    b.onclick = () => openCodex(g.overlay);
+  });
+  game.menuHooks.push((card, g) => {
+    const b = el('button', 'menu-btn', card.querySelector('.menu-extra') as HTMLElement, t('settings.title'));
+    b.onclick = () => openSettings(g.overlay);
+  });
+  game.gameMenuHooks.push((bar, g) => {
+    const b = el('button', 'gm-btn', bar, t('settings.title'));
+    b.onclick = () => {
+      const s = g.session;
+      if (s) s.modal = true;
+      openSettings(g.overlay, () => s && (s.modal = false));
+    };
+  });
+  game.gameMenuHooks.push((bar, g) => {
+    const b = el('button', 'gm-btn', bar, t('codex.title'));
+    b.onclick = () => {
+      const s = g.session;
+      if (s) s.modal = true;
+      openCodex(g.overlay, () => s && (s.modal = false));
+    };
+  });
 
   const player = params.get('faction') === 'voc' ? 'faction_voc' : 'faction_zheng';
   const mode = params.get('mode');
