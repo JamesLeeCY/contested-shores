@@ -1,0 +1,654 @@
+{
+  "id": "ch1",
+  "chapter": 1,
+  "nameKey": "scenario.ch1.name",
+  "dateKey": "scenario.ch1.date",
+  "timerMinutes": 20,
+  "stage": {
+    "faction_zheng": 1,
+    "faction_voc": 1
+  },
+  "resources": {
+    "faction_zheng": {
+      "grain": 900,
+      "wood": 400,
+      "powder": 80,
+      "deerskin": 40
+    },
+    "faction_voc": {
+      "grain": 1500,
+      "wood": 300,
+      "powder": 600,
+      "deerskin": 0
+    }
+  },
+  "castleMorale": 80,
+  "techs": {
+    "faction_zheng": [
+      "tech_hebin_map"
+    ]
+  },
+  "units": [
+    {
+      "type": "coyett",
+      "owner": "faction_voc",
+      "count": 1,
+      "at": [
+        44.5,
+        61.5
+      ]
+    },
+    {
+      "type": "pedel",
+      "owner": "faction_voc",
+      "count": 1,
+      "at": [
+        50.5,
+        61.5
+      ],
+      "tag": "pedel"
+    },
+    {
+      "type": "musketeer_voc",
+      "owner": "faction_voc",
+      "count": 24,
+      "at": [
+        52,
+        63
+      ],
+      "tag": "sortie"
+    },
+    {
+      "type": "company_worker",
+      "owner": "faction_voc",
+      "count": 6,
+      "at": [
+        36,
+        62
+      ]
+    },
+    {
+      "type": "warship",
+      "owner": "faction_voc",
+      "count": 1,
+      "at": [
+        34.5,
+        46.5
+      ],
+      "tag": "hector"
+    },
+    {
+      "type": "yacht",
+      "owner": "faction_voc",
+      "count": 1,
+      "at": [
+        46.5,
+        47.5
+      ]
+    },
+    {
+      "type": "longboat",
+      "owner": "faction_voc",
+      "count": 4,
+      "at": [
+        43.5,
+        49.5
+      ],
+      "tag": "sortie_boats"
+    }
+  ],
+  "fleets": [
+    {
+      "ship": "junk",
+      "owner": "faction_zheng",
+      "count": 24,
+      "at": [
+        10,
+        22
+      ],
+      "tag": "armada",
+      "cargo": [
+        {
+          "type": "koxinga",
+          "owner": "faction_zheng",
+          "count": 1
+        },
+        {
+          "type": "shield_soldier",
+          "owner": "faction_zheng",
+          "count": 70
+        },
+        {
+          "type": "archer_zheng",
+          "owner": "faction_zheng",
+          "count": 50
+        },
+        {
+          "type": "laborer",
+          "owner": "faction_zheng",
+          "count": 20
+        }
+      ]
+    }
+  ],
+  "ai": {
+    "faction_zheng": {
+      "plans": [
+        "land_at_heliao"
+      ],
+      "composition": {
+        "shield_soldier": 0.5,
+        "archer_zheng": 0.5
+      },
+      "targetArmy": 100,
+      "home": [
+        114,
+        40
+      ]
+    },
+    "faction_voc": {
+      "plans": [
+        "naval_screen"
+      ],
+      "composition": {
+        "musketeer_voc": 0.7,
+        "pikeman": 0.3
+      },
+      "targetArmy": 30,
+      "home": [
+        48,
+        62
+      ]
+    }
+  },
+  "historicalLoser": "faction_voc",
+  "objectives": {
+    "faction_zheng": [
+      "ch1.obj.land",
+      "ch1.obj.repel",
+      "ch1.obj.hector"
+    ],
+    "faction_voc": [
+      "ch1.obj.sink",
+      "ch1.obj.camp"
+    ]
+  },
+  "triggers": [
+    {
+      "id": "ch1_start",
+      "when": {
+        "type": "time_elapsed",
+        "seconds": 0
+      },
+      "do": [
+        {
+          "type": "show_cutscene",
+          "id": "ch1_intro"
+        },
+        {
+          "type": "set_objective",
+          "id": "land",
+          "faction": "faction_zheng",
+          "textKey": "ch1.obj.land",
+          "primary": true
+        },
+        {
+          "type": "set_objective",
+          "id": "repel",
+          "faction": "faction_zheng",
+          "textKey": "ch1.obj.repel",
+          "primary": true
+        },
+        {
+          "type": "set_objective",
+          "id": "hector",
+          "faction": "faction_zheng",
+          "textKey": "ch1.obj.hector",
+          "primary": false
+        },
+        {
+          "type": "set_objective",
+          "id": "sink",
+          "faction": "faction_voc",
+          "textKey": "ch1.obj.sink",
+          "primary": true
+        },
+        {
+          "type": "set_objective",
+          "id": "camp",
+          "faction": "faction_voc",
+          "textKey": "ch1.obj.camp",
+          "primary": false
+        }
+      ]
+    },
+    {
+      "id": "ch1_tide_tutorial",
+      "when": {
+        "type": "time_elapsed",
+        "seconds": 30
+      },
+      "do": [
+        {
+          "type": "show_message",
+          "textKey": "ch1.tide_tutorial",
+          "kind": "info"
+        }
+      ]
+    },
+    {
+      "id": "ch1_sortie",
+      "when": {
+        "type": "time_elapsed",
+        "seconds": 180
+      },
+      "do": [
+        {
+          "type": "show_message",
+          "textKey": "ch1.sortie",
+          "kind": "warn"
+        },
+        {
+          "type": "set_ai_plan",
+          "faction": "faction_voc",
+          "plans": [
+            "sortie_baxemboy",
+            "naval_screen"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "ch1_hector_explodes",
+      "when": {
+        "type": "unit_hp_below",
+        "unitTag": "hector",
+        "ratio": 0.3
+      },
+      "do": [
+        {
+          "type": "kill_unit",
+          "unitTag": "hector",
+          "effect": "explosion_large"
+        },
+        {
+          "type": "show_message",
+          "textKey": "ch1.hector_explodes",
+          "kind": "warn"
+        },
+        {
+          "type": "modify_morale",
+          "faction": "faction_voc",
+          "delta": -15,
+          "reason": "hector"
+        },
+        {
+          "type": "complete_objective",
+          "id": "hector",
+          "faction": "faction_zheng"
+        }
+      ]
+    },
+    {
+      "id": "ch1_hector_sunk",
+      "when": {
+        "type": "unit_dead",
+        "unitTag": "hector"
+      },
+      "do": [
+        {
+          "type": "complete_objective",
+          "id": "hector",
+          "faction": "faction_zheng"
+        }
+      ]
+    },
+    {
+      "id": "ch1_pedel_dead",
+      "when": {
+        "type": "unit_dead",
+        "unitTag": "pedel"
+      },
+      "do": [
+        {
+          "type": "show_message",
+          "textKey": "ch1.pedel_dead",
+          "kind": "warn"
+        },
+        {
+          "type": "modify_morale",
+          "faction": "faction_voc",
+          "delta": -20,
+          "reason": "pedel"
+        }
+      ]
+    },
+    {
+      "id": "ch1_landed",
+      "when": {
+        "type": "all_of",
+        "conditions": [
+          {
+            "type": "area_entered",
+            "region": "saccam",
+            "owner": "faction_zheng",
+            "pop": 60
+          },
+          {
+            "type": "not",
+            "condition": {
+              "type": "time_elapsed",
+              "seconds": 900
+            }
+          }
+        ]
+      },
+      "do": [
+        {
+          "type": "complete_objective",
+          "id": "land",
+          "faction": "faction_zheng"
+        },
+        {
+          "type": "set_flag",
+          "name": "ch1_landed",
+          "value": true
+        }
+      ]
+    },
+    {
+      "id": "ch1_repelled",
+      "when": {
+        "type": "all_of",
+        "conditions": [
+          {
+            "type": "time_elapsed",
+            "seconds": 185
+          },
+          {
+            "type": "any_of",
+            "conditions": [
+              {
+                "type": "unit_dead",
+                "unitTag": "pedel"
+              },
+              {
+                "type": "unit_dead",
+                "unitTag": "sortie",
+                "atLeast": 18
+              }
+            ]
+          }
+        ]
+      },
+      "do": [
+        {
+          "type": "complete_objective",
+          "id": "repel",
+          "faction": "faction_zheng"
+        },
+        {
+          "type": "set_flag",
+          "name": "ch1_repelled",
+          "value": true
+        }
+      ]
+    },
+    {
+      "id": "ch1_camp_built",
+      "when": {
+        "type": "building_built",
+        "building": "camp_zheng",
+        "owner": "faction_zheng",
+        "region": "saccam"
+      },
+      "do": [
+        {
+          "type": "complete_objective",
+          "id": "camp",
+          "faction": "faction_voc",
+          "failed": true
+        }
+      ]
+    },
+    {
+      "id": "ch1_zheng_wins",
+      "when": {
+        "type": "all_of",
+        "conditions": [
+          {
+            "type": "flag",
+            "name": "ch1_landed"
+          },
+          {
+            "type": "flag",
+            "name": "ch1_repelled"
+          }
+        ]
+      },
+      "do": [
+        {
+          "type": "win_mission",
+          "faction": "faction_zheng",
+          "rating": "victory",
+          "reasonKey": "ch1.end.zheng"
+        }
+      ]
+    },
+    {
+      "id": "ch1_junks_sunk",
+      "when": {
+        "type": "units_lost",
+        "owner": "faction_zheng",
+        "unitType": "junk",
+        "count": 10
+      },
+      "do": [
+        {
+          "type": "complete_objective",
+          "id": "sink",
+          "faction": "faction_voc"
+        },
+        {
+          "type": "win_mission",
+          "faction": "faction_voc",
+          "rating": "victory",
+          "reasonKey": "ch1.end.junks"
+        }
+      ]
+    },
+    {
+      "id": "ch1_baxemboy_held",
+      "when": {
+        "type": "all_of",
+        "conditions": [
+          {
+            "type": "time_elapsed",
+            "seconds": 900
+          },
+          {
+            "type": "not",
+            "condition": {
+              "type": "unit_dead",
+              "unitTag": "pedel"
+            }
+          },
+          {
+            "type": "area_entered",
+            "region": "baxemboy",
+            "owner": "faction_voc",
+            "pop": 5
+          },
+          {
+            "type": "not",
+            "condition": {
+              "type": "area_entered",
+              "region": "baxemboy",
+              "owner": "faction_zheng",
+              "pop": 10
+            }
+          }
+        ]
+      },
+      "do": [
+        {
+          "type": "complete_objective",
+          "id": "sink",
+          "faction": "faction_voc"
+        },
+        {
+          "type": "win_mission",
+          "faction": "faction_voc",
+          "rating": "victory",
+          "reasonKey": "ch1.end.held"
+        }
+      ]
+    },
+    {
+      "id": "ch1_landing_failed",
+      "when": {
+        "type": "all_of",
+        "conditions": [
+          {
+            "type": "time_elapsed",
+            "seconds": 900
+          },
+          {
+            "type": "not",
+            "condition": {
+              "type": "flag",
+              "name": "ch1_landed"
+            }
+          }
+        ]
+      },
+      "do": [
+        {
+          "type": "complete_objective",
+          "id": "land",
+          "faction": "faction_zheng",
+          "failed": true
+        },
+        {
+          "type": "fail_mission",
+          "faction": "faction_zheng",
+          "reasonKey": "ch1.end.no_landing"
+        }
+      ]
+    },
+    {
+      "id": "ch1_castle_damaged",
+      "when": {
+        "type": "building_hp_below",
+        "building": "zeelandia_castle",
+        "ratio": 0.5
+      },
+      "do": [
+        {
+          "type": "fail_mission",
+          "faction": "faction_voc",
+          "reasonKey": "ch1.end.castle"
+        }
+      ]
+    },
+    {
+      "id": "ch1_baxemboy_lost",
+      "when": {
+        "type": "all_of",
+        "conditions": [
+          {
+            "type": "unit_dead",
+            "unitTag": "pedel"
+          },
+          {
+            "type": "area_entered",
+            "region": "baxemboy",
+            "owner": "faction_zheng",
+            "pop": 10
+          },
+          {
+            "type": "not",
+            "condition": {
+              "type": "area_entered",
+              "region": "baxemboy",
+              "owner": "faction_voc",
+              "pop": 1
+            }
+          }
+        ]
+      },
+      "do": [
+        {
+          "type": "fail_mission",
+          "faction": "faction_voc",
+          "reasonKey": "ch1.end.baxemboy"
+        }
+      ]
+    },
+    {
+      "id": "ch1_timeout",
+      "when": {
+        "type": "time_elapsed",
+        "seconds": 1200
+      },
+      "do": [
+        {
+          "type": "set_flag",
+          "name": "timeout",
+          "value": true
+        }
+      ]
+    },
+    {
+      "id": "ch1_timeout_zheng",
+      "when": {
+        "type": "all_of",
+        "conditions": [
+          {
+            "type": "flag",
+            "name": "timeout"
+          },
+          {
+            "type": "flag",
+            "name": "ch1_landed"
+          }
+        ]
+      },
+      "do": [
+        {
+          "type": "win_mission",
+          "faction": "faction_zheng",
+          "rating": "historical",
+          "reasonKey": "ch1.end.timeout_landed"
+        }
+      ]
+    },
+    {
+      "id": "ch1_timeout_voc",
+      "when": {
+        "type": "all_of",
+        "conditions": [
+          {
+            "type": "flag",
+            "name": "timeout"
+          },
+          {
+            "type": "not",
+            "condition": {
+              "type": "flag",
+              "name": "ch1_landed"
+            }
+          }
+        ]
+      },
+      "do": [
+        {
+          "type": "win_mission",
+          "faction": "faction_voc",
+          "rating": "victory",
+          "reasonKey": "ch1.end.timeout"
+        }
+      ]
+    }
+  ]
+}

@@ -4,14 +4,14 @@ test('game page boots without errors', async ({ page }) => {
   const errors: string[] = [];
   page.on('pageerror', (e) => errors.push(e.message));
   page.on('console', (m) => m.type() === 'error' && errors.push(m.text()));
-  await page.goto('./');
+  await page.goto('./?mode=sandbox');
   await expect(page.locator('#game canvas')).toBeVisible();
   await page.waitForTimeout(3000);
   expect(errors).toEqual([]);
 });
 
 test('box-select own units and right-click to move them', async ({ page }) => {
-  await page.goto('./');
+  await page.goto('./?mode=sandbox');
   await page.waitForFunction(() => (window as unknown as { __game?: unknown }).__game);
   // Centre the camera on the Zheng army and remember where a soldier starts.
   const before = await page.evaluate(() => {

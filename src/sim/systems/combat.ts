@@ -210,9 +210,13 @@ export function acquireTarget(world: World, a: Entity, radius: number, melee: bo
   let bestScore = Infinity;
   const consider = (t: Entity) => {
     if (!canTarget(world, a, t, melee)) return;
+    // A breached fort is taken, not destroyed: no point hammering it.
+    if (t.kind === 'building' && (world.data.buildings.get(t.type) as { capturable?: boolean }).capturable && t.hp <= t.maxHp * world.rules.capture.maxHpFraction) return;
     const d = entityDistance(a, t);
     if (d > radius) return;
-    const tier = t.kind === 'unit' ? 0 : t.type === 'lower_town_wall' || t.type === 'farm' || t.type === 'trench' ? 2 : 1;
+    // Walls, farms, trenches and batteries are only attacked on explicit orders.
+    if (t.kind === 'building' && ['lower_town_wall', 'farm', 'trench', 'battery'].includes(t.type)) return;
+    const tier = t.kind === 'unit' ? 0 : 1;
     const score = tier * 1000 + d;
     if (score < bestScore) {
       bestScore = score;

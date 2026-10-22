@@ -50,6 +50,8 @@ export class World {
   readonly woodLeft: Float32Array;
   /** Building id occupying each tile (0 = none), including walkable ones (farms, trenches). */
   readonly occupancy: Int32Array;
+  /** The scenario being played, if any (static data; progress lives in ext.flags). */
+  scenario: import('./scenario/types').Scenario | null = null;
   /** Campaign-system state (diplomacy, supply, typhoon, events). */
   ext: ExtState = initialExt();
   /** Active weather effects (typhoon, spec §4.10). */

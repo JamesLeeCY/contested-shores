@@ -6,7 +6,7 @@ import factions from '../../data/factions.json';
 import aiPlans from '../../data/ai_plans.json';
 import zhTW from '../../i18n/zh-TW.json';
 import type { SimData } from '../sim/types';
-import type { BuildingDef, FactionsDef, TechDef, UnitDef } from './schema';
+import type { AiPlanDef, BuildingDef, FactionsDef, TechDef, UnitDef } from './schema';
 import { validateData } from './validate';
 
 export type GameData = SimData;
@@ -24,5 +24,6 @@ export function loadGameData(): GameData {
     techs: byId(techs as TechDef[]),
     rules,
     factions: factions as unknown as FactionsDef,
+    aiPlans: byId(aiPlans as AiPlanDef[]),
   };
 }

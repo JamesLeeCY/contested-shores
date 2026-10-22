@@ -22,6 +22,11 @@ export const captureHooks: ((world: World, b: Entity, from: Owner, to: Owner) =>
 function captureTick(world: World, b: Entity) {
   const r = world.rules.capture;
   const hz = world.ticksPerSecond;
+  // A breached fort can no longer shelter its garrison: they spill out and must fight.
+  if (b.garrisoned?.length && b.hp <= b.maxHp * r.ejectBelowHpFraction) {
+    ejectAll(world, b);
+    world.emit({ type: 'garrison_ejected', id: b.id, owner: b.owner });
+  }
   let attacker: Owner | null = null;
   let defended = (b.garrisoned?.length ?? 0) > 0;
   for (const u of world.unitsNear(b.x, b.y, b.w! / 2 + r.defenderRadius + 1)) {

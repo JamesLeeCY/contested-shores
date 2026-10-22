@@ -67,6 +67,7 @@ export function eventMessage(world: World, player: string, ev: SimEvent): [strin
       return u?.owner === player ? [t('msg.stranded'), 'warn'] : null;
     }
     case 'message':
+      if (e.to && e.to !== player) return null;
       return [t(e.textKey as string, (e.params as Record<string, string | number>) ?? {}), (e.kind as 'info' | 'warn' | 'good') ?? 'info'];
     default:
       return null;

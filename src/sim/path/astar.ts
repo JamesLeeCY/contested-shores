@@ -13,8 +13,11 @@ const DIRS = [
   [-1, 1, SQRT2],
   [-1, -1, SQRT2],
 ] as const;
-/** Fastest terrain multiplier (roads); keeps the heuristic admissible. */
-const MAX_SPEED = 1.2;
+/**
+ * Heuristic scale. Using plain octile distance (instead of dividing by the road speed 1.2) makes
+ * the search slightly greedy on roads but expands far fewer nodes; still deterministic.
+ */
+const MAX_SPEED = 1.0;
 
 export interface PathResult {
   /** Waypoints [x0, y0, x1, y1, …] in continuous tile coordinates, excluding the start. */

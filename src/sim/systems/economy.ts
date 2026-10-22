@@ -12,6 +12,12 @@ import { clearMove, isMoving, moveUnitTo } from './movement';
 
 type GatherOrder = Extract<NonNullable<Entity['order']>, { type: 'gather' }>;
 
+/** AI factions' income multiplier by difficulty (spec §8.3). */
+export function incomeMul(world: World, owner: Owner): number {
+  const ai = world.ext.ai[owner];
+  return ai ? world.rules.difficulty[ai.difficulty].incomeMul : 1;
+}
+
 /** Whether a faction may gather from a farm (own, or a farm whose owner is allied — see diplomacy). */
 export const farmAccess: { allowed: (world: World, owner: Owner, farm: Entity) => boolean } = {
   allowed: (_world, owner, farm) => farm.owner === owner,
@@ -88,6 +94,11 @@ function distToSource(world: World, o: GatherOrder, u: Entity): number {
   return Math.hypot(dx, dy);
 }
 
+export function forestEdge(world: World, x: number, y: number): boolean {
+  for (let dy = -1; dy <= 1; dy++) for (let dx = -1; dx <= 1; dx++) if ((dx || dy) && world.nav.passable('foot', x + dx, y + dy)) return true;
+  return false;
+}
+
 /** Nearest complete own drop-off building (spec §4.2: main base, warehouse, camp). */
 export function nearestDropoff(world: World, u: Entity): Entity | null {
   let best: Entity | null = null;
@@ -104,7 +115,8 @@ export function nearestDropoff(world: World, u: Entity): Entity | null {
   return best;
 }
 
-function nextForestTile(world: World, from: number): number | null {
+/** A forest tile with wood that touches walkable ground, nearest to `from` (excluding `skip`). */
+function nextForestTile(world: World, from: number, skip?: number): number | null {
   const W = world.map.width;
   const fx = from % W;
   const fy = Math.floor(from / W);
@@ -115,7 +127,8 @@ function nextForestTile(world: World, from: number): number | null {
     for (let x = fx - R; x <= fx + R; x++) {
       if (x < 0 || y < 0 || x >= W || y >= world.map.height) continue;
       const i = y * W + x;
-      if (world.map.terrain[i] !== T.forest || world.woodLeft[i] <= 0) continue;
+      if (i === skip || world.map.terrain[i] !== T.forest || world.woodLeft[i] <= 0) continue;
+      if (!forestEdge(world, x, y)) continue;
       const d = (x - fx) ** 2 + (y - fy) ** 2;
       if (d < bestD) {
         bestD = d;
@@ -155,12 +168,27 @@ function gatherTick(world: World, u: Entity, o: GatherOrder) {
     }
     const res = resourceOf(world, o.target !== undefined ? (world.get(o.target) ?? null) : null, o.tile ?? null);
     if (!res) return retarget(world, u, o);
-    if (distToSource(world, o, u) <= reach) {
+    const dist = distToSource(world, o, u);
+    if (dist <= reach || (!isMoving(u) && (o.tries ?? 0) > 0 && dist <= reach + 0.8)) {
       clearMove(world, u);
       o.phase = 'gathering';
+      o.tries = 0;
       return;
     }
     if (!isMoving(u)) {
+      if ((o.tries ?? 0) >= 2) {
+        // Could not get close: try another tree, or give up on this source.
+        o.tries = 0;
+        if (o.tile !== undefined) {
+          const next = nextForestTile(world, o.tile, o.tile);
+          if (next !== null) {
+            o.tile = next;
+            return;
+          }
+        }
+        return goIdle(u);
+      }
+      o.tries = (o.tries ?? 0) + 1;
       const p = sourcePoint(world, o, u);
       if (!p) return goIdle(u);
       if (o.tile !== undefined) {
@@ -206,7 +234,7 @@ function gatherTick(world: World, u: Entity, o: GatherOrder) {
   if (distToEntity(u.x, u.y, drop) <= reach + 0.2) {
     clearMove(world, u);
     const f = world.faction(u.owner);
-    if (f && u.carrying) f.resources[u.carrying.resource] += u.carrying.amount;
+    if (f && u.carrying) f.resources[u.carrying.resource] += u.carrying.amount * incomeMul(world, u.owner);
     u.carrying = undefined;
     o.dropoff = undefined;
     o.phase = 'to_resource';

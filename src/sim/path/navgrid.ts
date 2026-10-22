@@ -80,6 +80,54 @@ export class NavGrids {
     return this.speedAt(cls, x, y, tideHigh) > 0;
   }
 
+  private comps: Partial<Record<MoveClass, { version: number; high: boolean; label: Int32Array }>> = {};
+
+  /** Connected-component label of a tile for a move class at the current tide (0 = impassable). */
+  component(cls: MoveClass, x: number, y: number): number {
+    if (x < 0 || y < 0 || x >= this.width || y >= this.height) return 0;
+    let c = this.comps[cls];
+    if (!c || c.version !== this.version || c.high !== this.tideHigh) {
+      c = { version: this.version, high: this.tideHigh, label: this.label(cls) };
+      this.comps[cls] = c;
+    }
+    return c.label[y * this.width + x];
+  }
+
+  /** Whether two tiles are mutually reachable (8-way, no corner cutting is ignored here). */
+  connected(cls: MoveClass, ax: number, ay: number, bx: number, by: number): boolean {
+    const a = this.component(cls, ax, ay);
+    return a !== 0 && a === this.component(cls, bx, by);
+  }
+
+  private label(cls: MoveClass): Int32Array {
+    const { width: W, height: H } = this;
+    const out = new Int32Array(W * H);
+    const stack: number[] = [];
+    let next = 1;
+    for (let i = 0; i < W * H; i++) {
+      if (out[i] || !this.passable(cls, i % W, (i / W) | 0)) continue;
+      out[i] = next;
+      stack.push(i);
+      while (stack.length) {
+        const j = stack.pop()!;
+        const x = j % W;
+        const y = (j - x) / W;
+        for (let dy = -1; dy <= 1; dy++)
+          for (let dx = -1; dx <= 1; dx++) {
+            const nx = x + dx;
+            const ny = y + dy;
+            if ((!dx && !dy) || nx < 0 || ny < 0 || nx >= W || ny >= H) continue;
+            const k = ny * W + nx;
+            if (out[k] || !this.passable(cls, nx, ny)) continue;
+            out[k] = next;
+            stack.push(k);
+          }
+      }
+      next++;
+    }
+    return out;
+  }
+
   setBlocked(x: number, y: number, w: number, h: number, value: boolean) {
     for (let yy = y; yy < y + h; yy++)
       for (let xx = x; xx < x + w; xx++)

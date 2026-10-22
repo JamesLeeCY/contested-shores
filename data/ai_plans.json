@@ -1,10 +1,112 @@
 [
-  { "id": "land_at_heliao", "faction": "faction_zheng", "chapters": [1], "steps": ["wait_tide_high", "move_fleet:luermen", "move_fleet:heliao", "unload", "build:camp_zheng"] },
-  { "id": "sortie_baxemboy", "faction": "faction_voc", "chapters": [1], "steps": ["embark:longboat", "move:baxemboy", "unload", "form_line", "advance"] },
-  { "id": "naval_screen", "faction": "any", "chapters": [1, 3], "steps": ["patrol:main_channel", "intercept"] },
-  { "id": "take_provintia", "faction": "faction_zheng", "chapters": [2], "steps": ["surround:provintia_fort", "bombard:120", "assault"] },
-  { "id": "relief_landing", "faction": "faction_voc", "chapters": [3], "steps": ["suppress:battery", "embark:longboat", "land:tayouan"] },
-  { "id": "fire_ship_ambush", "faction": "faction_zheng", "chapters": [3], "steps": ["hide:shallow", "strike_when:enemy_stranded_or_near"] },
-  { "id": "take_utrecht", "faction": "faction_zheng", "chapters": [4], "steps": ["trench_approach:utrecht_redoubt", "build:battery", "bombard", "assault"] },
-  { "id": "hold_utrecht", "faction": "faction_voc", "chapters": [4], "steps": ["hold:utrecht_redoubt", "sortie:battery", "counter_mine"] }
+  {
+    "id": "land_at_heliao",
+    "faction": "faction_zheng",
+    "chapters": [
+      1
+    ],
+    "steps": [
+      "wait_tide_high",
+      "move_fleet:luermen",
+      "move_fleet:heliao",
+      "unload",
+      "build:camp_zheng"
+    ]
+  },
+  {
+    "id": "sortie_baxemboy",
+    "faction": "faction_voc",
+    "chapters": [
+      1
+    ],
+    "steps": [
+      "embark:longboat",
+      "move:baxemboy",
+      "unload",
+      "form_line",
+      "advance"
+    ]
+  },
+  {
+    "id": "naval_screen",
+    "faction": "any",
+    "chapters": [
+      1,
+      3
+    ],
+    "steps": [
+      "patrol:main_channel",
+      "intercept"
+    ]
+  },
+  {
+    "id": "take_provintia",
+    "faction": "faction_zheng",
+    "chapters": [
+      2
+    ],
+    "steps": [
+      "surround:provintia_fort",
+      "bombard:120",
+      "assault"
+    ]
+  },
+  {
+    "id": "relief_landing",
+    "faction": "faction_voc",
+    "chapters": [
+      3
+    ],
+    "steps": [
+      "suppress:battery",
+      "embark:longboat",
+      "land:tayouan"
+    ]
+  },
+  {
+    "id": "fire_ship_ambush",
+    "faction": "faction_zheng",
+    "chapters": [
+      3
+    ],
+    "steps": [
+      "hide:shallow",
+      "strike_when:enemy_stranded_or_near"
+    ]
+  },
+  {
+    "id": "take_utrecht",
+    "faction": "faction_zheng",
+    "chapters": [
+      4
+    ],
+    "steps": [
+      "trench_approach:utrecht_redoubt",
+      "build:battery",
+      "bombard",
+      "assault"
+    ]
+  },
+  {
+    "id": "hold_utrecht",
+    "faction": "faction_voc",
+    "chapters": [
+      4
+    ],
+    "steps": [
+      "hold:utrecht_redoubt",
+      "sortie:battery",
+      "counter_mine"
+    ]
+  },
+  {
+    "id": "assault_zeelandia",
+    "faction": "faction_zheng",
+    "chapters": [
+      2
+    ],
+    "steps": [
+      "assault:zeelandia_castle"
+    ]
+  }
 ]

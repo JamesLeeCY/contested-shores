@@ -1,0 +1,452 @@
+{
+  "id": "ch2",
+  "chapter": 2,
+  "nameKey": "scenario.ch2.name",
+  "dateKey": "scenario.ch2.date",
+  "timerMinutes": 30,
+  "stage": {
+    "faction_zheng": 2,
+    "faction_voc": 2
+  },
+  "resources": {
+    "faction_zheng": {
+      "grain": 1200,
+      "wood": 600,
+      "powder": 250,
+      "deerskin": 60
+    },
+    "faction_voc": {
+      "grain": 1500,
+      "wood": 300,
+      "powder": 500,
+      "deerskin": 0
+    }
+  },
+  "castleMorale": "carry",
+  "buildings": [
+    {
+      "type": "camp_zheng",
+      "owner": "faction_zheng",
+      "at": [
+        113,
+        36
+      ]
+    }
+  ],
+  "units": [
+    {
+      "type": "koxinga",
+      "owner": "faction_zheng",
+      "count": 1,
+      "at": [
+        118,
+        41
+      ]
+    },
+    {
+      "type": "shield_soldier",
+      "owner": "faction_zheng",
+      "count": 30,
+      "at": [
+        119,
+        42
+      ]
+    },
+    {
+      "type": "archer_zheng",
+      "owner": "faction_zheng",
+      "count": 20,
+      "at": [
+        116,
+        43
+      ]
+    },
+    {
+      "type": "iron_man",
+      "owner": "faction_zheng",
+      "count": 10,
+      "at": [
+        121,
+        41
+      ]
+    },
+    {
+      "type": "musketeer_zheng",
+      "owner": "faction_zheng",
+      "count": 10,
+      "at": [
+        117,
+        41
+      ]
+    },
+    {
+      "type": "light_cannon",
+      "owner": "faction_zheng",
+      "count": 6,
+      "at": [
+        115,
+        41
+      ],
+      "tag": "guns"
+    },
+    {
+      "type": "laborer",
+      "owner": "faction_zheng",
+      "count": 20,
+      "at": [
+        111,
+        41
+      ]
+    },
+    {
+      "type": "coyett",
+      "owner": "faction_voc",
+      "count": 1,
+      "at": [
+        44.5,
+        61.5
+      ]
+    },
+    {
+      "type": "musketeer_voc",
+      "owner": "faction_voc",
+      "count": 40,
+      "at": [
+        48,
+        63
+      ]
+    },
+    {
+      "type": "pikeman",
+      "owner": "faction_voc",
+      "count": 15,
+      "at": [
+        44,
+        64
+      ]
+    },
+    {
+      "type": "grenadier",
+      "owner": "faction_voc",
+      "count": 5,
+      "at": [
+        40,
+        63
+      ]
+    },
+    {
+      "type": "company_worker",
+      "owner": "faction_voc",
+      "count": 6,
+      "at": [
+        36,
+        62
+      ]
+    },
+    {
+      "type": "yacht",
+      "owner": "faction_voc",
+      "count": 1,
+      "at": [
+        46.5,
+        47.5
+      ]
+    }
+  ],
+  "garrisons": [
+    {
+      "type": "musketeer_voc",
+      "owner": "faction_voc",
+      "count": 14,
+      "in": "provintia_fort",
+      "tag": "valentyn"
+    }
+  ],
+  "ai": {
+    "faction_zheng": {
+      "plans": [
+        "take_provintia"
+      ],
+      "target": "provintia_fort",
+      "composition": {
+        "shield_soldier": 0.4,
+        "archer_zheng": 0.3,
+        "iron_man": 0.15,
+        "musketeer_zheng": 0.15
+      },
+      "targetArmy": 80,
+      "home": [
+        115,
+        40
+      ]
+    },
+    "faction_voc": {
+      "plans": [],
+      "composition": {
+        "musketeer_voc": 0.6,
+        "pikeman": 0.3,
+        "grenadier": 0.1
+      },
+      "targetArmy": 60,
+      "home": [
+        48,
+        62
+      ],
+      "defensive": true
+    }
+  },
+  "historicalLoser": null,
+  "objectives": {
+    "faction_zheng": [
+      "ch2.obj.provintia",
+      "ch2.obj.assault"
+    ],
+    "faction_voc": [
+      "ch2.obj.hold"
+    ]
+  },
+  "choices": [
+    {
+      "id": "negotiate_provintia",
+      "faction": "faction_voc",
+      "labelKey": "ch2.choice.negotiate",
+      "while": {
+        "type": "not",
+        "condition": {
+          "type": "building_captured",
+          "building": "provintia_fort",
+          "by": "faction_zheng"
+        }
+      }
+    }
+  ],
+  "triggers": [
+    {
+      "id": "ch2_start",
+      "when": {
+        "type": "time_elapsed",
+        "seconds": 0
+      },
+      "do": [
+        {
+          "type": "show_cutscene",
+          "id": "ch2_intro"
+        },
+        {
+          "type": "set_objective",
+          "id": "provintia",
+          "faction": "faction_zheng",
+          "textKey": "ch2.obj.provintia",
+          "primary": true
+        },
+        {
+          "type": "set_objective",
+          "id": "hold",
+          "faction": "faction_voc",
+          "textKey": "ch2.obj.hold",
+          "primary": true
+        }
+      ]
+    },
+    {
+      "id": "ch2_provintia_falls",
+      "when": {
+        "type": "building_captured",
+        "building": "provintia_fort",
+        "by": "faction_zheng"
+      },
+      "do": [
+        {
+          "type": "complete_objective",
+          "id": "provintia",
+          "faction": "faction_zheng"
+        },
+        {
+          "type": "show_cutscene",
+          "id": "ch2_hambroek"
+        },
+        {
+          "type": "modify_favor",
+          "party": "sinkan",
+          "faction": "faction_zheng",
+          "delta": 15
+        },
+        {
+          "type": "set_objective",
+          "id": "assault",
+          "faction": "faction_zheng",
+          "textKey": "ch2.obj.assault",
+          "primary": true
+        },
+        {
+          "type": "mark_army",
+          "owner": "faction_zheng",
+          "mark": "assault"
+        },
+        {
+          "type": "set_ai_plan",
+          "faction": "faction_zheng",
+          "plans": [
+            "assault_zeelandia"
+          ]
+        },
+        {
+          "type": "set_flag",
+          "name": "ch2_provintia_taken",
+          "value": true
+        }
+      ]
+    },
+    {
+      "id": "ch2_provintia_holds",
+      "when": {
+        "type": "all_of",
+        "conditions": [
+          {
+            "type": "time_elapsed",
+            "seconds": 600
+          },
+          {
+            "type": "not",
+            "condition": {
+              "type": "flag",
+              "name": "ch2_provintia_taken"
+            }
+          }
+        ]
+      },
+      "do": [
+        {
+          "type": "complete_objective",
+          "id": "hold",
+          "faction": "faction_voc"
+        },
+        {
+          "type": "win_mission",
+          "faction": "faction_voc",
+          "rating": "victory",
+          "reasonKey": "ch2.end.provintia_holds"
+        }
+      ]
+    },
+    {
+      "id": "ch2_assault_fails",
+      "when": {
+        "type": "all_of",
+        "conditions": [
+          {
+            "type": "flag",
+            "name": "ch2_provintia_taken"
+          },
+          {
+            "type": "losses_since",
+            "owner": "faction_zheng",
+            "pop": 40,
+            "mark": "assault"
+          }
+        ]
+      },
+      "do": [
+        {
+          "type": "show_cutscene",
+          "id": "ch2_siege"
+        },
+        {
+          "type": "complete_objective",
+          "id": "assault",
+          "faction": "faction_zheng"
+        },
+        {
+          "type": "complete_objective",
+          "id": "hold",
+          "faction": "faction_voc"
+        },
+        {
+          "type": "win_mission",
+          "faction": "faction_zheng",
+          "rating": "historical",
+          "reasonKey": "ch2.end.siege",
+          "keepOpen": true
+        },
+        {
+          "type": "win_mission",
+          "faction": "faction_voc",
+          "rating": "victory",
+          "reasonKey": "ch2.end.assault_repelled"
+        }
+      ]
+    },
+    {
+      "id": "ch2_timeout",
+      "when": {
+        "type": "time_elapsed",
+        "seconds": 1800
+      },
+      "do": [
+        {
+          "type": "set_flag",
+          "name": "timeout",
+          "value": true
+        }
+      ]
+    },
+    {
+      "id": "ch2_timeout_taken",
+      "when": {
+        "type": "all_of",
+        "conditions": [
+          {
+            "type": "flag",
+            "name": "timeout"
+          },
+          {
+            "type": "flag",
+            "name": "ch2_provintia_taken"
+          }
+        ]
+      },
+      "do": [
+        {
+          "type": "win_mission",
+          "faction": "faction_zheng",
+          "rating": "historical",
+          "reasonKey": "ch2.end.siege",
+          "keepOpen": true
+        },
+        {
+          "type": "win_mission",
+          "faction": "faction_voc",
+          "rating": "victory",
+          "reasonKey": "ch2.end.timeout"
+        }
+      ]
+    },
+    {
+      "id": "ch2_timeout_not_taken",
+      "when": {
+        "type": "all_of",
+        "conditions": [
+          {
+            "type": "flag",
+            "name": "timeout"
+          },
+          {
+            "type": "not",
+            "condition": {
+              "type": "flag",
+              "name": "ch2_provintia_taken"
+            }
+          }
+        ]
+      },
+      "do": [
+        {
+          "type": "win_mission",
+          "faction": "faction_voc",
+          "rating": "victory",
+          "reasonKey": "ch2.end.provintia_holds"
+        }
+      ]
+    }
+  ]
+}

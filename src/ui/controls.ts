@@ -1,5 +1,6 @@
 // Mouse/keyboard unit control (spec §9.2): click/box select, right-click orders, control groups,
 // pause and game speed.
+import { on } from './lifecycle';
 import type { Camera } from '../render/camera';
 import type { Entity } from '../sim/types';
 import type { World } from '../sim/world';
@@ -74,7 +75,7 @@ export class Controls {
       if (Math.hypot(e.clientX - s.x, e.clientY - s.y) < 5) this.clickSelect(e.clientX, e.clientY, e.shiftKey);
       else this.boxSelect(s.x, s.y, e.clientX, e.clientY, e.shiftKey);
     });
-    window.addEventListener('keydown', (e) => this.key(e));
+    on(window, 'keydown', (e) => this.key(e));
   }
 
   private units(): Entity[] {

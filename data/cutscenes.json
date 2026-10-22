@@ -1,0 +1,60 @@
+{
+  "ch1_intro": {
+    "titleKey": "cut.ch1_intro.title",
+    "art": "sea",
+    "lines": [
+      "cut.ch1_intro.1",
+      "cut.ch1_intro.2",
+      "cut.ch1_intro.3"
+    ]
+  },
+  "ch2_intro": {
+    "titleKey": "cut.ch2_intro.title",
+    "art": "fort",
+    "lines": [
+      "cut.ch2_intro.1",
+      "cut.ch2_intro.2"
+    ]
+  },
+  "ch2_hambroek": {
+    "titleKey": "cut.ch2_hambroek.title",
+    "art": "letter",
+    "lines": [
+      "cut.ch2_hambroek.1",
+      "cut.ch2_hambroek.2"
+    ]
+  },
+  "ch2_siege": {
+    "titleKey": "cut.ch2_siege.title",
+    "art": "fort",
+    "lines": [
+      "cut.ch2_siege.1",
+      "cut.ch2_siege.2"
+    ]
+  },
+  "ch3_intro": {
+    "titleKey": "cut.ch3_intro.title",
+    "art": "sea",
+    "lines": [
+      "cut.ch3_intro.1",
+      "cut.ch3_intro.2"
+    ]
+  },
+  "ch4_intro": {
+    "titleKey": "cut.ch4_intro.title",
+    "art": "hill",
+    "lines": [
+      "cut.ch4_intro.1",
+      "cut.ch4_intro.2"
+    ]
+  },
+  "ch4_treaty": {
+    "titleKey": "cut.ch4_treaty.title",
+    "art": "letter",
+    "lines": [
+      "cut.ch4_treaty.1",
+      "cut.ch4_treaty.2",
+      "cut.ch4_treaty.3"
+    ]
+  }
+}

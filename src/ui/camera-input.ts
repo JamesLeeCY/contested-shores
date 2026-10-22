@@ -1,3 +1,4 @@
+import { on } from './lifecycle';
 import type { Camera } from '../render/camera';
 
 const EDGE = 8;
@@ -15,29 +16,29 @@ export class CameraInput {
     private readonly camera: Camera,
     canvas: HTMLElement,
   ) {
-    window.addEventListener('keydown', (e) => {
+    on(window, 'keydown', (e) => {
       if (e.key.startsWith('Arrow')) {
         this.keys.add(e.key);
         e.preventDefault();
       }
     });
-    window.addEventListener('keyup', (e) => this.keys.delete(e.key));
-    window.addEventListener('blur', () => this.keys.clear());
-    document.addEventListener('pointermove', (e) => {
+    on(window, 'keyup', (e) => this.keys.delete(e.key));
+    on(window, 'blur', () => this.keys.clear());
+    on(document, 'pointermove', (e) => {
       this.mouse = { x: e.clientX, y: e.clientY, inside: true };
       if (this.drag) {
         camera.panScreen(this.drag.x - e.clientX, this.drag.y - e.clientY);
         this.drag = { x: e.clientX, y: e.clientY };
       }
     });
-    document.addEventListener('pointerleave', () => (this.mouse.inside = false));
+    on(document, 'pointerleave', () => (this.mouse.inside = false));
     canvas.addEventListener('pointerdown', (e) => {
       if (e.button === 1) {
         this.drag = { x: e.clientX, y: e.clientY };
         e.preventDefault();
       }
     });
-    window.addEventListener('pointerup', (e) => e.button === 1 && (this.drag = null));
+    on(window, 'pointerup', (e) => e.button === 1 && (this.drag = null));
     canvas.addEventListener(
       'wheel',
       (e) => {

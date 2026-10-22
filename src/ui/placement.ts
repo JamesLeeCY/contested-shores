@@ -1,4 +1,5 @@
 // Building placement ghost: follows the cursor, green when valid, red otherwise.
+import { on } from './lifecycle';
 import { Graphics } from 'pixi.js';
 import { toScreen } from '../render/iso';
 import { checkPlacement } from '../sim/systems/build';
@@ -14,11 +15,11 @@ export class Placement {
 
   constructor(private readonly session: Session) {
     session.overlayLayer.addChild(this.ghost);
-    window.addEventListener('pointermove', (e) => {
+    on(window, 'pointermove', (e) => {
       this.mouse = { x: e.clientX, y: e.clientY };
       this.shift = e.shiftKey;
     });
-    window.addEventListener('keyup', (e) => e.key === 'Shift' && (this.shift = false));
+    on(window, 'keyup', (e) => e.key === 'Shift' && (this.shift = false));
   }
 
   start(building: string, builders: number[]) {

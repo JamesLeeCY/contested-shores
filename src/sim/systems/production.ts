@@ -156,6 +156,9 @@ export function garrisonCapacity(world: World, b: Entity): number {
 /** Which units a building accepts: tuntian takes Zheng soldiers; bastions take musketeers; camps take anyone. */
 export function canGarrison(world: World, u: Entity, b: Entity): boolean {
   if (u.kind !== 'unit' || u.owner !== b.owner || (b.built ?? 1) < 1 || u.moveClass !== 'foot') return false;
+  // A breached fort cannot shelter anyone (see siege capture rules).
+  if ((world.data.buildings.get(b.type) as { capturable?: boolean }).capturable && b.hp <= b.maxHp * world.rules.capture.ejectBelowHpFraction)
+    return false;
   const def = world.data.units.get(u.type)!;
   if (def.traits.includes('hero')) return false;
   if (b.type === 'tuntian') return def.class === 'infantry' && def.faction === 'faction_zheng';

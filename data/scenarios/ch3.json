@@ -1,0 +1,640 @@
+{
+  "id": "ch3",
+  "chapter": 3,
+  "nameKey": "scenario.ch3.name",
+  "dateKey": "scenario.ch3.date",
+  "timerMinutes": 35,
+  "stage": {
+    "faction_zheng": 3,
+    "faction_voc": 3
+  },
+  "resources": {
+    "faction_zheng": {
+      "grain": 1500,
+      "wood": 600,
+      "powder": 300,
+      "deerskin": 60
+    },
+    "faction_voc": {
+      "grain": 1200,
+      "wood": 300,
+      "powder": 450,
+      "deerskin": 0
+    }
+  },
+  "castleMorale": "carry",
+  "ownership": [
+    {
+      "type": "provintia_fort",
+      "owner": "faction_zheng"
+    }
+  ],
+  "buildings": [
+    {
+      "type": "camp_zheng",
+      "owner": "faction_zheng",
+      "at": [
+        66,
+        58
+      ]
+    },
+    {
+      "type": "camp_zheng",
+      "owner": "faction_zheng",
+      "at": [
+        66,
+        64
+      ]
+    },
+    {
+      "type": "camp_zheng",
+      "owner": "faction_zheng",
+      "at": [
+        66,
+        70
+      ]
+    },
+    {
+      "type": "trench",
+      "owner": "faction_zheng",
+      "line": [
+        [
+          63,
+          58
+        ],
+        [
+          63,
+          74
+        ]
+      ]
+    },
+    {
+      "type": "battery",
+      "owner": "faction_zheng",
+      "at": [
+        37,
+        40
+      ],
+      "tag": "coastal_west"
+    },
+    {
+      "type": "battery",
+      "owner": "faction_zheng",
+      "at": [
+        55,
+        40
+      ],
+      "tag": "coastal_east"
+    }
+  ],
+  "units": [
+    {
+      "type": "koxinga",
+      "owner": "faction_zheng",
+      "count": 1,
+      "at": [
+        70,
+        66
+      ]
+    },
+    {
+      "type": "shield_soldier",
+      "owner": "faction_zheng",
+      "count": 30,
+      "at": [
+        68,
+        62
+      ]
+    },
+    {
+      "type": "archer_zheng",
+      "owner": "faction_zheng",
+      "count": 25,
+      "at": [
+        68,
+        68
+      ]
+    },
+    {
+      "type": "iron_man",
+      "owner": "faction_zheng",
+      "count": 10,
+      "at": [
+        70,
+        60
+      ]
+    },
+    {
+      "type": "musketeer_zheng",
+      "owner": "faction_zheng",
+      "count": 15,
+      "at": [
+        64,
+        66
+      ]
+    },
+    {
+      "type": "light_cannon",
+      "owner": "faction_zheng",
+      "count": 2,
+      "at": [
+        37.5,
+        40.5
+      ],
+      "tag": "coastal_guns",
+      "spacing": 0.9
+    },
+    {
+      "type": "light_cannon",
+      "owner": "faction_zheng",
+      "count": 2,
+      "at": [
+        55.5,
+        40.5
+      ],
+      "tag": "coastal_guns",
+      "spacing": 0.9
+    },
+    {
+      "type": "laborer",
+      "owner": "faction_zheng",
+      "count": 15,
+      "at": [
+        70,
+        74
+      ]
+    },
+    {
+      "type": "junk",
+      "owner": "faction_zheng",
+      "count": 16,
+      "at": [
+        80,
+        46.5
+      ],
+      "tag": "fleet"
+    },
+    {
+      "type": "fire_ship",
+      "owner": "faction_zheng",
+      "count": 4,
+      "at": [
+        66.5,
+        38.5
+      ],
+      "tag": "fire_ships"
+    },
+    {
+      "type": "coyett",
+      "owner": "faction_voc",
+      "count": 1,
+      "at": [
+        44.5,
+        61.5
+      ]
+    },
+    {
+      "type": "musketeer_voc",
+      "owner": "faction_voc",
+      "count": 35,
+      "at": [
+        48,
+        63
+      ]
+    },
+    {
+      "type": "pikeman",
+      "owner": "faction_voc",
+      "count": 10,
+      "at": [
+        44,
+        64
+      ]
+    },
+    {
+      "type": "grenadier",
+      "owner": "faction_voc",
+      "count": 5,
+      "at": [
+        40,
+        63
+      ]
+    },
+    {
+      "type": "company_worker",
+      "owner": "faction_voc",
+      "count": 6,
+      "at": [
+        36,
+        62
+      ]
+    }
+  ],
+  "ai": {
+    "faction_zheng": {
+      "plans": [
+        "naval_screen",
+        "fire_ship_ambush"
+      ],
+      "composition": {
+        "shield_soldier": 0.4,
+        "archer_zheng": 0.3,
+        "iron_man": 0.15,
+        "musketeer_zheng": 0.15
+      },
+      "targetArmy": 100,
+      "home": [
+        70,
+        66
+      ],
+      "siege": true
+    },
+    "faction_voc": {
+      "plans": [],
+      "composition": {
+        "musketeer_voc": 0.6,
+        "pikeman": 0.3,
+        "grenadier": 0.1
+      },
+      "targetArmy": 50,
+      "home": [
+        48,
+        62
+      ],
+      "defensive": true
+    }
+  },
+  "relief": {
+    "atSeconds": 300,
+    "owner": "faction_voc",
+    "at": [
+      4,
+      46.5
+    ],
+    "ships": [
+      {
+        "type": "warship",
+        "owner": "faction_voc",
+        "count": 1,
+        "tag": "koukercken"
+      },
+      {
+        "type": "warship",
+        "owner": "faction_voc",
+        "count": 1,
+        "tag": "relief"
+      },
+      {
+        "type": "yacht",
+        "owner": "faction_voc",
+        "count": 4,
+        "tag": "relief"
+      }
+    ],
+    "fleet": {
+      "ship": "longboat",
+      "count": 6,
+      "tag": "relief_boats",
+      "cargo": [
+        {
+          "type": "musketeer_voc",
+          "owner": "faction_voc",
+          "count": 26,
+          "tag": "relief_troops"
+        },
+        {
+          "type": "pikeman",
+          "owner": "faction_voc",
+          "count": 10,
+          "tag": "relief_troops"
+        }
+      ]
+    },
+    "manual": true
+  },
+  "historicalLoser": "faction_voc",
+  "objectives": {
+    "faction_zheng": [
+      "ch3.obj.repel"
+    ],
+    "faction_voc": [
+      "ch3.obj.land"
+    ]
+  },
+  "triggers": [
+    {
+      "id": "ch3_start",
+      "when": {
+        "type": "time_elapsed",
+        "seconds": 0
+      },
+      "do": [
+        {
+          "type": "show_cutscene",
+          "id": "ch3_intro"
+        },
+        {
+          "type": "set_objective",
+          "id": "repel",
+          "faction": "faction_zheng",
+          "textKey": "ch3.obj.repel",
+          "primary": true
+        },
+        {
+          "type": "set_objective",
+          "id": "land",
+          "faction": "faction_voc",
+          "textKey": "ch3.obj.land",
+          "primary": true
+        },
+        {
+          "type": "start_timer",
+          "id": "relief",
+          "seconds": 300
+        }
+      ]
+    },
+    {
+      "id": "ch3_relief",
+      "when": {
+        "type": "time_elapsed",
+        "seconds": 300
+      },
+      "do": [
+        {
+          "type": "spawn_units",
+          "relief": true
+        },
+        {
+          "type": "modify_morale",
+          "faction": "faction_voc",
+          "delta": 20,
+          "reason": "relief"
+        },
+        {
+          "type": "show_message",
+          "textKey": "ch3.relief_arrives",
+          "kind": "warn"
+        },
+        {
+          "type": "set_ai_plan",
+          "faction": "faction_voc",
+          "plans": [
+            "relief_landing"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "ch3_typhoon",
+      "when": {
+        "type": "time_elapsed",
+        "seconds": 690
+      },
+      "do": [
+        {
+          "type": "trigger_weather",
+          "weather": "typhoon",
+          "inSeconds": 30
+        }
+      ]
+    },
+    {
+      "id": "ch3_koukercken",
+      "when": {
+        "type": "stranded_in_range",
+        "unitTag": "koukercken",
+        "seconds": 60,
+        "enemy": "faction_zheng"
+      },
+      "do": [
+        {
+          "type": "kill_unit",
+          "unitTag": "koukercken",
+          "effect": "explosion_large"
+        },
+        {
+          "type": "show_message",
+          "textKey": "ch3.koukercken_lost",
+          "kind": "warn"
+        }
+      ]
+    },
+    {
+      "id": "ch3_relief_broken",
+      "when": {
+        "type": "all_of",
+        "conditions": [
+          {
+            "type": "time_elapsed",
+            "seconds": 301
+          },
+          {
+            "type": "any_of",
+            "conditions": [
+              {
+                "type": "unit_dead",
+                "unitTag": "relief",
+                "atLeast": 5
+              },
+              {
+                "type": "all_of",
+                "conditions": [
+                  {
+                    "type": "unit_dead",
+                    "unitTag": "koukercken"
+                  },
+                  {
+                    "type": "unit_dead",
+                    "unitTag": "relief",
+                    "atLeast": 3
+                  },
+                  {
+                    "type": "unit_dead",
+                    "unitTag": "relief_boats",
+                    "atLeast": 2
+                  }
+                ]
+              },
+              {
+                "type": "all_of",
+                "conditions": [
+                  {
+                    "type": "unit_dead",
+                    "unitTag": "relief_boats",
+                    "atLeast": 6
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "do": [
+        {
+          "type": "complete_objective",
+          "id": "repel",
+          "faction": "faction_zheng"
+        },
+        {
+          "type": "set_flag",
+          "name": "ch3_repelled",
+          "value": true
+        }
+      ]
+    },
+    {
+      "id": "ch3_batteries_down",
+      "when": {
+        "type": "all_of",
+        "conditions": [
+          {
+            "type": "building_dead",
+            "building": "coastal_west"
+          },
+          {
+            "type": "building_dead",
+            "building": "coastal_east"
+          }
+        ]
+      },
+      "do": [
+        {
+          "type": "set_flag",
+          "name": "ch3_batteries_down",
+          "value": true
+        }
+      ]
+    },
+    {
+      "id": "ch3_landed",
+      "when": {
+        "type": "all_of",
+        "conditions": [
+          {
+            "type": "area_entered",
+            "region": "tayouan",
+            "owner": "faction_voc",
+            "pop": 30,
+            "unitTag": "relief_troops"
+          }
+        ]
+      },
+      "do": [
+        {
+          "type": "set_flag",
+          "name": "ch3_landed",
+          "value": true
+        }
+      ]
+    },
+    {
+      "id": "ch3_voc_wins",
+      "when": {
+        "type": "all_of",
+        "conditions": [
+          {
+            "type": "flag",
+            "name": "ch3_batteries_down"
+          },
+          {
+            "type": "flag",
+            "name": "ch3_landed"
+          }
+        ]
+      },
+      "do": [
+        {
+          "type": "complete_objective",
+          "id": "land",
+          "faction": "faction_voc"
+        },
+        {
+          "type": "win_mission",
+          "faction": "faction_voc",
+          "rating": "victory",
+          "reasonKey": "ch3.end.relieved"
+        }
+      ]
+    },
+    {
+      "id": "ch3_zheng_wins",
+      "when": {
+        "type": "all_of",
+        "conditions": [
+          {
+            "type": "flag",
+            "name": "ch3_repelled"
+          },
+          {
+            "type": "time_elapsed",
+            "seconds": 600
+          }
+        ]
+      },
+      "do": [
+        {
+          "type": "win_mission",
+          "faction": "faction_zheng",
+          "rating": "victory",
+          "reasonKey": "ch3.end.repelled"
+        }
+      ]
+    },
+    {
+      "id": "ch3_timeout",
+      "when": {
+        "type": "time_elapsed",
+        "seconds": 2100
+      },
+      "do": [
+        {
+          "type": "set_flag",
+          "name": "timeout",
+          "value": true
+        }
+      ]
+    },
+    {
+      "id": "ch3_timeout_end",
+      "when": {
+        "type": "flag",
+        "name": "timeout"
+      },
+      "do": [
+        {
+          "type": "modify_morale",
+          "faction": "faction_voc",
+          "delta": -30,
+          "reason": "relief_failed"
+        },
+        {
+          "type": "win_mission",
+          "faction": "faction_zheng",
+          "rating": "victory",
+          "reasonKey": "ch3.end.timeout"
+        }
+      ]
+    },
+    {
+      "id": "ch3_camp_lost",
+      "when": {
+        "type": "building_dead",
+        "building": "camp_zheng"
+      },
+      "do": [
+        {
+          "type": "complete_objective",
+          "id": "repel",
+          "faction": "faction_zheng",
+          "failed": true
+        },
+        {
+          "type": "fail_mission",
+          "faction": "faction_zheng",
+          "reasonKey": "ch3.end.camp_lost"
+        }
+      ]
+    }
+  ]
+}

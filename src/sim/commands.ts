@@ -28,7 +28,8 @@ export type Command =
       party: string;
       action: 'gift_grain' | 'gift_deerskin' | 'pacify' | 'request_warriors' | 'raid' | 'requisition';
     }
-  | { type: 'sandbox'; owner: Owner; action: string; arg?: string | number };
+  | { type: 'sandbox'; owner: Owner; action: string; arg?: string | number }
+  | { type: 'choice'; owner: Owner; id: string };
 
 export type CommandHandler<C extends Command = Command> = (world: World, cmd: C) => void;
 const handlers = new Map<string, CommandHandler>();

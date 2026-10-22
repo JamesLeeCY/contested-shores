@@ -577,7 +577,8 @@
     "attackerRadius": 2,
     "defenderRadius": 4,
     "seconds": 10,
-    "maxHpFraction": 0.5
+    "maxHpFraction": 0.5,
+    "ejectBelowHpFraction": 0.3
   },
   "transport": {
     "embarkRange": 2.5,
@@ -593,5 +594,48 @@
     "chance": 0.4,
     "batchGapSeconds": 10,
     "grainPerDayEach": 2
+  },
+  "difficulty": {
+    "easy": {
+      "incomeMul": 0.7,
+      "strategicSeconds": 8,
+      "armyMul": 0.7,
+      "focusFire": false,
+      "pullBack": false,
+      "playerDiseaseMul": 0.5
+    },
+    "normal": {
+      "incomeMul": 1,
+      "strategicSeconds": 5,
+      "armyMul": 1,
+      "focusFire": true,
+      "pullBack": false,
+      "playerDiseaseMul": 1
+    },
+    "hard": {
+      "incomeMul": 1.25,
+      "strategicSeconds": 3,
+      "armyMul": 1.3,
+      "focusFire": true,
+      "pullBack": true,
+      "playerDiseaseMul": 1
+    }
+  },
+  "ai": {
+    "tacticalSeconds": 1,
+    "defendRadius": 8,
+    "defendCalmSeconds": 15,
+    "regroupLossFraction": 0.5,
+    "regroupReadyFraction": 0.8,
+    "economyReadyFraction": 0.6,
+    "workerTarget": {
+      "faction_zheng": 16,
+      "faction_voc": 8
+    },
+    "pullBackHp": 0.25,
+    "heroFollowDistance": 4,
+    "batteryStandoff": 0.5,
+    "trenchSpacing": 1,
+    "baseRadius": 24
   }
 }

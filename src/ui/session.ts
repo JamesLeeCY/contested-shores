@@ -21,6 +21,12 @@ import { installCampaignUi } from './campaign-ui';
 import { Controls, SPEEDS, type ControlHost } from './controls';
 import { ClockHud } from './hud';
 import { Minimap } from './minimap';
+import { life } from './lifecycle';
+import type { CampaignState, Scenario } from '../sim/scenario/types';
+import type { Difficulty } from '../sim/state';
+import { applyScenario } from '../sim/scenario/setup';
+import { enableAi } from '../sim/ai';
+import { timerSecondsLeft } from '../sim/scenario/runtime';
 
 export interface SessionOptions {
   data: SimData;
@@ -29,6 +35,11 @@ export interface SessionOptions {
   seed: number;
   sandbox?: boolean;
   setup?: (world: World) => void;
+  scenario?: Scenario;
+  campaign?: CampaignState;
+  difficulty?: Difficulty;
+  /** Play both sides by AI (spectator / tests). */
+  spectate?: boolean;
 }
 
 export class Session implements ControlHost {
@@ -67,16 +78,32 @@ export class Session implements ControlHost {
   private fps = { acc: 0, frames: 0, value: 0 };
   /** Time spent in sim steps during the last frame (ms), for the perf readout. */
   simMs = 0;
+  /** Set while a modal (cutscene, end screen) is open: the simulation does not advance. */
+  modal = false;
+  private readonly abort = new AbortController();
+  private tickFn?: (tk: { deltaMS: number }) => void;
 
   constructor(
     readonly app: Application,
     readonly ui: HTMLElement,
     readonly opts: SessionOptions,
   ) {
+    life.signal = this.abort.signal;
     const { data, map } = opts;
     this.player = opts.player;
     this.world = new World(data, map, { seed: opts.seed, sandbox: opts.sandbox, player: opts.player });
     opts.setup?.(this.world);
+    if (opts.scenario) {
+      const w = this.world;
+      applyScenario(w, opts.scenario, opts.campaign);
+      w.ext.flags.player = opts.spectate ? '' : this.player;
+      const diff = opts.difficulty ?? 'normal';
+      (w.rules.disease.playerMul as Record<string, number>)[this.player] = w.rules.difficulty[diff].playerDiseaseMul;
+      for (const [owner, spec] of Object.entries(opts.scenario.ai ?? {}))
+        if (opts.spectate || owner !== this.player) enableAi(w, owner, spec, diff);
+      const relief = opts.scenario.relief;
+      if (relief) this.reliefSeconds = () => (w.ext.flags.relief_spawned_ui || w.tick / w.ticksPerSecond >= relief.atSeconds ? null : relief.atSeconds - w.tick / w.ticksPerSecond);
+    }
     this.stepper = new FixedStepper(1000 / this.world.rules.sim.tickHz);
 
     const colors = Object.fromEntries(Object.entries(this.world.rules.terrain.types).map(([k, v]) => [k, v.color]));
@@ -134,9 +161,10 @@ export class Session implements ControlHost {
       return c;
     };
 
-    app.ticker.add((tk) => {
+    this.tickFn = (tk) => {
       const dt = Math.min(0.1, tk.deltaMS / 1000);
-      const n = this.stepper.advance(tk.deltaMS);
+      const n = this.modal ? 0 : this.stepper.advance(tk.deltaMS);
+      this.timerSeconds = timerSecondsLeft(this.world);
       const t0 = performance.now();
       for (let i = 0; i < n; i++) {
         step(this.world);
@@ -174,7 +202,17 @@ export class Session implements ControlHost {
         this.fpsEl.textContent = `${this.fps.value} FPS · ${[...this.world.all()].filter((e) => e.kind === 'unit').length} units`;
         this.fps.acc = this.fps.frames = 0;
       }
-    });
+    };
+    app.ticker.add(this.tickFn);
+  }
+
+  /** Stops the game and removes its rendering, panels and listeners. */
+  destroy() {
+    this.abort.abort();
+    if (this.tickFn) this.app.ticker.remove(this.tickFn);
+    this.app.stage.removeChild(this.worldLayer);
+    this.worldLayer.destroy({ children: true });
+    this.ui.replaceChildren();
   }
 
   fogForMinimap?: () => import('../sim/systems/fog').FogState | undefined;

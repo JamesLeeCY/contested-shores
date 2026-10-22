@@ -1,7 +1,7 @@
 // Unit movement: per-unit A* paths, shared flow fields for big groups, local separation,
 // and stranding/flood handling (spec §4.8, §10.4).
 import { T } from '../map';
-import { lineWalkable } from '../path/astar';
+import { lineWalkable, nearestPassable } from '../path/astar';
 import { PathService } from '../path/pathing';
 import type { MoveClass } from '../path/navgrid';
 import type { Entity } from '../types';
@@ -24,12 +24,25 @@ export function clearMove(world: World, e: Entity) {
   e.pathPending = false;
   e.stuck = 0;
   e.chasing = false;
+  e.repaths = 0;
   world.paths.cancel(e.id);
 }
 
 /** Sends a single unit towards (x, y) using A*. */
 export function moveUnitTo(world: World, e: Entity, x: number, y: number) {
   clearMove(world, e);
+  // Unreachable (other island, or water for foot): go to the nearest reachable point instead of
+  // letting A* flood the whole component.
+  const cls = e.moveClass!;
+  const sx = Math.floor(e.x);
+  const sy = Math.floor(e.y);
+  if (world.nav.passable(cls, sx, sy)) {
+    const g = nearestPassable(world.nav, cls, Math.floor(x), Math.floor(y), 6);
+    if (!g || !world.nav.connected(cls, sx, sy, g[0], g[1])) {
+      e.order = e.order?.type === 'move' ? { type: 'idle' } : e.order;
+      return;
+    }
+  }
   e.goalX = x;
   e.goalY = y;
   if (lineWalkable(world.nav, e.moveClass!, e.x, e.y, x, y) && Math.hypot(x - e.x, y - e.y) < 12) {
@@ -219,8 +232,14 @@ export function movementSystem(world: World) {
     const left = Math.hypot(e.goalX! - e.x, e.goalY! - e.y);
     if (e.stuck > 20 && left < 2.5) arrive(world, e);
     else if (e.stuck > 60) {
-      if (left < 6) arrive(world, e);
-      else moveUnitTo(world, e, e.goalX!, e.goalY!);
+      // Re-plan at most twice per order, then accept where we are.
+      e.repaths = (e.repaths ?? 0) + 1;
+      if (left < 6 || e.repaths > 2) arrive(world, e);
+      else {
+        const n = e.repaths;
+        moveUnitTo(world, e, e.goalX!, e.goalY!);
+        e.repaths = n;
+      }
     }
   }
 }
@@ -233,8 +252,22 @@ function tryStep(world: World, e: Entity, x: number, y: number): boolean {
   const tx = Math.floor(x);
   const ty = Math.floor(y);
   if ((tx !== fx || ty !== fy) && !world.nav.passable(cls, tx, ty)) {
-    // Blocked mid-path (tide or new building): re-plan.
-    if (!e.flowKey && e.goalX !== undefined) moveUnitTo(world, e, e.goalX, e.goalY!);
+    // Slide along the obstacle on one axis before giving up on this step.
+    if (x !== e.x && world.nav.passable(cls, Math.floor(x), fy)) {
+      e.x = x;
+      return true;
+    }
+    if (y !== e.y && world.nav.passable(cls, fx, Math.floor(y))) {
+      e.y = y;
+      return true;
+    }
+    // Blocked mid-path (tide or new building): re-plan, at most every 10 ticks.
+    if (!e.flowKey && e.goalX !== undefined && world.tick - (e.blockedAt ?? -99) >= 10) {
+      const n = e.repaths ?? 0;
+      moveUnitTo(world, e, e.goalX, e.goalY!);
+      e.repaths = n;
+      e.blockedAt = world.tick;
+    }
     return false;
   }
   e.x = x;

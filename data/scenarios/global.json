@@ -1,0 +1,78 @@
+{
+  "triggers": [
+    {
+      "id": "g_koxinga",
+      "when": {
+        "type": "unit_dead",
+        "unitTag": "koxinga"
+      },
+      "do": [
+        {
+          "type": "show_message",
+          "textKey": "global.koxinga_dead",
+          "kind": "warn"
+        },
+        {
+          "type": "fail_mission",
+          "faction": "faction_zheng",
+          "reasonKey": "global.end.koxinga"
+        }
+      ]
+    },
+    {
+      "id": "g_castle",
+      "when": {
+        "type": "building_captured",
+        "building": "zeelandia_castle",
+        "by": "faction_zheng"
+      },
+      "do": [
+        {
+          "type": "fail_mission",
+          "faction": "faction_voc",
+          "reasonKey": "global.end.castle_captured"
+        }
+      ]
+    },
+    {
+      "id": "g_castle_morale",
+      "when": {
+        "type": "castle_morale_below",
+        "value": 0.5
+      },
+      "do": [
+        {
+          "type": "win_mission",
+          "faction": "faction_zheng",
+          "rating": "victory",
+          "reasonKey": "global.end.castle_morale"
+        }
+      ]
+    },
+    {
+      "id": "g_starved",
+      "when": {
+        "type": "all_of",
+        "conditions": [
+          {
+            "type": "castle_morale_below",
+            "value": 0.5
+          },
+          {
+            "type": "resource_below",
+            "owner": "faction_voc",
+            "resource": "grain",
+            "value": 1
+          }
+        ]
+      },
+      "do": [
+        {
+          "type": "fail_mission",
+          "faction": "faction_voc",
+          "reasonKey": "global.end.starved"
+        }
+      ]
+    }
+  ]
+}

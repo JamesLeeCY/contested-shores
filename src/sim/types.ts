@@ -1,5 +1,5 @@
 import type rulesJson from '../../data/rules.json';
-import type { BuildingDef, FactionsDef, ResourceId, TechDef, UnitDef } from '../data/schema';
+import type { AiPlanDef, BuildingDef, FactionsDef, ResourceId, TechDef, UnitDef } from '../data/schema';
 import type { MoveClass } from './path/navgrid';
 
 export type RulesData = typeof rulesJson;
@@ -11,6 +11,7 @@ export interface SimData {
   techs: Map<string, TechDef>;
   rules: RulesData;
   factions: FactionsDef;
+  aiPlans?: Map<string, AiPlanDef>;
 }
 
 /** Playable factions plus neutral owners: `faction_settlers`, `village_<id>`, `faction_neutral`. */
@@ -34,6 +35,8 @@ export type Order =
       tile?: number;
       phase: 'to_resource' | 'gathering' | 'to_dropoff';
       dropoff?: number;
+      /** Approach attempts that ended out of reach (avoids re-path loops). */
+      tries?: number;
     }
   | { type: 'build'; target: number }
   | { type: 'garrison'; target: number }
@@ -85,6 +88,10 @@ export interface Entity {
   pathPending?: boolean;
   /** Consecutive ticks without progress while moving. */
   stuck?: number;
+  /** Re-plans triggered by being stuck during the current move. */
+  repaths?: number;
+  /** Tick of the last blocked-step re-plan (throttle). */
+  blockedAt?: number;
   stranded?: boolean;
   morale?: number;
   cooldown?: number;

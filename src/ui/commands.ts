@@ -1,5 +1,6 @@
 // Command panel: 3 rows × 4 columns with hotkeys (spec §9.1). Buttons come from providers so
 // later systems (combat, diplomacy, siege) can add their own.
+import { on } from './lifecycle';
 import type { Resources } from '../sim/types';
 import { canAfford } from '../sim/stats';
 import { buildableList, buildingStage } from '../sim/systems/build';
@@ -60,7 +61,7 @@ export class CommandPanel {
     this.root = el('div', 'cmdpanel panel', parent);
     this.grid = el('div', 'cmd-grid', this.root);
     this.tip = el('div', 'cmd-tip', parent);
-    window.addEventListener('keydown', (e) => {
+    on(window, 'keydown', (e) => {
       if (e.ctrlKey || e.metaKey || e.altKey || (e.target as HTMLElement)?.tagName === 'INPUT') return;
       if (e.key === 'Escape') {
         if (this.session.pendingClick) this.session.cancelPending();

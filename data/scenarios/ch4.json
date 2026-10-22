@@ -1,0 +1,506 @@
+{
+  "id": "ch4",
+  "chapter": 4,
+  "nameKey": "scenario.ch4.name",
+  "dateKey": "scenario.ch4.date",
+  "timerMinutes": 40,
+  "stage": {
+    "faction_zheng": 4,
+    "faction_voc": 4
+  },
+  "resources": {
+    "faction_zheng": {
+      "grain": 1800,
+      "wood": 900,
+      "powder": 350,
+      "deerskin": 60
+    },
+    "faction_voc": {
+      "grain": 1200,
+      "wood": 300,
+      "powder": 300,
+      "deerskin": 0
+    }
+  },
+  "castleMorale": "carry",
+  "castleMoraleMin": 30,
+  "ownership": [
+    {
+      "type": "provintia_fort",
+      "owner": "faction_zheng"
+    }
+  ],
+  "buildings": [
+    {
+      "type": "camp_zheng",
+      "owner": "faction_zheng",
+      "at": [
+        67,
+        58
+      ]
+    },
+    {
+      "type": "camp_zheng",
+      "owner": "faction_zheng",
+      "at": [
+        67,
+        64
+      ]
+    },
+    {
+      "type": "camp_zheng",
+      "owner": "faction_zheng",
+      "at": [
+        67,
+        70
+      ]
+    },
+    {
+      "type": "trench",
+      "owner": "faction_zheng",
+      "line": [
+        [
+          64,
+          60
+        ],
+        [
+          64,
+          74
+        ]
+      ]
+    }
+  ],
+  "units": [
+    {
+      "type": "koxinga",
+      "owner": "faction_zheng",
+      "count": 1,
+      "at": [
+        71,
+        66
+      ]
+    },
+    {
+      "type": "shield_soldier",
+      "owner": "faction_zheng",
+      "count": 40,
+      "at": [
+        69,
+        62
+      ]
+    },
+    {
+      "type": "archer_zheng",
+      "owner": "faction_zheng",
+      "count": 20,
+      "at": [
+        69,
+        68
+      ]
+    },
+    {
+      "type": "iron_man",
+      "owner": "faction_zheng",
+      "count": 15,
+      "at": [
+        71,
+        60
+      ]
+    },
+    {
+      "type": "musketeer_zheng",
+      "owner": "faction_zheng",
+      "count": 20,
+      "at": [
+        69,
+        74
+      ]
+    },
+    {
+      "type": "heavy_cannon",
+      "owner": "faction_zheng",
+      "count": 4,
+      "at": [
+        70,
+        67
+      ],
+      "tag": "guns"
+    },
+    {
+      "type": "laborer",
+      "owner": "faction_zheng",
+      "count": 20,
+      "at": [
+        71,
+        74
+      ]
+    },
+    {
+      "type": "coyett",
+      "owner": "faction_voc",
+      "count": 1,
+      "at": [
+        44.5,
+        61.5
+      ]
+    },
+    {
+      "type": "musketeer_voc",
+      "owner": "faction_voc",
+      "count": 19,
+      "at": [
+        48,
+        63
+      ]
+    },
+    {
+      "type": "pikeman",
+      "owner": "faction_voc",
+      "count": 10,
+      "at": [
+        47,
+        69
+      ]
+    },
+    {
+      "type": "grenadier",
+      "owner": "faction_voc",
+      "count": 5,
+      "at": [
+        44,
+        64
+      ]
+    },
+    {
+      "type": "company_worker",
+      "owner": "faction_voc",
+      "count": 6,
+      "at": [
+        36,
+        62
+      ]
+    }
+  ],
+  "garrisons": [
+    {
+      "type": "musketeer_voc",
+      "owner": "faction_voc",
+      "count": 6,
+      "in": "utrecht_redoubt"
+    }
+  ],
+  "ai": {
+    "faction_zheng": {
+      "plans": [
+        "take_utrecht"
+      ],
+      "target": "utrecht_redoubt",
+      "composition": {
+        "shield_soldier": 0.4,
+        "archer_zheng": 0.2,
+        "iron_man": 0.2,
+        "musketeer_zheng": 0.2
+      },
+      "targetArmy": 100,
+      "home": [
+        71,
+        66
+      ],
+      "siege": true
+    },
+    "faction_voc": {
+      "plans": [
+        "hold_utrecht"
+      ],
+      "target": "utrecht_redoubt",
+      "composition": {
+        "musketeer_voc": 0.6,
+        "pikeman": 0.3,
+        "grenadier": 0.1
+      },
+      "targetArmy": 40,
+      "home": [
+        48,
+        62
+      ],
+      "defensive": true
+    }
+  },
+  "historicalLoser": "faction_voc",
+  "objectives": {
+    "faction_zheng": [
+      "ch4.obj.utrecht",
+      "ch4.obj.castle"
+    ],
+    "faction_voc": [
+      "ch4.obj.hold"
+    ]
+  },
+  "choices": [
+    {
+      "id": "sue_for_peace",
+      "faction": "faction_voc",
+      "labelKey": "ch4.choice.peace",
+      "while": {
+        "type": "castle_morale_below",
+        "value": 15.01
+      }
+    }
+  ],
+  "triggers": [
+    {
+      "id": "ch4_start",
+      "when": {
+        "type": "time_elapsed",
+        "seconds": 0
+      },
+      "do": [
+        {
+          "type": "show_cutscene",
+          "id": "ch4_intro"
+        },
+        {
+          "type": "modify_morale",
+          "faction": "faction_voc",
+          "delta": -15,
+          "reason": "caeuw_left"
+        },
+        {
+          "type": "set_objective",
+          "id": "utrecht",
+          "faction": "faction_zheng",
+          "textKey": "ch4.obj.utrecht",
+          "primary": true
+        },
+        {
+          "type": "set_objective",
+          "id": "hold",
+          "faction": "faction_voc",
+          "textKey": "ch4.obj.hold",
+          "primary": true
+        }
+      ]
+    },
+    {
+      "id": "ch4_rumor",
+      "when": {
+        "type": "time_elapsed",
+        "seconds": 480
+      },
+      "do": [
+        {
+          "type": "reveal_area",
+          "around": "utrecht_redoubt",
+          "radius": 12,
+          "faction": "faction_zheng"
+        },
+        {
+          "type": "show_message",
+          "textKey": "ch4.rumor_zheng",
+          "kind": "good",
+          "to": "faction_zheng"
+        },
+        {
+          "type": "show_message",
+          "textKey": "ch4.rumor_voc",
+          "kind": "warn",
+          "to": "faction_voc"
+        },
+        {
+          "type": "modify_morale",
+          "faction": "faction_voc",
+          "delta": -5,
+          "reason": "deserter"
+        }
+      ]
+    },
+    {
+      "id": "ch4_utrecht_taken",
+      "when": {
+        "type": "building_captured",
+        "building": "utrecht_redoubt",
+        "by": "faction_zheng"
+      },
+      "do": [
+        {
+          "type": "complete_objective",
+          "id": "utrecht",
+          "faction": "faction_zheng"
+        },
+        {
+          "type": "complete_objective",
+          "id": "hold",
+          "faction": "faction_voc",
+          "failed": true
+        },
+        {
+          "type": "set_objective",
+          "id": "castle",
+          "faction": "faction_zheng",
+          "textKey": "ch4.obj.castle",
+          "primary": true
+        },
+        {
+          "type": "show_message",
+          "textKey": "ch4.utrecht_taken",
+          "kind": "warn"
+        }
+      ]
+    },
+    {
+      "id": "ch4_peace_offer",
+      "when": {
+        "type": "all_of",
+        "conditions": [
+          {
+            "type": "castle_morale_below",
+            "value": 15.01
+          },
+          {
+            "type": "not",
+            "condition": {
+              "type": "is_ai",
+              "faction": "faction_voc"
+            }
+          }
+        ]
+      },
+      "do": [
+        {
+          "type": "show_message",
+          "textKey": "ch4.peace_available",
+          "kind": "warn",
+          "to": "faction_voc"
+        }
+      ]
+    },
+    {
+      "id": "ch4_ai_peace",
+      "when": {
+        "type": "all_of",
+        "conditions": [
+          {
+            "type": "castle_morale_below",
+            "value": 10
+          },
+          {
+            "type": "is_ai",
+            "faction": "faction_voc"
+          }
+        ]
+      },
+      "do": [
+        {
+          "type": "show_cutscene",
+          "id": "ch4_treaty"
+        },
+        {
+          "type": "win_mission",
+          "faction": "faction_voc",
+          "rating": "historical",
+          "reasonKey": "ch4.end.treaty",
+          "keepOpen": true
+        },
+        {
+          "type": "win_mission",
+          "faction": "faction_zheng",
+          "rating": "victory",
+          "reasonKey": "ch4.end.treaty"
+        }
+      ]
+    },
+    {
+      "id": "ch4_morale_zero",
+      "when": {
+        "type": "castle_morale_below",
+        "value": 0.5
+      },
+      "do": [
+        {
+          "type": "show_cutscene",
+          "id": "ch4_treaty"
+        },
+        {
+          "type": "complete_objective",
+          "id": "castle",
+          "faction": "faction_zheng"
+        },
+        {
+          "type": "win_mission",
+          "faction": "faction_zheng",
+          "rating": "victory",
+          "reasonKey": "ch4.end.morale"
+        }
+      ]
+    },
+    {
+      "id": "ch4_held",
+      "when": {
+        "type": "all_of",
+        "conditions": [
+          {
+            "type": "time_elapsed",
+            "seconds": 1500
+          },
+          {
+            "type": "not",
+            "condition": {
+              "type": "building_captured",
+              "building": "utrecht_redoubt",
+              "by": "faction_zheng"
+            }
+          }
+        ]
+      },
+      "do": [
+        {
+          "type": "complete_objective",
+          "id": "hold",
+          "faction": "faction_voc"
+        },
+        {
+          "type": "win_mission",
+          "faction": "faction_voc",
+          "rating": "victory",
+          "reasonKey": "ch4.end.held"
+        }
+      ]
+    },
+    {
+      "id": "ch4_zheng_spent",
+      "when": {
+        "type": "army_pop_below",
+        "owner": "faction_zheng",
+        "pop": 40
+      },
+      "do": [
+        {
+          "type": "complete_objective",
+          "id": "hold",
+          "faction": "faction_voc"
+        },
+        {
+          "type": "win_mission",
+          "faction": "faction_voc",
+          "rating": "victory",
+          "reasonKey": "ch4.end.spent"
+        }
+      ]
+    },
+    {
+      "id": "ch4_timeout",
+      "when": {
+        "type": "time_elapsed",
+        "seconds": 2400
+      },
+      "do": [
+        {
+          "type": "win_mission",
+          "faction": "faction_voc",
+          "rating": "victory",
+          "reasonKey": "ch4.end.timeout"
+        }
+      ]
+    }
+  ]
+}
