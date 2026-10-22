@@ -11,6 +11,10 @@ import { EntityRenderer } from '../render/entities';
 import { buildTerrain } from '../render/terrain';
 import { CameraInput } from './camera-input';
 import { CommandPanel, economyContextOrder } from './commands';
+import { CoverageOverlay, combatContextOrder } from './combat-ui';
+import { Effects } from '../render/effects';
+import { FogRenderer } from '../render/fog';
+import { fogOf, isVisibleTo } from '../sim/systems/fog';
 import { Messages, ResourceBar, SelectionPanel, eventMessage } from './panels';
 import { Placement } from './placement';
 import { Controls, SPEEDS, type ControlHost } from './controls';
@@ -43,6 +47,10 @@ export class Session implements ControlHost {
   readonly selectionPanel: SelectionPanel;
   readonly commandPanel: CommandPanel;
   readonly placement: Placement;
+  readonly effects = new Effects();
+  readonly fogRenderer: FogRenderer;
+  readonly coverage: CoverageOverlay;
+  private fogTick = -1;
   /** Hooks for later stages (HUD panels, fog, effects) called every frame. */
   readonly frameHooks: ((s: Session, dt: number) => void)[] = [];
   readonly eventHooks: ((s: Session, ev: SimEvent) => void)[] = [];
@@ -72,7 +80,16 @@ export class Session implements ControlHost {
     this.worldLayer.addChild(buildTerrain(map, colors));
     this.entities = new EntityRenderer(data);
     this.worldLayer.addChild(this.entities.layer);
+    this.worldLayer.addChild(this.effects.layer);
+    this.fogRenderer = new FogRenderer(map.width, map.height);
+    this.worldLayer.addChild(this.fogRenderer.sprite);
     this.worldLayer.addChild(this.overlayLayer);
+    this.entities.hidden = (e) => !isVisibleTo(this.world, this.player, e);
+    this.effects.visibleAt = (x, y) => {
+      const f = fogOf(this.world, this.player);
+      return !f || !!f.visible[Math.floor(y) * map.width + Math.floor(x)];
+    };
+    this.fogForMinimap = () => fogOf(this.world, this.player);
 
     this.camera = new Camera(map.width, map.height);
     const own = [...this.world.all()].find((e) => e.owner === this.player && e.kind === 'unit');
@@ -92,7 +109,10 @@ export class Session implements ControlHost {
     this.selectionPanel.onCancel = (building, index) => this.issue({ type: 'cancel', owner: this.player, building, index });
     this.commandPanel = new CommandPanel(ui, this);
     this.placement = new Placement(this);
-    this.contextOrder = (target, x, y, ids) => economyContextOrder(this, target, x, y, ids);
+    this.coverage = new CoverageOverlay(this);
+    this.contextOrder = (target, x, y, ids) =>
+      combatContextOrder(this, target, x, y, ids) || economyContextOrder(this, target, x, y, ids);
+    this.eventHooks.push((s, ev) => s.effects.handle(s.world, ev));
     this.eventHooks.push((s, ev) => {
       const m = eventMessage(s.world, s.player, ev);
       if (m) s.messages.push(m[0], m[1]);
@@ -129,6 +149,12 @@ export class Session implements ControlHost {
       this.selectionPanel.update(this.world, [...this.selected]);
       this.commandPanel.update();
       this.placement.update();
+      this.coverage.update();
+      this.effects.update(dt);
+      if (Math.floor(this.world.tick / 5) !== this.fogTick) {
+        this.fogTick = Math.floor(this.world.tick / 5);
+        this.fogRenderer.update(fogOf(this.world, this.player));
+      }
       for (const h of this.frameHooks) h(this, dt);
       this.minimap.draw(
         [...this.world.all()]
@@ -146,7 +172,7 @@ export class Session implements ControlHost {
     });
   }
 
-  fogForMinimap?: () => Uint8Array | undefined;
+  fogForMinimap?: () => import('../sim/systems/fog').FogState | undefined;
 
   get fpsValue() {
     return this.fps.value;

@@ -14,7 +14,14 @@ export type Command =
   | { type: 'cancel'; owner: Owner; building: number; index: number }
   | { type: 'rally'; owner: Owner; building: number; x: number; y: number }
   | { type: 'garrison'; owner: Owner; ids: number[]; target: number }
-  | { type: 'ungarrison'; owner: Owner; building: number; ids?: number[] };
+  | { type: 'ungarrison'; owner: Owner; building: number; ids?: number[] }
+  | { type: 'attack'; owner: Owner; ids: number[]; target: number }
+  | { type: 'attack_move'; owner: Owner; ids: number[]; x: number; y: number }
+  | { type: 'attack_ground'; owner: Owner; ids: number[]; x: number; y: number }
+  | { type: 'patrol'; owner: Owner; ids: number[]; x: number; y: number }
+  | { type: 'dig_mine'; owner: Owner; ids: number[]; target: number }
+  | { type: 'embark'; owner: Owner; ids: number[]; target: number }
+  | { type: 'unload'; owner: Owner; ids: number[]; x?: number; y?: number };
 
 export type CommandHandler<C extends Command = Command> = (world: World, cmd: C) => void;
 const handlers = new Map<string, CommandHandler>();
@@ -24,12 +31,12 @@ export function registerCommand<T extends Command['type']>(type: T, fn: CommandH
   handlers.set(type, fn as CommandHandler);
 }
 
-/** Live units in `ids` that belong to `owner`, ascending id. */
+/** Live, commandable units in `ids` that belong to `owner`, ascending id (routing units ignore orders). */
 export function ownedUnits(world: World, owner: Owner, ids: number[]) {
   return [...new Set(ids)]
     .sort((a, b) => a - b)
     .map((id) => world.get(id))
-    .filter((e) => e && e.kind === 'unit' && e.owner === owner && !e.insideOf) as NonNullable<ReturnType<World['get']>>[];
+    .filter((e) => e && e.kind === 'unit' && e.owner === owner && !e.insideOf && e.order?.type !== 'rout') as NonNullable<ReturnType<World['get']>>[];
 }
 
 registerCommand('move', (world, cmd) => {

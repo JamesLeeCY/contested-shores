@@ -23,6 +23,7 @@ export function clearMove(world: World, e: Entity) {
   e.flowKey = null;
   e.pathPending = false;
   e.stuck = 0;
+  e.chasing = false;
   world.paths.cancel(e.id);
 }
 
@@ -148,8 +149,9 @@ function nextWaypoint(world: World, e: Entity): [number, number] | null {
 }
 
 function arrive(world: World, e: Entity) {
+  const chasing = e.chasing;
   clearMove(world, e);
-  if (e.order?.type === 'move') e.order = { type: 'idle' };
+  if (e.order?.type === 'move' && !chasing) e.order = { type: 'idle' };
 }
 
 export function movementSystem(world: World) {

@@ -150,7 +150,11 @@
         "radius": 1,
         "ratio": 0.5
       }
-    }
+    },
+    "repathTicks": 10,
+    "autoAcquireWorkers": false,
+    "garrisonRangeBonus": 1,
+    "buildingTargetPriority": "nearest"
   },
   "morale": {
     "unitStart": 70,
@@ -195,7 +199,13 @@
       "outpostLost": -20,
       "supplyArrived": 10,
       "assaultRepelled": 15
-    }
+    },
+    "regen": {
+      "perSecond": 0.1,
+      "target": 70,
+      "calmSeconds": 10
+    },
+    "afterRout": 15
   },
   "heroes": {
     "aura_koxinga": {
@@ -334,7 +344,9 @@
     "mine": {
       "secondsPerTile": 15,
       "maxTiles": 8,
-      "wallDamage": 1500
+      "wallDamage": 1500,
+      "hp": 100,
+      "stage": 4
     },
     "counterMineRadius": 0,
     "sandBuildingHpMul": 0.9
@@ -531,5 +543,19 @@
       }
     },
     "finalDefenseStage": 4
+  },
+  "capture": {
+    "attackerRadius": 2,
+    "defenderRadius": 4,
+    "seconds": 10,
+    "maxHpFraction": 0.5
+  },
+  "transport": {
+    "embarkRange": 2.5,
+    "unloadRange": 2.5
+  },
+  "fog": {
+    "hillSightBonus": 2,
+    "garrisonSightBonus": 2
   }
 }

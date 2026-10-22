@@ -14,6 +14,8 @@ export interface WorldOptions {
   resources?: Partial<Record<Owner, Partial<Record<string, number>>>>;
   /** Skip spawning preset map buildings (used by focused unit tests). */
   emptyMap?: boolean;
+  /** Disable fog of war (tests, sandbox). */
+  noFog?: boolean;
   chapter?: number;
 }
 
@@ -43,6 +45,10 @@ export class World {
   readonly woodLeft: Float32Array;
   /** Building id occupying each tile (0 = none), including walkable ones (farms, trenches). */
   readonly occupancy: Int32Array;
+  /** Active weather effects (typhoon, spec §4.10). */
+  weather = { active: false, sightMul: 1, rangedHitPenalty: 0 };
+  private heroCache: { tick: number; list: Entity[] } = { tick: -1, list: [] };
+  private buildingCache: Entity[] | null = null;
   /** Spatial hash for units: cell → ids. */
   private grid = new Map<number, number[]>();
   static readonly CELL = 2;
@@ -74,6 +80,7 @@ export class World {
         buildingMods: {},
         revealTerrain: [],
         starvingUntil: 0,
+        mainBaseCannonBonus: 0,
       });
     }
     this.woodLeft = new Float32Array(map.width * map.height);
@@ -122,6 +129,7 @@ export class World {
   private add(e: Entity): Entity {
     this.entities.set(e.id, e);
     this.sortedDirty = true;
+    if (e.kind === 'building') this.buildingCache = null;
     return e;
   }
 
@@ -131,10 +139,11 @@ export class World {
     e.dead = true;
     if (e.kind === 'building') {
       if (e.blocks) this.nav.setBlocked(e.tx!, e.ty!, e.w!, e.h!, false);
-      this.setOccupancy(e, 0);
+      if (e.type !== 'mine') this.setOccupancy(e, 0);
     }
     this.entities.delete(id);
     this.sortedDirty = true;
+    if (e.kind === 'building') this.buildingCache = null;
   }
 
   moveClassOf(unitType: string): MoveClass {
@@ -204,7 +213,8 @@ export class World {
     // Farms are walkable gather points; everything else blocks movement.
     e.blocks = !('gatherPoint' in def) && !('walkable' in def);
     if (e.blocks) this.nav.setBlocked(tx, ty, size, size, true);
-    this.setOccupancy(e, e.id);
+    // Mines run underground and must not displace the trench they start from.
+    if (type !== 'mine') this.setOccupancy(e, e.id);
     return e;
   }
 
@@ -257,6 +267,38 @@ export class World {
     this.map.terrain[i] = terrain;
     this.nav.updateTile(i, this.rules.terrain);
     this.emit({ type: 'terrain', tile: i });
+  }
+
+  /** Living hero units (cached per tick). */
+  heroes(): Entity[] {
+    if (this.heroCache.tick !== this.tick) {
+      this.heroCache = {
+        tick: this.tick,
+        list: [...this.all()].filter((e) => e.kind === 'unit' && !e.insideOf && this.data.units.get(e.type)!.traits.includes('hero')),
+      };
+    }
+    return this.heroCache.list.filter((e) => !e.dead);
+  }
+
+  /** All live buildings in ascending id (cached until a building is added or removed). */
+  buildings(): Entity[] {
+    if (!this.buildingCache) this.buildingCache = [...this.all()].filter((e) => e.kind === 'building');
+    return this.buildingCache;
+  }
+
+  buildingsOf(owner: Owner): Entity[] {
+    return this.buildings().filter((e) => e.owner === owner);
+  }
+
+  /** Buildings whose footprint is within r of (x, y), ascending id. */
+  buildingsNear(x: number, y: number, r: number): Entity[] {
+    const out: Entity[] = [];
+    for (const e of this.buildings()) {
+      const dx = Math.max(e.tx! - x, 0, x - (e.tx! + e.w!));
+      const dy = Math.max(e.ty! - y, 0, y - (e.ty! + e.h!));
+      if (dx * dx + dy * dy <= r * r) out.push(e);
+    }
+    return out;
   }
 
   // --- factions -------------------------------------------------------------------------------

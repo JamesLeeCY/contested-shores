@@ -1,5 +1,6 @@
 import type { Camera } from '../render/camera';
 import { TERRAIN_IDS, type GameMap } from '../sim/map';
+import type { FogState } from '../sim/systems/fog';
 
 export interface MinimapDot {
   x: number;
@@ -54,17 +55,16 @@ export class Minimap {
     this.el.addEventListener('contextmenu', (e) => e.preventDefault());
   }
 
-  /** `fog` (optional): 0 unexplored, 1 explored, 2 visible per tile. */
-  draw(dots: MinimapDot[], fog?: Uint8Array) {
+  draw(dots: MinimapDot[], fog?: FogState) {
     const { ctx, sx, sy } = this;
     ctx.imageSmoothingEnabled = false;
     ctx.drawImage(this.base, 0, 0, this.el.width, this.el.height);
     if (fog) {
       for (let y = 0; y < this.map.height; y++)
         for (let x = 0; x < this.map.width; x++) {
-          const f = fog[y * this.map.width + x];
-          if (f === 2) continue;
-          ctx.fillStyle = f === 0 ? '#000' : 'rgba(0,0,0,0.45)';
+          const i = y * this.map.width + x;
+          if (fog.visible[i]) continue;
+          ctx.fillStyle = fog.explored[i] ? 'rgba(0,0,0,0.45)' : '#000';
           ctx.fillRect(x * sx, y * sy, sx + 0.5, sy + 0.5);
         }
     }

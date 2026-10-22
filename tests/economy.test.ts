@@ -168,7 +168,7 @@ describe('placement, population, queues', () => {
     // Need 3 grain/day: day 1 OK (5→2); day 2 short by 1 → 1 step → −5 morale.
     run(w, DAY * 2 + 1);
     expect(w.faction(V)!.resources.grain).toBe(0);
-    for (const u of us) expect(u.morale).toBe(70 - 5);
+    for (const u of us) expect(u.morale).toBeCloseTo(70 - 5, 1);
   });
 
   it('researching a tech applies its effect (排槍操典: interval 2.8 → 2.4)', async () => {

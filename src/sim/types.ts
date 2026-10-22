@@ -95,6 +95,24 @@ export interface Entity {
   /** Tick at which a garrisoned unit leaves its building (tuntian recall delay). */
   releaseAt?: number;
   facing?: number;
+  /** Current combat target (explicit or auto-acquired). */
+  attackTarget?: number;
+  /** Movement was issued by combat to chase a target; arrival must not end the order. */
+  chasing?: boolean;
+  chaseAt?: number;
+  lastHit?: number;
+  lastAttacker?: number;
+  lastCombat?: number;
+  gunCooldowns?: number[];
+  /** Capture progress in ticks and the capturing owner. */
+  captureTicks?: number;
+  captureBy?: Owner;
+  /** Mine (坑道) state. */
+  mineTarget?: number;
+  mineLength?: number;
+  mineTicks?: number;
+  mineFromX?: number;
+  mineFromY?: number;
 
   // --- buildings / resources ---
   tx?: number;
@@ -132,6 +150,8 @@ export interface FactionState {
   revealTerrain: string[];
   /** Ticks of the current starvation warning (UI flash). */
   starvingUntil: number;
+  /** Extra cannon damage vs the main castle (set when 烏特勒支堡 is captured). */
+  mainBaseCannonBonus: number;
 }
 
 export type SimEvent =

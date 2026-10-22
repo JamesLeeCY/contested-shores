@@ -1,0 +1,16 @@
+import { loadGameData } from '../../src/data/load';
+import { loadMap } from '../../src/data/map';
+import { step } from '../../src/sim/loop';
+import { World } from '../../src/sim/world';
+const Z = 'faction_zheng', V = 'faction_voc';
+const w = new World(loadGameData(), loadMap(), { seed: 1, emptyMap: true, noFog: true });
+w.faction(Z)!.stage = 4;
+const wall = w.spawnBuilding('bastion', V, 120, 50);
+w.spawnBuilding('trench', Z, 121, 58);
+const lab = w.spawnUnit('laborer', Z, 121.5, 59.5);
+w.enqueue({ type: 'dig_mine', owner: Z, ids: [lab.id], target: wall.id });
+w.rules.siege.counterMineRadius = 4;
+for (let i = 0; i < 20 * 50; i++) step(w);
+const mine = [...w.all()].find((e) => e.type === 'mine')!;
+console.log(mine && { x: mine.x, y: mine.y, ticks: mine.mineTicks, len: mine.mineLength }, lab.order, lab.x, lab.y);
+console.log(w.rules.siege.counterMineRadius, [...w.factions.keys()]);

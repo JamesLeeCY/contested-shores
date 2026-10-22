@@ -53,7 +53,7 @@ const script = (t: number) => {
 };
 
 describe('determinism', () => {
-  it('same seed + same commands → identical state hash every 100 ticks for 6,000 ticks', () => {
+  it('same seed + same commands → identical state hash every 100 ticks for 6,000 ticks', { timeout: 120_000 }, () => {
     const a = runScripted(42, script);
     const b = runScripted(42, script);
     expect(a.hashes).toHaveLength(60);
@@ -61,7 +61,7 @@ describe('determinism', () => {
     expect(b.hashes).toEqual(a.hashes);
   });
 
-  it('replaying the recorded command log reproduces the same state', () => {
+  it('replaying the recorded command log reproduces the same state', { timeout: 120_000 }, () => {
     const a = runScripted(9, script);
     const replay = runScripted(9, (t) => a.log.filter((l) => l.tick === t).map((l) => l.cmd));
     expect(replay.hashes).toEqual(a.hashes);

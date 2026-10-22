@@ -1,6 +1,8 @@
 // Top resource bar, bottom selection panel, message feed (spec §9.1).
 import type { ResourceId } from '../data/schema';
 import { popCap, popUsed, unitStat } from '../sim/stats';
+import { hasPowder } from '../sim/systems/combat';
+import { capacityOf, cargoPop } from '../sim/systems/transport';
 import type { Entity, SimEvent } from '../sim/types';
 import type { World } from '../sim/world';
 import { el, setText } from './dom';
@@ -151,12 +153,20 @@ export class SelectionPanel {
         parts.push(t('order.' + (e.order?.type ?? 'idle')));
         if (e.carrying) parts.push(t('ui.carrying', { amount: Math.floor(e.carrying.amount), res: t('resource.' + e.carrying.resource) }));
         if (e.stranded) parts.push(t('ui.stranded'));
+        const def = world.data.units.get(e.type)!;
+        if (e.cargo !== undefined || def.traits.some((x) => x.startsWith('transport_')))
+          parts.push(t('ui.cargo', { n: cargoPop(world, e), max: capacityOf(world, e) }));
+        if (def.traits.includes('must_deploy'))
+          parts.push((e.deployTicks ?? 0) >= world.rules.combat.traits.must_deploy.seconds * world.ticksPerSecond ? t('ui.deployed') : t('ui.deploying'));
+        if (def.powderPerShot > 0 && !hasPowder(world, e)) parts.push(t('ui.no_powder'));
       } else if (e.kind === 'building') {
         if ((e.built ?? 1) < 1) parts.push(t('ui.constructing', { p: Math.floor((e.built ?? 0) * 100) }));
         const cap = (world.data.buildings.get(e.type) as { garrison: number; tuntianCapacity?: number });
         const max = cap.tuntianCapacity ?? cap.garrison;
         if (max) parts.push(t('ui.garrison', { n: e.garrisoned?.length ?? 0, max }));
         if (e.popBlocked) parts.push(t('ui.pop_blocked'));
+        if (e.captureTicks) parts.push(t('ui.capture', { p: Math.floor((e.captureTicks / (world.rules.capture.seconds * world.ticksPerSecond)) * 100) }));
+        if (e.type === 'mine' && e.mineLength) parts.push(t('ui.mine_progress', { p: Math.floor((e.mineTicks ?? 0) / (world.rules.siege.mine.secondsPerTile * world.ticksPerSecond)), n: e.mineLength }));
       } else if (e.amount !== undefined) parts.push(`${Math.floor(e.amount)} / ${e.maxAmount}`);
       setText(status, parts.join(' · '));
     }

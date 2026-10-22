@@ -197,7 +197,7 @@
     "buildTime": 0,
     "popCap": 40,
     "size": 6,
-    "sight": 8,
+    "sight": 12,
     "dropoff": true,
     "produces": [
       "company_worker"
@@ -219,7 +219,8 @@
       "atkInterval": 6,
       "hitChance": 0.6
     },
-    "isMainBase": true
+    "isMainBase": true,
+    "capturable": true
   },
   {
     "id": "bastion",
@@ -238,7 +239,7 @@
     "buildTime": 0,
     "popCap": 0,
     "size": 3,
-    "sight": 8,
+    "sight": 13,
     "dropoff": false,
     "produces": [],
     "researches": [],
@@ -301,7 +302,7 @@
     "buildTime": 0,
     "popCap": 0,
     "size": 3,
-    "sight": 8,
+    "sight": 12,
     "dropoff": false,
     "produces": [],
     "researches": [],
@@ -337,7 +338,7 @@
     "buildTime": 0,
     "popCap": 10,
     "size": 5,
-    "sight": 8,
+    "sight": 11,
     "dropoff": true,
     "produces": [],
     "researches": [],
@@ -557,5 +558,32 @@
     "attack": null,
     "walkable": true,
     "battery": true
+  },
+  {
+    "id": "mine",
+    "faction": "faction_zheng",
+    "nameKey": "building.mine.name",
+    "hp": 100,
+    "armor": 0,
+    "armorType": "building",
+    "preset": true,
+    "cost": {
+      "grain": 0,
+      "wood": 0,
+      "powder": 0,
+      "deerskin": 0
+    },
+    "buildTime": 0,
+    "popCap": 0,
+    "size": 1,
+    "sight": 1,
+    "dropoff": false,
+    "produces": [],
+    "researches": [],
+    "garrison": 0,
+    "diseaseShelter": false,
+    "attack": null,
+    "walkable": true,
+    "hiddenFromEnemy": true
   }
 ]

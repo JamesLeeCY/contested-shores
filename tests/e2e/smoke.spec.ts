@@ -33,7 +33,7 @@ test('box-select own units and right-click to move them', async ({ page }) => {
   await page.mouse.up();
   const selected = await page.evaluate(() => (window as any).__game.selected.size);
   expect(selected).toBeGreaterThan(0);
-  const target = await page.evaluate(() => (window as any).__game.camera.tileToScreen(50, 38));
+  const target = await page.evaluate(() => (window as any).__game.camera.tileToScreen(46, 33));
   await page.mouse.click(target.x, target.y, { button: 'right' });
   await page.waitForTimeout(3000);
   const after = await page.evaluate((id) => {
