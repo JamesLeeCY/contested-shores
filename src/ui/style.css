@@ -13,3 +13,7 @@ html, body { margin: 0; height: 100%; overflow: hidden; background: var(--bg); c
 #game canvas { display: block; }
 #ui { position: fixed; inset: 0; pointer-events: none; }
 #ui > * { pointer-events: auto; }
+
+.minimap { position: absolute; left: 8px; bottom: 8px; width: 200px; height: 150px;
+  border: 2px solid var(--panel-border); background: #000; image-rendering: pixelated; cursor: pointer; }
+.fps { position: absolute; right: 8px; bottom: 8px; color: var(--muted); font: 11px monospace; pointer-events: none; }

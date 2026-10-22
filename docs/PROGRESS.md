@@ -16,3 +16,15 @@
 
 **已知問題**
 - 部署網址待 GitHub repo 建立後確認
+
+## 階段 1：地圖與鏡頭（2026-10-22）
+
+**完成**
+- `scripts/gen-map.ts` 依第 6.3 節產生 Tiled 1.10 JSON（`data/maps/taijiang.json`）與佔位地形圖塊 `assets/tiles/terrain.png`
+- `src/sim/map.ts`（Tiled 載入）、`src/sim/path/navgrid.ts`（6 張導航圖）、`src/sim/mapcheck.ts`
+- PixiJS 等角地形繪製（16×16 區塊）、鏡頭（方向鍵、滑鼠貼邊、中鍵拖曳、滾輪 0.5×–1.5×）、小地圖（點擊／拖曳跳轉、視野框）
+- `scripts/validate-map.ts` 第 6.4 節五項檢查
+
+**驗收**
+- `validate-map` 五項全過；`tests/map.test.ts` 另驗證把鹿耳門挖深時檢查會失敗
+- 縮到 0.5× 時 60 FPS（瀏覽器實測）

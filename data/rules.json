@@ -335,5 +335,171 @@
   },
   "finalDefense": {
     "buildingHpMul": 1.2
+  },
+  "terrain": {
+    "order": [
+      "deep_water",
+      "shallow",
+      "tidal_flat",
+      "sand",
+      "plain",
+      "farmland",
+      "forest",
+      "hill",
+      "road"
+    ],
+    "types": {
+      "deep_water": {
+        "foot": {
+          "high": 0,
+          "low": 0
+        },
+        "smallCraft": {
+          "high": true,
+          "low": true
+        },
+        "ship": {
+          "high": true,
+          "low": true
+        },
+        "buildable": false,
+        "color": "#1f4e6b"
+      },
+      "shallow": {
+        "foot": {
+          "high": 0,
+          "low": 0.5
+        },
+        "smallCraft": {
+          "high": true,
+          "low": false
+        },
+        "ship": {
+          "high": false,
+          "low": false
+        },
+        "buildable": false,
+        "color": "#3f8a99"
+      },
+      "tidal_flat": {
+        "foot": {
+          "high": 0.5,
+          "low": 1
+        },
+        "smallCraft": {
+          "high": true,
+          "low": false
+        },
+        "ship": {
+          "high": false,
+          "low": false
+        },
+        "buildable": false,
+        "color": "#8fa89a"
+      },
+      "sand": {
+        "foot": {
+          "high": 0.85,
+          "low": 0.85
+        },
+        "smallCraft": {
+          "high": false,
+          "low": false
+        },
+        "ship": {
+          "high": false,
+          "low": false
+        },
+        "buildable": true,
+        "buildingHpMul": 0.9,
+        "color": "#d9c58f"
+      },
+      "plain": {
+        "foot": {
+          "high": 1,
+          "low": 1
+        },
+        "smallCraft": {
+          "high": false,
+          "low": false
+        },
+        "ship": {
+          "high": false,
+          "low": false
+        },
+        "buildable": true,
+        "color": "#8aa35a"
+      },
+      "farmland": {
+        "foot": {
+          "high": 0.9,
+          "low": 0.9
+        },
+        "smallCraft": {
+          "high": false,
+          "low": false
+        },
+        "ship": {
+          "high": false,
+          "low": false
+        },
+        "buildable": true,
+        "onlyBuild": [
+          "farm"
+        ],
+        "color": "#b4a35a"
+      },
+      "forest": {
+        "foot": {
+          "high": 0.7,
+          "low": 0.7
+        },
+        "smallCraft": {
+          "high": false,
+          "low": false
+        },
+        "ship": {
+          "high": false,
+          "low": false
+        },
+        "buildable": false,
+        "blocksSight": true,
+        "woodPerTile": 150,
+        "color": "#3e6b35"
+      },
+      "hill": {
+        "foot": {
+          "high": 0.8,
+          "low": 0.8
+        },
+        "smallCraft": {
+          "high": false,
+          "low": false
+        },
+        "ship": {
+          "high": false,
+          "low": false
+        },
+        "buildable": true,
+        "elevated": true,
+        "color": "#a08a5c"
+      },
+      "road": {
+        "foot": {
+          "high": 1.2,
+          "low": 1.2
+        },
+        "smallCraft": {
+          "high": false,
+          "low": false
+        },
+        "ship": {
+          "high": false,
+          "low": false
+        },
+        "buildable": false,
+        "color": "#c2a878"
+      }
+    }
   }
 }
