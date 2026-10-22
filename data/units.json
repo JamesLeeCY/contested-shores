@@ -1,0 +1,820 @@
+[
+  {
+    "id": "laborer",
+    "faction": "faction_zheng",
+    "nameKey": "unit.laborer.name",
+    "class": "worker",
+    "hp": 40,
+    "atk": 3,
+    "atkType": "melee",
+    "atkInterval": 1.5,
+    "armor": 0,
+    "armorType": "none",
+    "range": 1,
+    "sight": 5,
+    "speed": 1,
+    "hitChance": 1,
+    "powderPerShot": 0,
+    "producible": true,
+    "cost": {
+      "grain": 30,
+      "wood": 0,
+      "powder": 0,
+      "deerskin": 0
+    },
+    "buildTime": 10,
+    "pop": 1,
+    "stage": 1,
+    "producedAt": [
+      "camp_zheng"
+    ],
+    "traits": [
+      "gatherer",
+      "builder"
+    ],
+    "naval": false,
+    "smallCraft": false
+  },
+  {
+    "id": "shield_soldier",
+    "faction": "faction_zheng",
+    "nameKey": "unit.shield_soldier.name",
+    "class": "infantry",
+    "hp": 90,
+    "atk": 9,
+    "atkType": "melee",
+    "atkInterval": 1.2,
+    "armor": 1,
+    "armorType": "none",
+    "range": 1,
+    "sight": 5,
+    "speed": 1.1,
+    "hitChance": 1,
+    "powderPerShot": 0,
+    "producible": true,
+    "cost": {
+      "grain": 40,
+      "wood": 10,
+      "powder": 0,
+      "deerskin": 0
+    },
+    "buildTime": 12,
+    "pop": 1,
+    "stage": 1,
+    "producedAt": [
+      "barracks_zheng"
+    ],
+    "traits": [
+      "block_arrow_30"
+    ],
+    "naval": false,
+    "smallCraft": false
+  },
+  {
+    "id": "archer_zheng",
+    "faction": "faction_zheng",
+    "nameKey": "unit.archer_zheng.name",
+    "class": "infantry",
+    "hp": 55,
+    "atk": 7,
+    "atkType": "arrow",
+    "atkInterval": 1.5,
+    "armor": 0,
+    "armorType": "none",
+    "range": 6,
+    "sight": 7,
+    "speed": 1,
+    "hitChance": 1,
+    "powderPerShot": 0,
+    "producible": true,
+    "cost": {
+      "grain": 35,
+      "wood": 25,
+      "powder": 0,
+      "deerskin": 0
+    },
+    "buildTime": 14,
+    "pop": 1,
+    "stage": 1,
+    "producedAt": [
+      "barracks_zheng"
+    ],
+    "traits": [],
+    "naval": false,
+    "smallCraft": false
+  },
+  {
+    "id": "iron_man",
+    "faction": "faction_zheng",
+    "nameKey": "unit.iron_man.name",
+    "class": "infantry",
+    "hp": 160,
+    "atk": 16,
+    "atkType": "melee",
+    "atkInterval": 1.6,
+    "armor": 3,
+    "armorType": "scale",
+    "range": 1,
+    "sight": 5,
+    "speed": 0.8,
+    "hitChance": 1,
+    "powderPerShot": 0,
+    "producible": true,
+    "cost": {
+      "grain": 70,
+      "wood": 20,
+      "powder": 0,
+      "deerskin": 0
+    },
+    "buildTime": 20,
+    "pop": 2,
+    "stage": 2,
+    "producedAt": [
+      "barracks_zheng"
+    ],
+    "traits": [
+      "cleave_2"
+    ],
+    "naval": false,
+    "smallCraft": false
+  },
+  {
+    "id": "musketeer_zheng",
+    "faction": "faction_zheng",
+    "nameKey": "unit.musketeer_zheng.name",
+    "class": "infantry",
+    "hp": 60,
+    "atk": 14,
+    "atkType": "musket",
+    "atkInterval": 3,
+    "armor": 0,
+    "armorType": "none",
+    "range": 5,
+    "sight": 6,
+    "speed": 1,
+    "hitChance": 0.6,
+    "powderPerShot": 0.2,
+    "producible": true,
+    "cost": {
+      "grain": 50,
+      "wood": 10,
+      "powder": 0,
+      "deerskin": 0
+    },
+    "buildTime": 18,
+    "pop": 1,
+    "stage": 2,
+    "producedAt": [
+      "barracks_zheng"
+    ],
+    "traits": [
+      "uses_powder"
+    ],
+    "naval": false,
+    "smallCraft": false
+  },
+  {
+    "id": "light_cannon",
+    "faction": "faction_zheng",
+    "nameKey": "unit.light_cannon.name",
+    "class": "siege",
+    "hp": 120,
+    "atk": 40,
+    "atkType": "cannon",
+    "atkInterval": 6,
+    "armor": 2,
+    "armorType": "building",
+    "range": 8,
+    "sight": 8,
+    "speed": 0.5,
+    "hitChance": 0.5,
+    "powderPerShot": 2,
+    "producible": true,
+    "cost": {
+      "grain": 30,
+      "wood": 80,
+      "powder": 0,
+      "deerskin": 0
+    },
+    "buildTime": 30,
+    "pop": 3,
+    "stage": 2,
+    "producedAt": [
+      "barracks_zheng"
+    ],
+    "traits": [
+      "uses_powder",
+      "must_deploy"
+    ],
+    "naval": false,
+    "smallCraft": false
+  },
+  {
+    "id": "heavy_cannon",
+    "faction": "faction_zheng",
+    "nameKey": "unit.heavy_cannon.name",
+    "class": "siege",
+    "hp": 200,
+    "atk": 90,
+    "atkType": "cannon",
+    "atkInterval": 10,
+    "armor": 3,
+    "armorType": "building",
+    "range": 10,
+    "sight": 8,
+    "speed": 0.3,
+    "hitChance": 0.45,
+    "powderPerShot": 2,
+    "producible": true,
+    "cost": {
+      "grain": 40,
+      "wood": 150,
+      "powder": 20,
+      "deerskin": 0
+    },
+    "buildTime": 45,
+    "pop": 4,
+    "stage": 4,
+    "producedAt": [
+      "barracks_zheng"
+    ],
+    "traits": [
+      "uses_powder",
+      "must_deploy",
+      "battery_only"
+    ],
+    "naval": false,
+    "smallCraft": false
+  },
+  {
+    "id": "junk",
+    "faction": "faction_zheng",
+    "nameKey": "unit.junk.name",
+    "class": "naval",
+    "hp": 300,
+    "atk": 20,
+    "atkType": "cannon",
+    "atkInterval": 5,
+    "armor": 2,
+    "armorType": "ship",
+    "range": 6,
+    "sight": 8,
+    "speed": 1.4,
+    "hitChance": 0.5,
+    "powderPerShot": 2,
+    "producible": true,
+    "cost": {
+      "grain": 0,
+      "wood": 120,
+      "powder": 0,
+      "deerskin": 0
+    },
+    "buildTime": 35,
+    "pop": 3,
+    "stage": 1,
+    "producedAt": [
+      "shipyard_zheng"
+    ],
+    "traits": [
+      "naval",
+      "small_craft",
+      "transport_10",
+      "uses_powder"
+    ],
+    "naval": true,
+    "smallCraft": true
+  },
+  {
+    "id": "fire_ship",
+    "faction": "faction_zheng",
+    "nameKey": "unit.fire_ship.name",
+    "class": "naval",
+    "hp": 150,
+    "atk": 400,
+    "atkType": "fire",
+    "atkInterval": 0,
+    "armor": 0,
+    "armorType": "ship",
+    "range": 1,
+    "sight": 6,
+    "speed": 1.8,
+    "hitChance": 1,
+    "powderPerShot": 0,
+    "producible": true,
+    "cost": {
+      "grain": 0,
+      "wood": 90,
+      "powder": 10,
+      "deerskin": 0
+    },
+    "buildTime": 25,
+    "pop": 2,
+    "stage": 3,
+    "producedAt": [
+      "shipyard_zheng"
+    ],
+    "traits": [
+      "naval",
+      "small_craft",
+      "suicide"
+    ],
+    "naval": true,
+    "smallCraft": true
+  },
+  {
+    "id": "koxinga",
+    "faction": "faction_zheng",
+    "nameKey": "unit.koxinga.name",
+    "class": "hero",
+    "hp": 600,
+    "atk": 25,
+    "atkType": "melee",
+    "atkInterval": 1.2,
+    "armor": 4,
+    "armorType": "scale",
+    "range": 1,
+    "sight": 8,
+    "speed": 1.1,
+    "hitChance": 1,
+    "powderPerShot": 0,
+    "producible": false,
+    "cost": {
+      "grain": 0,
+      "wood": 0,
+      "powder": 0,
+      "deerskin": 0
+    },
+    "buildTime": 0,
+    "pop": 0,
+    "stage": 1,
+    "producedAt": [],
+    "traits": [
+      "hero",
+      "aura_koxinga",
+      "diplomat"
+    ],
+    "naval": false,
+    "smallCraft": false
+  },
+  {
+    "id": "company_worker",
+    "faction": "faction_voc",
+    "nameKey": "unit.company_worker.name",
+    "class": "worker",
+    "hp": 40,
+    "atk": 3,
+    "atkType": "melee",
+    "atkInterval": 1.5,
+    "armor": 0,
+    "armorType": "none",
+    "range": 1,
+    "sight": 5,
+    "speed": 1,
+    "hitChance": 1,
+    "powderPerShot": 0,
+    "producible": true,
+    "cost": {
+      "grain": 35,
+      "wood": 0,
+      "powder": 0,
+      "deerskin": 0
+    },
+    "buildTime": 10,
+    "pop": 1,
+    "stage": 1,
+    "producedAt": [
+      "zeelandia_castle"
+    ],
+    "traits": [
+      "gatherer",
+      "builder"
+    ],
+    "naval": false,
+    "smallCraft": false
+  },
+  {
+    "id": "musketeer_voc",
+    "faction": "faction_voc",
+    "nameKey": "unit.musketeer_voc.name",
+    "class": "infantry",
+    "hp": 75,
+    "atk": 18,
+    "atkType": "musket",
+    "atkInterval": 2.8,
+    "armor": 1,
+    "armorType": "cuirass",
+    "range": 6,
+    "sight": 7,
+    "speed": 1,
+    "hitChance": 0.65,
+    "powderPerShot": 0.2,
+    "producible": true,
+    "cost": {
+      "grain": 60,
+      "wood": 10,
+      "powder": 0,
+      "deerskin": 0
+    },
+    "buildTime": 18,
+    "pop": 1,
+    "stage": 1,
+    "producedAt": [
+      "barracks_voc"
+    ],
+    "traits": [
+      "uses_powder",
+      "volley"
+    ],
+    "naval": false,
+    "smallCraft": false
+  },
+  {
+    "id": "pikeman",
+    "faction": "faction_voc",
+    "nameKey": "unit.pikeman.name",
+    "class": "infantry",
+    "hp": 110,
+    "atk": 11,
+    "atkType": "melee",
+    "atkInterval": 1.4,
+    "armor": 2,
+    "armorType": "cuirass",
+    "range": 2,
+    "sight": 5,
+    "speed": 0.9,
+    "hitChance": 1,
+    "powderPerShot": 0,
+    "producible": true,
+    "cost": {
+      "grain": 50,
+      "wood": 20,
+      "powder": 0,
+      "deerskin": 0
+    },
+    "buildTime": 15,
+    "pop": 1,
+    "stage": 1,
+    "producedAt": [
+      "barracks_voc"
+    ],
+    "traits": [
+      "anti_charge"
+    ],
+    "naval": false,
+    "smallCraft": false
+  },
+  {
+    "id": "grenadier",
+    "faction": "faction_voc",
+    "nameKey": "unit.grenadier.name",
+    "class": "infantry",
+    "hp": 70,
+    "atk": 35,
+    "atkType": "cannon",
+    "atkInterval": 5,
+    "armor": 1,
+    "armorType": "cuirass",
+    "range": 3,
+    "sight": 6,
+    "speed": 1,
+    "hitChance": 0.7,
+    "powderPerShot": 2,
+    "producible": true,
+    "cost": {
+      "grain": 60,
+      "wood": 0,
+      "powder": 10,
+      "deerskin": 0
+    },
+    "buildTime": 20,
+    "pop": 1,
+    "stage": 2,
+    "producedAt": [
+      "barracks_voc"
+    ],
+    "traits": [
+      "uses_powder",
+      "splash_1"
+    ],
+    "naval": false,
+    "smallCraft": false
+  },
+  {
+    "id": "field_cannon",
+    "faction": "faction_voc",
+    "nameKey": "unit.field_cannon.name",
+    "class": "siege",
+    "hp": 140,
+    "atk": 55,
+    "atkType": "cannon",
+    "atkInterval": 7,
+    "armor": 2,
+    "armorType": "building",
+    "range": 10,
+    "sight": 8,
+    "speed": 0.4,
+    "hitChance": 0.55,
+    "powderPerShot": 2,
+    "producible": true,
+    "cost": {
+      "grain": 30,
+      "wood": 100,
+      "powder": 10,
+      "deerskin": 0
+    },
+    "buildTime": 35,
+    "pop": 3,
+    "stage": 1,
+    "producedAt": [
+      "barracks_voc"
+    ],
+    "traits": [
+      "uses_powder",
+      "must_deploy"
+    ],
+    "naval": false,
+    "smallCraft": false
+  },
+  {
+    "id": "longboat",
+    "faction": "faction_voc",
+    "nameKey": "unit.longboat.name",
+    "class": "naval",
+    "hp": 120,
+    "atk": 6,
+    "atkType": "musket",
+    "atkInterval": 3,
+    "armor": 1,
+    "armorType": "ship",
+    "range": 4,
+    "sight": 6,
+    "speed": 1.6,
+    "hitChance": 0.6,
+    "powderPerShot": 0.2,
+    "producible": true,
+    "cost": {
+      "grain": 0,
+      "wood": 50,
+      "powder": 0,
+      "deerskin": 0
+    },
+    "buildTime": 15,
+    "pop": 1,
+    "stage": 1,
+    "producedAt": [
+      "dock_voc"
+    ],
+    "traits": [
+      "naval",
+      "small_craft",
+      "transport_6",
+      "uses_powder"
+    ],
+    "naval": true,
+    "smallCraft": true
+  },
+  {
+    "id": "yacht",
+    "faction": "faction_voc",
+    "nameKey": "unit.yacht.name",
+    "class": "naval",
+    "hp": 350,
+    "atk": 30,
+    "atkType": "cannon",
+    "atkInterval": 5,
+    "armor": 3,
+    "armorType": "ship",
+    "range": 8,
+    "sight": 9,
+    "speed": 1.5,
+    "hitChance": 0.55,
+    "powderPerShot": 2,
+    "producible": true,
+    "cost": {
+      "grain": 0,
+      "wood": 150,
+      "powder": 20,
+      "deerskin": 0
+    },
+    "buildTime": 40,
+    "pop": 3,
+    "stage": 1,
+    "producedAt": [
+      "dock_voc"
+    ],
+    "traits": [
+      "naval",
+      "uses_powder"
+    ],
+    "naval": true,
+    "smallCraft": false
+  },
+  {
+    "id": "warship",
+    "faction": "faction_voc",
+    "nameKey": "unit.warship.name",
+    "class": "naval",
+    "hp": 900,
+    "atk": 70,
+    "atkType": "cannon",
+    "atkInterval": 6,
+    "armor": 5,
+    "armorType": "ship",
+    "range": 10,
+    "sight": 10,
+    "speed": 1,
+    "hitChance": 0.55,
+    "powderPerShot": 2,
+    "producible": true,
+    "cost": {
+      "grain": 0,
+      "wood": 350,
+      "powder": 60,
+      "deerskin": 0
+    },
+    "buildTime": 70,
+    "pop": 6,
+    "stage": 1,
+    "producedAt": [
+      "dock_voc"
+    ],
+    "traits": [
+      "naval",
+      "broadside",
+      "uses_powder"
+    ],
+    "naval": true,
+    "smallCraft": false
+  },
+  {
+    "id": "coyett",
+    "faction": "faction_voc",
+    "nameKey": "unit.coyett.name",
+    "class": "hero",
+    "hp": 400,
+    "atk": 12,
+    "atkType": "musket",
+    "atkInterval": 2.5,
+    "armor": 3,
+    "armorType": "cuirass",
+    "range": 5,
+    "sight": 8,
+    "speed": 1,
+    "hitChance": 0.7,
+    "powderPerShot": 0.2,
+    "producible": false,
+    "cost": {
+      "grain": 0,
+      "wood": 0,
+      "powder": 0,
+      "deerskin": 0
+    },
+    "buildTime": 0,
+    "pop": 0,
+    "stage": 1,
+    "producedAt": [],
+    "traits": [
+      "hero",
+      "aura_coyett",
+      "uses_powder"
+    ],
+    "naval": false,
+    "smallCraft": false
+  },
+  {
+    "id": "pedel",
+    "faction": "faction_voc",
+    "nameKey": "unit.pedel.name",
+    "class": "hero",
+    "hp": 350,
+    "atk": 22,
+    "atkType": "musket",
+    "atkInterval": 2.5,
+    "armor": 3,
+    "armorType": "cuirass",
+    "range": 6,
+    "sight": 8,
+    "speed": 1.1,
+    "hitChance": 0.7,
+    "powderPerShot": 0.2,
+    "producible": false,
+    "cost": {
+      "grain": 0,
+      "wood": 0,
+      "powder": 0,
+      "deerskin": 0
+    },
+    "buildTime": 0,
+    "pop": 0,
+    "stage": 1,
+    "producedAt": [],
+    "traits": [
+      "hero",
+      "aura_pedel",
+      "uses_powder"
+    ],
+    "naval": false,
+    "smallCraft": false
+  },
+  {
+    "id": "village_warrior",
+    "faction": "faction_neutral",
+    "nameKey": "unit.village_warrior.name",
+    "class": "infantry",
+    "hp": 80,
+    "atk": 10,
+    "atkType": "arrow",
+    "atkInterval": 1.3,
+    "armor": 0,
+    "armorType": "none",
+    "range": 5,
+    "sight": 7,
+    "speed": 1.3,
+    "hitChance": 1,
+    "powderPerShot": 0,
+    "producible": false,
+    "cost": {
+      "grain": 0,
+      "wood": 0,
+      "powder": 0,
+      "deerskin": 0
+    },
+    "buildTime": 0,
+    "pop": 1,
+    "stage": 1,
+    "producedAt": [],
+    "traits": [
+      "forest_stealth",
+      "fast_terrain"
+    ],
+    "naval": false,
+    "smallCraft": false
+  },
+  {
+    "id": "village_hunter",
+    "faction": "faction_neutral",
+    "nameKey": "unit.village_hunter.name",
+    "class": "worker",
+    "hp": 50,
+    "atk": 5,
+    "atkType": "arrow",
+    "atkInterval": 1.5,
+    "armor": 0,
+    "armorType": "none",
+    "range": 5,
+    "sight": 6,
+    "speed": 1.2,
+    "hitChance": 1,
+    "powderPerShot": 0,
+    "producible": false,
+    "cost": {
+      "grain": 0,
+      "wood": 0,
+      "powder": 0,
+      "deerskin": 0
+    },
+    "buildTime": 0,
+    "pop": 0,
+    "stage": 1,
+    "producedAt": [],
+    "traits": [
+      "gatherer"
+    ],
+    "naval": false,
+    "smallCraft": false
+  },
+  {
+    "id": "settler",
+    "faction": "faction_neutral",
+    "nameKey": "unit.settler.name",
+    "class": "worker",
+    "hp": 35,
+    "atk": 2,
+    "atkType": "melee",
+    "atkInterval": 2,
+    "armor": 0,
+    "armorType": "none",
+    "range": 1,
+    "sight": 4,
+    "speed": 0.9,
+    "hitChance": 1,
+    "powderPerShot": 0,
+    "producible": false,
+    "cost": {
+      "grain": 0,
+      "wood": 0,
+      "powder": 0,
+      "deerskin": 0
+    },
+    "buildTime": 0,
+    "pop": 0,
+    "stage": 1,
+    "producedAt": [],
+    "traits": [
+      "gatherer",
+      "non_combat"
+    ],
+    "naval": false,
+    "smallCraft": false
+  }
+]

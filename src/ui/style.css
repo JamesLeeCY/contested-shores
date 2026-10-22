@@ -1,0 +1,15 @@
+:root {
+  --bg: #1d2a2e;
+  --panel: rgba(28, 24, 18, 0.88);
+  --panel-border: #8a6d3b;
+  --text: #f1e6cf;
+  --muted: #b9a988;
+  --accent: #e0a84a;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; height: 100%; overflow: hidden; background: var(--bg); color: var(--text);
+  font-family: 'Noto Sans TC', 'Microsoft JhengHei', 'PingFang TC', sans-serif; font-size: 14px; user-select: none; }
+#game { position: fixed; inset: 0; }
+#game canvas { display: block; }
+#ui { position: fixed; inset: 0; pointer-events: none; }
+#ui > * { pointer-events: auto; }

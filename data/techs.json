@@ -1,0 +1,305 @@
+[
+  {
+    "id": "tech_herbal",
+    "faction": "faction_zheng",
+    "nameKey": "tech.tech_herbal.name",
+    "descKey": "tech.tech_herbal.desc",
+    "researchedAt": "camp_zheng",
+    "cost": {
+      "grain": 150,
+      "wood": 0,
+      "powder": 0,
+      "deerskin": 30
+    },
+    "time": 45,
+    "stage": 1,
+    "effects": [
+      {
+        "type": "set_rule",
+        "path": "disease.chanceZheng",
+        "value": 0.008
+      }
+    ]
+  },
+  {
+    "id": "tech_tuntian_ext",
+    "faction": "faction_zheng",
+    "nameKey": "tech.tech_tuntian_ext.name",
+    "descKey": "tech.tech_tuntian_ext.desc",
+    "researchedAt": "camp_zheng",
+    "cost": {
+      "grain": 200,
+      "wood": 100,
+      "powder": 0,
+      "deerskin": 0
+    },
+    "time": 60,
+    "stage": 2,
+    "effects": [
+      {
+        "type": "mul_rule",
+        "path": "tuntian.grainPerDay",
+        "value": 1.5
+      }
+    ]
+  },
+  {
+    "id": "tech_hebin_map",
+    "faction": "faction_zheng",
+    "nameKey": "tech.tech_hebin_map.name",
+    "descKey": "tech.tech_hebin_map.desc",
+    "researchedAt": "camp_zheng",
+    "cost": {
+      "grain": 100,
+      "wood": 0,
+      "powder": 0,
+      "deerskin": 0
+    },
+    "time": 30,
+    "stage": 1,
+    "effects": [
+      {
+        "type": "reveal_terrain",
+        "terrain": [
+          "shallow",
+          "tidal_flat"
+        ]
+      },
+      {
+        "type": "set_rule",
+        "path": "naval.smallCraftShallowSpeedMul",
+        "value": 1.2
+      }
+    ]
+  },
+  {
+    "id": "tech_siege_drill",
+    "faction": "faction_zheng",
+    "nameKey": "tech.tech_siege_drill.name",
+    "descKey": "tech.tech_siege_drill.desc",
+    "researchedAt": "barracks_zheng",
+    "cost": {
+      "grain": 100,
+      "wood": 100,
+      "powder": 50,
+      "deerskin": 0
+    },
+    "time": 60,
+    "stage": 2,
+    "effects": [
+      {
+        "type": "add_unit_stat",
+        "units": [
+          "light_cannon",
+          "heavy_cannon"
+        ],
+        "stat": "hitChance",
+        "value": 0.1
+      }
+    ]
+  },
+  {
+    "id": "tech_iron_scale",
+    "faction": "faction_zheng",
+    "nameKey": "tech.tech_iron_scale.name",
+    "descKey": "tech.tech_iron_scale.desc",
+    "researchedAt": "barracks_zheng",
+    "cost": {
+      "grain": 200,
+      "wood": 0,
+      "powder": 0,
+      "deerskin": 0
+    },
+    "time": 50,
+    "stage": 2,
+    "effects": [
+      {
+        "type": "add_unit_stat",
+        "units": [
+          "iron_man"
+        ],
+        "stat": "armor",
+        "value": 1
+      }
+    ]
+  },
+  {
+    "id": "tech_amnesty",
+    "faction": "faction_zheng",
+    "nameKey": "tech.tech_amnesty.name",
+    "descKey": "tech.tech_amnesty.desc",
+    "researchedAt": "camp_zheng",
+    "cost": {
+      "grain": 150,
+      "wood": 0,
+      "powder": 0,
+      "deerskin": 50
+    },
+    "time": 45,
+    "stage": 1,
+    "effects": [
+      {
+        "type": "mul_rule",
+        "path": "diplomacy.pacify.cooldown",
+        "value": 0.5
+      },
+      {
+        "type": "add_rule",
+        "path": "diplomacy.pacify.favor",
+        "value": 5
+      }
+    ]
+  },
+  {
+    "id": "tech_drill_voc",
+    "faction": "faction_voc",
+    "nameKey": "tech.tech_drill_voc.name",
+    "descKey": "tech.tech_drill_voc.desc",
+    "researchedAt": "barracks_voc",
+    "cost": {
+      "grain": 150,
+      "wood": 0,
+      "powder": 20,
+      "deerskin": 0
+    },
+    "time": 50,
+    "stage": 1,
+    "effects": [
+      {
+        "type": "set_unit_stat",
+        "units": [
+          "musketeer_voc"
+        ],
+        "stat": "atkInterval",
+        "value": 2.4
+      }
+    ]
+  },
+  {
+    "id": "tech_bastion_guns",
+    "faction": "faction_voc",
+    "nameKey": "tech.tech_bastion_guns.name",
+    "descKey": "tech.tech_bastion_guns.desc",
+    "researchedAt": "zeelandia_castle",
+    "cost": {
+      "grain": 0,
+      "wood": 200,
+      "powder": 50,
+      "deerskin": 0
+    },
+    "time": 70,
+    "stage": 2,
+    "effects": [
+      {
+        "type": "add_building_attack",
+        "buildings": [
+          "bastion",
+          "zeelandia_castle"
+        ],
+        "range": 1,
+        "atk": 10
+      }
+    ]
+  },
+  {
+    "id": "tech_rationing",
+    "faction": "faction_voc",
+    "nameKey": "tech.tech_rationing.name",
+    "descKey": "tech.tech_rationing.desc",
+    "researchedAt": "zeelandia_castle",
+    "cost": {
+      "grain": 0,
+      "wood": 0,
+      "powder": 0,
+      "deerskin": 0
+    },
+    "time": 30,
+    "stage": 1,
+    "effects": [
+      {
+        "type": "mul_rule",
+        "path": "upkeep.factionMul.faction_voc",
+        "value": 0.7
+      },
+      {
+        "type": "set_rule",
+        "path": "morale.unitMaxByFaction.faction_voc",
+        "value": 90
+      }
+    ]
+  },
+  {
+    "id": "tech_counter_mine",
+    "faction": "faction_voc",
+    "nameKey": "tech.tech_counter_mine.name",
+    "descKey": "tech.tech_counter_mine.desc",
+    "researchedAt": "zeelandia_castle",
+    "cost": {
+      "grain": 0,
+      "wood": 150,
+      "powder": 30,
+      "deerskin": 0
+    },
+    "time": 50,
+    "stage": 2,
+    "effects": [
+      {
+        "type": "set_rule",
+        "path": "siege.counterMineRadius",
+        "value": 4
+      }
+    ]
+  },
+  {
+    "id": "tech_landdag",
+    "faction": "faction_voc",
+    "nameKey": "tech.tech_landdag.name",
+    "descKey": "tech.tech_landdag.desc",
+    "researchedAt": "zeelandia_castle",
+    "cost": {
+      "grain": 100,
+      "wood": 0,
+      "powder": 0,
+      "deerskin": 40
+    },
+    "time": 45,
+    "stage": 1,
+    "effects": [
+      {
+        "type": "favor_all",
+        "faction": "faction_voc",
+        "value": 10
+      },
+      {
+        "type": "add_rule",
+        "path": "diplomacy.giftBonus.faction_voc",
+        "value": 5
+      }
+    ]
+  },
+  {
+    "id": "tech_grapeshot",
+    "faction": "faction_voc",
+    "nameKey": "tech.tech_grapeshot.name",
+    "descKey": "tech.tech_grapeshot.desc",
+    "researchedAt": "zeelandia_castle",
+    "cost": {
+      "grain": 0,
+      "wood": 0,
+      "powder": 80,
+      "deerskin": 0
+    },
+    "time": 60,
+    "stage": 2,
+    "effects": [
+      {
+        "type": "add_building_trait",
+        "buildings": [
+          "bastion",
+          "zeelandia_castle"
+        ],
+        "trait": "grapeshot"
+      }
+    ]
+  }
+]

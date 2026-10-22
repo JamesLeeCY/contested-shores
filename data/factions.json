@@ -1,0 +1,27 @@
+{
+  "playable": [
+    {
+      "id": "faction_zheng",
+      "nameKey": "faction.faction_zheng.name",
+      "basePopCap": 120,
+      "colors": { "primary": "#c0392b", "secondary": "#1b1b1b" },
+      "heroes": ["koxinga"],
+      "startResources": { "grain": 600, "wood": 400, "powder": 100, "deerskin": 50 }
+    },
+    {
+      "id": "faction_voc",
+      "nameKey": "faction.faction_voc.name",
+      "basePopCap": 40,
+      "colors": { "primary": "#e67e22", "secondary": "#1f3a5f" },
+      "heroes": ["coyett", "pedel"],
+      "startResources": { "grain": 1500, "wood": 300, "powder": 600, "deerskin": 0 }
+    }
+  ],
+  "villages": [
+    { "id": "sinkan", "dutchName": "Sinkan", "nameKey": "village.sinkan.name", "pos": [148, 46], "color": "#c9a227", "favor": { "faction_zheng": 40, "faction_voc": 55 }, "pacifyMul": 1.5, "allianceBonus": { "type": "none" } },
+    { "id": "mattau", "dutchName": "Mattau", "nameKey": "village.mattau.name", "pos": [141, 7], "color": "#a0522d", "favor": { "faction_zheng": 30, "faction_voc": 40 }, "pacifyMul": 1.0, "allianceBonus": { "type": "warriors", "count": 8 } },
+    { "id": "soulang", "dutchName": "Soulang", "nameKey": "village.soulang.name", "pos": [139, 16], "color": "#6b8e23", "favor": { "faction_zheng": 35, "faction_voc": 45 }, "pacifyMul": 1.0, "allianceBonus": { "type": "daily_deerskin", "amount": 20 } },
+    { "id": "bakloan", "dutchName": "Bakloan", "nameKey": "village.bakloan.name", "pos": [146, 26], "color": "#3f51b5", "favor": { "faction_zheng": 35, "faction_voc": 50 }, "pacifyMul": 1.0, "allianceBonus": { "type": "territory_speed", "mul": 1.2 } }
+  ],
+  "settlers": { "id": "faction_settlers", "nameKey": "faction.faction_settlers.name", "color": "#f5f0e1" }
+}

@@ -1,0 +1,339 @@
+{
+  "sim": {
+    "tickHz": 20,
+    "ticksPerDay": 1200,
+    "fogUpdateTicks": 5
+  },
+  "resources": [
+    "grain",
+    "wood",
+    "powder",
+    "deerskin"
+  ],
+  "gather": {
+    "rates": {
+      "laborer": {
+        "grain": 0.6,
+        "wood": 0.5,
+        "deerskin": 0.3
+      },
+      "company_worker": {
+        "grain": 0.5,
+        "wood": 0.45,
+        "deerskin": 0.3
+      },
+      "village_hunter": {
+        "grain": 0,
+        "wood": 0,
+        "deerskin": 0.3
+      },
+      "settler": {
+        "grain": 0.5,
+        "wood": 0.3,
+        "deerskin": 0
+      }
+    },
+    "carry": 10,
+    "deerHerd": {
+      "amount": 200,
+      "regenPerDay": 5
+    },
+    "forestTileWood": 150
+  },
+  "powder": {
+    "musketPerShot": 0.2,
+    "cannonPerShot": 2,
+    "noPowderMeleeMul": 0.4
+  },
+  "trade": {
+    "deerskinToGrain": 3
+  },
+  "upkeep": {
+    "combatPerDay": 1,
+    "workerPerDay": 0.5,
+    "factionMul": {
+      "faction_zheng": 1,
+      "faction_voc": 1
+    },
+    "starvation": {
+      "grainPerStep": 10,
+      "moralePerStep": -5
+    }
+  },
+  "tuntian": {
+    "grainPerDay": 2,
+    "recallSeconds": 10
+  },
+  "combat": {
+    "damageMatrix": {
+      "melee": {
+        "none": 1,
+        "scale": 0.8,
+        "cuirass": 0.7,
+        "building": 0.2,
+        "ship": 0.3
+      },
+      "arrow": {
+        "none": 1.2,
+        "scale": 0.5,
+        "cuirass": 0.6,
+        "building": 0.05,
+        "ship": 0.2
+      },
+      "musket": {
+        "none": 1.2,
+        "scale": 1,
+        "cuirass": 0.8,
+        "building": 0.1,
+        "ship": 0.3
+      },
+      "cannon": {
+        "none": 1.5,
+        "scale": 1.5,
+        "cuirass": 1.5,
+        "building": 1,
+        "ship": 1
+      },
+      "fire": {
+        "none": 0.5,
+        "scale": 0.5,
+        "cuirass": 0.5,
+        "building": 0.6,
+        "ship": 2
+      }
+    },
+    "minDamage": 1,
+    "trenchCoverMul": 0.5,
+    "elevatedRangeBonus": 1,
+    "elevatedSightBonus": 2,
+    "crossfire": {
+      "minSources": 2,
+      "bonus": 0.25
+    },
+    "traits": {
+      "block_arrow_30": {
+        "chance": 0.3
+      },
+      "cleave_2": {
+        "maxTargets": 2,
+        "radius": 1,
+        "ratio": 0.5
+      },
+      "volley": {
+        "minUnits": 3,
+        "radius": 2,
+        "hitBonus": 0.15
+      },
+      "anti_charge": {
+        "targets": [
+          "iron_man",
+          "shield_soldier"
+        ],
+        "bonus": 0.25
+      },
+      "must_deploy": {
+        "seconds": 4
+      },
+      "broadside": {
+        "maxTargets": 2
+      },
+      "suicide": {
+        "radius": 1
+      },
+      "forest_stealth": {
+        "revealDistance": 2
+      },
+      "splash_1": {
+        "radius": 1,
+        "ratio": 0.5
+      }
+    }
+  },
+  "morale": {
+    "unitStart": 70,
+    "unitMax": 100,
+    "unitMaxByFaction": {
+      "faction_zheng": 100,
+      "faction_voc": 100
+    },
+    "bands": [
+      {
+        "min": 70,
+        "mod": 1.1,
+        "speedMul": 1
+      },
+      {
+        "min": 30,
+        "mod": 1,
+        "speedMul": 1
+      },
+      {
+        "min": 10,
+        "mod": 0.8,
+        "speedMul": 0.9
+      },
+      {
+        "min": 0,
+        "mod": 0.8,
+        "speedMul": 0.9,
+        "rout": true
+      }
+    ],
+    "routSeconds": 10,
+    "allyDeath": {
+      "delta": -3,
+      "radius": 4
+    },
+    "kill": 2,
+    "heroAuraPerSecond": 1,
+    "castle": {
+      "start": 80,
+      "reliefFailed": -30,
+      "outpostLost": -20,
+      "supplyArrived": 10,
+      "assaultRepelled": 15
+    }
+  },
+  "heroes": {
+    "aura_koxinga": {
+      "radius": 6,
+      "atkBonus": 0.15,
+      "moraleRegenMul": 1.5
+    },
+    "aura_coyett": {
+      "radius": 8,
+      "buildingDamageTakenMul": 0.8,
+      "castleMoraleLossMul": 0.7
+    },
+    "aura_pedel": {
+      "radius": 6,
+      "atkBonus": 0.1
+    }
+  },
+  "disease": {
+    "chanceZheng": 0.015,
+    "chanceVoc": 0.005,
+    "lateChapterFrom": 3,
+    "lateChapterMul": 1.5
+  },
+  "tide": {
+    "phases": [
+      {
+        "id": "rising",
+        "seconds": 90,
+        "high": true
+      },
+      {
+        "id": "high",
+        "seconds": 30,
+        "high": true
+      },
+      {
+        "id": "falling",
+        "seconds": 90,
+        "high": false
+      },
+      {
+        "id": "low",
+        "seconds": 30,
+        "high": false
+      }
+    ],
+    "strandedDamageTakenMul": 1.5
+  },
+  "naval": {
+    "smallCraftShallowSpeedMul": 1
+  },
+  "diplomacy": {
+    "favorMin": 0,
+    "favorMax": 100,
+    "joinAt": 80,
+    "joinMargin": 20,
+    "leaveBelow": 40,
+    "hostileBelow": 20,
+    "driftTarget": 50,
+    "driftPerDay": 1,
+    "events": {
+      "fightInTerritory": -5,
+      "raidGranary": -30,
+      "gift": 10,
+      "protect": 15,
+      "attackVillageCenter": -50
+    },
+    "gift": {
+      "grain": 50,
+      "deerskin": 20,
+      "favor": 10,
+      "cooldown": 60
+    },
+    "giftBonus": {
+      "faction_zheng": 0,
+      "faction_voc": 0
+    },
+    "pacify": {
+      "grain": 100,
+      "deerskin": 30,
+      "favor": 20,
+      "cooldown": 120
+    },
+    "requestWarriors": {
+      "cooldownDays": 1
+    },
+    "territoryRadius": 8,
+    "hostileRaid": {
+      "everyDays": 2,
+      "warriors": 4
+    },
+    "invadedResponseSeconds": 60,
+    "tatuEvent": {
+      "minSoldiers": 30,
+      "chance": 0.4
+    }
+  },
+  "settlers": {
+    "startFavor": {
+      "faction_zheng": 50,
+      "faction_voc": 30
+    },
+    "provintiaCapturedBonus": 30,
+    "requisition": {
+      "grain": 200,
+      "favor": -40
+    }
+  },
+  "supply": {
+    "everyDays": 3,
+    "grain": 100,
+    "powder": 50
+  },
+  "typhoon": {
+    "durationSeconds": 60,
+    "warnSeconds": 30,
+    "shipDamagePctPerSecond": 0.01,
+    "sightMul": 0.5,
+    "rangedHitPenalty": 0.3,
+    "randomChance": 0.2
+  },
+  "siege": {
+    "trench": {
+      "wood": 10,
+      "seconds": 8
+    },
+    "battery": {
+      "wood": 80,
+      "seconds": 30,
+      "rangeBonus": 2,
+      "damageTakenMul": 0.7
+    },
+    "mine": {
+      "secondsPerTile": 15,
+      "maxTiles": 8,
+      "wallDamage": 1500
+    },
+    "counterMineRadius": 0,
+    "sandBuildingHpMul": 0.9
+  },
+  "finalDefense": {
+    "buildingHpMul": 1.2
+  }
+}

@@ -1,0 +1,507 @@
+[
+  {
+    "id": "camp_zheng",
+    "faction": "faction_zheng",
+    "nameKey": "building.camp_zheng.name",
+    "hp": 1500,
+    "armor": 3,
+    "armorType": "building",
+    "preset": false,
+    "cost": {
+      "grain": 0,
+      "wood": 200,
+      "powder": 0,
+      "deerskin": 0
+    },
+    "buildTime": 60,
+    "popCap": 25,
+    "size": 4,
+    "sight": 8,
+    "dropoff": true,
+    "produces": [
+      "laborer"
+    ],
+    "researches": [
+      "tech_herbal",
+      "tech_tuntian_ext",
+      "tech_hebin_map",
+      "tech_amnesty"
+    ],
+    "garrison": 10,
+    "diseaseShelter": true,
+    "attack": null
+  },
+  {
+    "id": "barracks_zheng",
+    "faction": "faction_zheng",
+    "nameKey": "building.barracks_zheng.name",
+    "hp": 800,
+    "armor": 2,
+    "armorType": "building",
+    "preset": false,
+    "cost": {
+      "grain": 0,
+      "wood": 150,
+      "powder": 0,
+      "deerskin": 0
+    },
+    "buildTime": 40,
+    "popCap": 0,
+    "size": 3,
+    "sight": 8,
+    "dropoff": false,
+    "produces": [
+      "shield_soldier",
+      "archer_zheng",
+      "iron_man",
+      "musketeer_zheng",
+      "light_cannon",
+      "heavy_cannon"
+    ],
+    "researches": [
+      "tech_siege_drill",
+      "tech_iron_scale"
+    ],
+    "garrison": 0,
+    "diseaseShelter": false,
+    "attack": null
+  },
+  {
+    "id": "shipyard_zheng",
+    "faction": "faction_zheng",
+    "nameKey": "building.shipyard_zheng.name",
+    "hp": 700,
+    "armor": 2,
+    "armorType": "building",
+    "preset": false,
+    "cost": {
+      "grain": 0,
+      "wood": 150,
+      "powder": 0,
+      "deerskin": 0
+    },
+    "buildTime": 40,
+    "popCap": 0,
+    "size": 3,
+    "sight": 8,
+    "dropoff": false,
+    "produces": [
+      "junk",
+      "fire_ship"
+    ],
+    "researches": [],
+    "garrison": 0,
+    "diseaseShelter": false,
+    "attack": null,
+    "needsWater": true
+  },
+  {
+    "id": "powder_mill",
+    "faction": "faction_zheng",
+    "nameKey": "building.powder_mill.name",
+    "hp": 500,
+    "armor": 1,
+    "armorType": "building",
+    "preset": false,
+    "cost": {
+      "grain": 0,
+      "wood": 120,
+      "powder": 0,
+      "deerskin": 0
+    },
+    "buildTime": 35,
+    "popCap": 0,
+    "size": 3,
+    "sight": 8,
+    "dropoff": false,
+    "produces": [],
+    "researches": [],
+    "garrison": 0,
+    "diseaseShelter": false,
+    "attack": null,
+    "converter": {
+      "from": {
+        "wood": 2
+      },
+      "to": {
+        "powder": 1
+      },
+      "seconds": 5
+    }
+  },
+  {
+    "id": "tuntian",
+    "faction": "faction_zheng",
+    "nameKey": "building.tuntian.name",
+    "hp": 300,
+    "armor": 0,
+    "armorType": "building",
+    "preset": false,
+    "cost": {
+      "grain": 0,
+      "wood": 60,
+      "powder": 0,
+      "deerskin": 0
+    },
+    "buildTime": 20,
+    "popCap": 0,
+    "size": 3,
+    "sight": 8,
+    "dropoff": false,
+    "produces": [],
+    "researches": [],
+    "garrison": 0,
+    "diseaseShelter": false,
+    "attack": null,
+    "tuntianCapacity": 10
+  },
+  {
+    "id": "warehouse",
+    "faction": "any",
+    "nameKey": "building.warehouse.name",
+    "hp": 400,
+    "armor": 1,
+    "armorType": "building",
+    "preset": false,
+    "cost": {
+      "grain": 0,
+      "wood": 80,
+      "powder": 0,
+      "deerskin": 0
+    },
+    "buildTime": 25,
+    "popCap": 5,
+    "size": 3,
+    "sight": 8,
+    "dropoff": true,
+    "produces": [],
+    "researches": [],
+    "garrison": 0,
+    "diseaseShelter": false,
+    "attack": null
+  },
+  {
+    "id": "zeelandia_castle",
+    "faction": "faction_voc",
+    "nameKey": "building.zeelandia_castle.name",
+    "hp": 6000,
+    "armor": 8,
+    "armorType": "building",
+    "preset": true,
+    "cost": {
+      "grain": 0,
+      "wood": 0,
+      "powder": 0,
+      "deerskin": 0
+    },
+    "buildTime": 0,
+    "popCap": 40,
+    "size": 6,
+    "sight": 8,
+    "dropoff": true,
+    "produces": [
+      "company_worker"
+    ],
+    "researches": [
+      "tech_bastion_guns",
+      "tech_rationing",
+      "tech_counter_mine",
+      "tech_landdag",
+      "tech_grapeshot"
+    ],
+    "garrison": 20,
+    "diseaseShelter": true,
+    "attack": {
+      "guns": 4,
+      "atk": 60,
+      "atkType": "cannon",
+      "range": 10,
+      "atkInterval": 6,
+      "hitChance": 0.6
+    },
+    "isMainBase": true
+  },
+  {
+    "id": "bastion",
+    "faction": "faction_voc",
+    "nameKey": "building.bastion.name",
+    "hp": 2500,
+    "armor": 6,
+    "armorType": "building",
+    "preset": true,
+    "cost": {
+      "grain": 0,
+      "wood": 0,
+      "powder": 0,
+      "deerskin": 0
+    },
+    "buildTime": 0,
+    "popCap": 0,
+    "size": 3,
+    "sight": 8,
+    "dropoff": false,
+    "produces": [],
+    "researches": [],
+    "garrison": 6,
+    "diseaseShelter": true,
+    "attack": {
+      "guns": 2,
+      "atk": 55,
+      "atkType": "cannon",
+      "range": 11,
+      "atkInterval": 6,
+      "hitChance": 0.6
+    },
+    "crossfire": true,
+    "repair": {
+      "wood": 1,
+      "hp": 2
+    }
+  },
+  {
+    "id": "lower_town_wall",
+    "faction": "faction_voc",
+    "nameKey": "building.lower_town_wall.name",
+    "hp": 1200,
+    "armor": 6,
+    "armorType": "building",
+    "preset": true,
+    "cost": {
+      "grain": 0,
+      "wood": 0,
+      "powder": 0,
+      "deerskin": 0
+    },
+    "buildTime": 0,
+    "popCap": 0,
+    "size": 1,
+    "sight": 8,
+    "dropoff": false,
+    "produces": [],
+    "researches": [],
+    "garrison": 0,
+    "diseaseShelter": false,
+    "attack": null,
+    "blocksMovement": true
+  },
+  {
+    "id": "utrecht_redoubt",
+    "faction": "faction_voc",
+    "nameKey": "building.utrecht_redoubt.name",
+    "hp": 1800,
+    "armor": 5,
+    "armorType": "building",
+    "preset": true,
+    "cost": {
+      "grain": 0,
+      "wood": 0,
+      "powder": 0,
+      "deerskin": 0
+    },
+    "buildTime": 0,
+    "popCap": 0,
+    "size": 3,
+    "sight": 8,
+    "dropoff": false,
+    "produces": [],
+    "researches": [],
+    "garrison": 6,
+    "diseaseShelter": true,
+    "attack": {
+      "guns": 2,
+      "atk": 50,
+      "atkType": "cannon",
+      "range": 10,
+      "atkInterval": 6,
+      "hitChance": 0.6
+    },
+    "capturable": true,
+    "onCapture": {
+      "cannonVsMainBaseBonus": 0.5
+    }
+  },
+  {
+    "id": "provintia_fort",
+    "faction": "faction_voc",
+    "nameKey": "building.provintia_fort.name",
+    "hp": 2000,
+    "armor": 5,
+    "armorType": "building",
+    "preset": true,
+    "cost": {
+      "grain": 0,
+      "wood": 0,
+      "powder": 0,
+      "deerskin": 0
+    },
+    "buildTime": 0,
+    "popCap": 10,
+    "size": 5,
+    "sight": 8,
+    "dropoff": true,
+    "produces": [],
+    "researches": [],
+    "garrison": 14,
+    "diseaseShelter": true,
+    "attack": {
+      "guns": 2,
+      "atk": 45,
+      "atkType": "cannon",
+      "range": 9,
+      "atkInterval": 6,
+      "hitChance": 0.6
+    },
+    "capturable": true,
+    "onCapture": {
+      "becomesMainBase": true
+    }
+  },
+  {
+    "id": "barracks_voc",
+    "faction": "faction_voc",
+    "nameKey": "building.barracks_voc.name",
+    "hp": 800,
+    "armor": 3,
+    "armorType": "building",
+    "preset": false,
+    "cost": {
+      "grain": 0,
+      "wood": 180,
+      "powder": 0,
+      "deerskin": 0
+    },
+    "buildTime": 40,
+    "popCap": 0,
+    "size": 3,
+    "sight": 8,
+    "dropoff": false,
+    "produces": [
+      "musketeer_voc",
+      "pikeman",
+      "grenadier",
+      "field_cannon"
+    ],
+    "researches": [
+      "tech_drill_voc"
+    ],
+    "garrison": 0,
+    "diseaseShelter": false,
+    "attack": null
+  },
+  {
+    "id": "dock_voc",
+    "faction": "faction_voc",
+    "nameKey": "building.dock_voc.name",
+    "hp": 900,
+    "armor": 3,
+    "armorType": "building",
+    "preset": true,
+    "cost": {
+      "grain": 0,
+      "wood": 0,
+      "powder": 0,
+      "deerskin": 0
+    },
+    "buildTime": 0,
+    "popCap": 0,
+    "size": 3,
+    "sight": 8,
+    "dropoff": false,
+    "produces": [
+      "longboat",
+      "yacht",
+      "warship"
+    ],
+    "researches": [],
+    "garrison": 0,
+    "diseaseShelter": false,
+    "attack": null,
+    "needsWater": true,
+    "supplyDropoff": true
+  },
+  {
+    "id": "farm",
+    "faction": "any",
+    "nameKey": "building.farm.name",
+    "hp": 200,
+    "armor": 0,
+    "armorType": "building",
+    "preset": false,
+    "cost": {
+      "grain": 0,
+      "wood": 50,
+      "powder": 0,
+      "deerskin": 0
+    },
+    "buildTime": 15,
+    "popCap": 0,
+    "size": 3,
+    "sight": 8,
+    "dropoff": false,
+    "produces": [],
+    "researches": [],
+    "garrison": 0,
+    "diseaseShelter": false,
+    "attack": null,
+    "gatherPoint": {
+      "resource": "grain",
+      "infinite": true,
+      "maxGatherers": 3
+    }
+  },
+  {
+    "id": "sugar_mill",
+    "faction": "faction_settlers",
+    "nameKey": "building.sugar_mill.name",
+    "hp": 400,
+    "armor": 1,
+    "armorType": "building",
+    "preset": true,
+    "cost": {
+      "grain": 0,
+      "wood": 0,
+      "powder": 0,
+      "deerskin": 0
+    },
+    "buildTime": 0,
+    "popCap": 0,
+    "size": 3,
+    "sight": 8,
+    "dropoff": false,
+    "produces": [],
+    "researches": [],
+    "garrison": 0,
+    "diseaseShelter": false,
+    "attack": null,
+    "dailyIncome": {
+      "grain": 60
+    }
+  },
+  {
+    "id": "village_center",
+    "faction": "faction_village",
+    "nameKey": "building.village_center.name",
+    "hp": 1500,
+    "armor": 2,
+    "armorType": "building",
+    "preset": true,
+    "cost": {
+      "grain": 0,
+      "wood": 0,
+      "powder": 0,
+      "deerskin": 0
+    },
+    "buildTime": 0,
+    "popCap": 0,
+    "size": 3,
+    "sight": 8,
+    "dropoff": false,
+    "produces": [],
+    "researches": [],
+    "garrison": 0,
+    "diseaseShelter": false,
+    "attack": null,
+    "capturable": false,
+    "attackFavorPenalty": -50
+  }
+]
