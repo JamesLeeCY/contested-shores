@@ -227,7 +227,12 @@
     "chanceZheng": 0.015,
     "chanceVoc": 0.005,
     "lateChapterFrom": 3,
-    "lateChapterMul": 1.5
+    "lateChapterMul": 1.5,
+    "heroesImmune": true,
+    "playerMul": {
+      "faction_zheng": 1,
+      "faction_voc": 1
+    }
   },
   "tide": {
     "phases": [
@@ -293,7 +298,8 @@
       "cooldown": 120
     },
     "requestWarriors": {
-      "cooldownDays": 1
+      "cooldownDays": 1,
+      "count": 2
     },
     "territoryRadius": 8,
     "hostileRaid": {
@@ -304,7 +310,18 @@
     "tatuEvent": {
       "minSoldiers": 30,
       "chance": 0.4
-    }
+    },
+    "fightThrottleSeconds": 10,
+    "attackCenterThrottleSeconds": 30,
+    "protectThrottleSeconds": 60,
+    "raid": {
+      "grain": 100,
+      "favor": -30,
+      "cooldownDays": 1
+    },
+    "logSize": 3,
+    "raidRetreatSeconds": 45,
+    "huntersPerVillage": 2
   },
   "settlers": {
     "startFavor": {
@@ -315,12 +332,20 @@
     "requisition": {
       "grain": 200,
       "favor": -40
-    }
+    },
+    "joinRule": "same_as_villages",
+    "farmers": 3
   },
   "supply": {
     "everyDays": 3,
     "grain": 100,
-    "powder": 50
+    "powder": 50,
+    "spawn": [
+      1.5,
+      46.5
+    ],
+    "deliverRange": 3,
+    "shipType": "supply_ship"
   },
   "typhoon": {
     "durationSeconds": 60,
@@ -328,7 +353,11 @@
     "shipDamagePctPerSecond": 0.01,
     "sightMul": 0.5,
     "rangedHitPenalty": 0.3,
-    "randomChance": 0.2
+    "randomChance": 0.2,
+    "affectedTerrain": [
+      "deep_water",
+      "shallow"
+    ]
   },
   "siege": {
     "trench": {
@@ -557,5 +586,12 @@
   "fog": {
     "hillSightBonus": 2,
     "garrisonSightBonus": 2
+  },
+  "tatu": {
+    "region": "north_exit",
+    "minSoldiers": 30,
+    "chance": 0.4,
+    "batchGapSeconds": 10,
+    "grainPerDayEach": 2
   }
 }

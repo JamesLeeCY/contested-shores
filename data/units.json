@@ -816,5 +816,39 @@
     ],
     "naval": false,
     "smallCraft": false
+  },
+  {
+    "id": "supply_ship",
+    "faction": "faction_voc",
+    "nameKey": "unit.supply_ship.name",
+    "class": "naval",
+    "hp": 400,
+    "atk": 0,
+    "atkType": "cannon",
+    "atkInterval": 0,
+    "armor": 3,
+    "armorType": "ship",
+    "range": 1,
+    "sight": 8,
+    "speed": 1.3,
+    "hitChance": 0,
+    "powderPerShot": 0,
+    "producible": false,
+    "cost": {
+      "grain": 0,
+      "wood": 0,
+      "powder": 0,
+      "deerskin": 0
+    },
+    "buildTime": 0,
+    "pop": 0,
+    "stage": 1,
+    "producedAt": [],
+    "traits": [
+      "naval",
+      "non_combat"
+    ],
+    "naval": true,
+    "smallCraft": false
   }
 ]

@@ -21,7 +21,14 @@ export type Command =
   | { type: 'patrol'; owner: Owner; ids: number[]; x: number; y: number }
   | { type: 'dig_mine'; owner: Owner; ids: number[]; target: number }
   | { type: 'embark'; owner: Owner; ids: number[]; target: number }
-  | { type: 'unload'; owner: Owner; ids: number[]; x?: number; y?: number };
+  | { type: 'unload'; owner: Owner; ids: number[]; x?: number; y?: number }
+  | {
+      type: 'diplomacy';
+      owner: Owner;
+      party: string;
+      action: 'gift_grain' | 'gift_deerskin' | 'pacify' | 'request_warriors' | 'raid' | 'requisition';
+    }
+  | { type: 'sandbox'; owner: Owner; action: string; arg?: string | number };
 
 export type CommandHandler<C extends Command = Command> = (world: World, cmd: C) => void;
 const handlers = new Map<string, CommandHandler>();

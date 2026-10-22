@@ -17,6 +17,7 @@ import { FogRenderer } from '../render/fog';
 import { fogOf, isVisibleTo } from '../sim/systems/fog';
 import { Messages, ResourceBar, SelectionPanel, eventMessage } from './panels';
 import { Placement } from './placement';
+import { installCampaignUi } from './campaign-ui';
 import { Controls, SPEEDS, type ControlHost } from './controls';
 import { ClockHud } from './hud';
 import { Minimap } from './minimap';
@@ -26,6 +27,7 @@ export interface SessionOptions {
   map: GameMap;
   player: string;
   seed: number;
+  sandbox?: boolean;
   setup?: (world: World) => void;
 }
 
@@ -58,6 +60,8 @@ export class Session implements ControlHost {
   contextOrder?: ControlHost['contextOrder'];
   onSelectionChange?: () => void;
   timerSeconds: number | null = null;
+  /** Seconds until the scenario's relief fleet (VOC HUD), set by the scenario layer. */
+  reliefSeconds?: () => number | null;
   private speedIdx = 1;
   private fpsEl: HTMLDivElement;
   private fps = { acc: 0, frames: 0, value: 0 };
@@ -71,7 +75,7 @@ export class Session implements ControlHost {
   ) {
     const { data, map } = opts;
     this.player = opts.player;
-    this.world = new World(data, map, { seed: opts.seed });
+    this.world = new World(data, map, { seed: opts.seed, sandbox: opts.sandbox, player: opts.player });
     opts.setup?.(this.world);
     this.stepper = new FixedStepper(1000 / this.world.rules.sim.tickHz);
 
@@ -117,6 +121,7 @@ export class Session implements ControlHost {
       const m = eventMessage(s.world, s.player, ev);
       if (m) s.messages.push(m[0], m[1]);
     });
+    installCampaignUi(this);
     this.fpsEl = document.createElement('div');
     this.fpsEl.className = 'fps';
     ui.appendChild(this.fpsEl);

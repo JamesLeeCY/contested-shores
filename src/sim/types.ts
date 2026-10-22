@@ -154,11 +154,8 @@ export interface FactionState {
   mainBaseCannonBonus: number;
 }
 
-export type SimEvent =
-  | { type: 'tide'; phase: string }
-  | { type: 'stranded'; id: number }
-  | { type: 'message'; textKey: string; params?: Record<string, string | number> }
-  | { type: 'death'; id: number; unitType: string; owner: Owner; x: number; y: number }
-  | { type: 'shot'; from: number; to: number; atkType: string; hit: boolean; x: number; y: number; tx: number; ty: number }
-  | { type: 'explosion'; x: number; y: number; size: 'small' | 'large' }
-  | { type: string; [k: string]: unknown };
+/** Something that happened during a tick (UI messages, effects, scenario triggers). */
+export interface SimEvent {
+  type: string;
+  [k: string]: unknown;
+}

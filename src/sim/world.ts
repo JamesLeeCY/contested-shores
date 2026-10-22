@@ -3,6 +3,7 @@ import { T, type GameMap, type MapObject } from './map';
 import { NavGrids, type MoveClass } from './path/navgrid';
 import { PathService } from './path/pathing';
 import { Rng } from './rng';
+import { initialExt, type ExtState } from './state';
 import type { Command } from './commands';
 import { PLAYABLE, type Entity, type FactionState, type Owner, type RulesData, type SimData, type SimEvent } from './types';
 
@@ -16,6 +17,10 @@ export interface WorldOptions {
   emptyMap?: boolean;
   /** Disable fog of war (tests, sandbox). */
   noFog?: boolean;
+  /** Sandbox: enables the debug `sandbox` command. */
+  sandbox?: boolean;
+  /** Player-controlled faction (difficulty modifiers apply to it). */
+  player?: Owner;
   chapter?: number;
 }
 
@@ -45,6 +50,8 @@ export class World {
   readonly woodLeft: Float32Array;
   /** Building id occupying each tile (0 = none), including walkable ones (farms, trenches). */
   readonly occupancy: Int32Array;
+  /** Campaign-system state (diplomacy, supply, typhoon, events). */
+  ext: ExtState = initialExt();
   /** Active weather effects (typhoon, spec §4.10). */
   weather = { active: false, sightMul: 1, rangedHitPenalty: 0 };
   private heroCache: { tick: number; list: Entity[] } = { tick: -1, list: [] };

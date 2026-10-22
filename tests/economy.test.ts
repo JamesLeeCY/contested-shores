@@ -9,6 +9,14 @@ const Z = 'faction_zheng';
 const V = 'faction_voc';
 const DAY = 1200;
 
+/** Economy tests isolate the economy: disease is tested separately. */
+function econWorld() {
+  const w = makeWorld({ emptyMap: true });
+  w.rules.disease.chanceZheng = 0;
+  w.rules.disease.chanceVoc = 0;
+  return w;
+}
+
 function setRes(w: World, owner: string, r: Partial<Record<'grain' | 'wood' | 'powder' | 'deerskin', number>>) {
   Object.assign(w.faction(owner)!.resources, { grain: 0, wood: 0, powder: 0, deerskin: 0, ...r });
 }
@@ -27,7 +35,7 @@ function freePlain(w: World, x0: number, y0: number, size: number): [number, num
 
 describe('economy: hand-calculated 600 s totals', () => {
   it('tuntian income, powder mill conversion and daily upkeep match the formulas exactly', () => {
-    const w = makeWorld({ emptyMap: true });
+    const w = econWorld();
     setRes(w, Z, { grain: 500, wood: 1000, powder: 0 });
     const [cx, cy] = freePlain(w, 114, 62, 4);
     w.spawnBuilding('camp_zheng', Z, cx, cy);
@@ -57,7 +65,7 @@ describe('economy: hand-calculated 600 s totals', () => {
   });
 
   it('a labourer on a farm next to the camp delivers exactly what the trip cycle predicts', () => {
-    const w = makeWorld({ emptyMap: true });
+    const w = econWorld();
     setRes(w, Z, { grain: 1000 });
     const [cx, cy] = freePlain(w, 114, 62, 7);
     w.spawnBuilding('camp_zheng', Z, cx, cy);
@@ -142,7 +150,7 @@ describe('placement, population, queues', () => {
   });
 
   it('production waits for population room and refunds on cancel', () => {
-    const w = makeWorld({ emptyMap: true });
+    const w = econWorld();
     setRes(w, V, { grain: 1000, wood: 1000, powder: 100 });
     w.faction(V)!.basePopCap = 2;
     const [bx, by] = freePlain(w, 120, 60, 3);
@@ -162,7 +170,7 @@ describe('placement, population, queues', () => {
   });
 
   it('starvation lowers morale by 5 per 10 grain short', () => {
-    const w = makeWorld({ emptyMap: true });
+    const w = econWorld();
     setRes(w, V, { grain: 5 });
     const us = [0, 1, 2].map((i) => w.spawnUnit('pikeman', V, 120 + i, 60));
     // Need 3 grain/day: day 1 OK (5→2); day 2 short by 1 → 1 step → −5 morale.
@@ -173,7 +181,7 @@ describe('placement, population, queues', () => {
 
   it('researching a tech applies its effect (排槍操典: interval 2.8 → 2.4)', async () => {
     const { unitStat } = await import('../src/sim/stats');
-    const w = makeWorld({ emptyMap: true });
+    const w = econWorld();
     setRes(w, V, { grain: 1000, powder: 100 });
     const [bx, by] = freePlain(w, 120, 60, 3);
     const b = w.spawnBuilding('barracks_voc', V, bx, by);
@@ -186,7 +194,7 @@ describe('placement, population, queues', () => {
   });
 
   it('tuntian soldiers enter, farm, and come out 10 s after recall', () => {
-    const w = makeWorld({ emptyMap: true });
+    const w = econWorld();
     w.faction(Z)!.stage = 2;
     const [tx, ty] = freePlain(w, 120, 60, 3);
     const tun = w.spawnBuilding('tuntian', Z, tx, ty);

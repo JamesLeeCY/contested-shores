@@ -1,7 +1,13 @@
 // Ordered list of per-tick systems. Importing this module also registers every command handler.
 import { traitsOf } from '../traits';
 import type { World } from '../world';
+import { villageAiSystem } from '../ai/village';
 import { buildSystem } from './build';
+import { diplomacySystem } from './diplomacy';
+import './disease';
+import './sandbox';
+import { supplySystem } from './supply';
+import { weatherSystem } from './weather';
 import { combatSystem } from './combat';
 import { economySystem } from './economy';
 import { fogSystem } from './fog';
@@ -16,14 +22,18 @@ export type System = (world: World) => void;
 
 export const SYSTEMS: { name: string; fn: System }[] = [
   { name: 'tide', fn: tideSystem },
+  { name: 'weather', fn: weatherSystem },
   { name: 'fog', fn: fogSystem },
   { name: 'production', fn: productionSystem },
   { name: 'build', fn: buildSystem },
   { name: 'economy', fn: economySystem },
+  { name: 'village_ai', fn: villageAiSystem },
   { name: 'combat', fn: combatSystem },
   { name: 'siege', fn: siegeSystem },
+  { name: 'diplomacy', fn: diplomacySystem },
   { name: 'morale', fn: moraleSystem },
   { name: 'transport', fn: transportSystem },
+  { name: 'supply', fn: supplySystem },
   { name: 'movement', fn: movementSystem },
 ];
 

@@ -30,5 +30,11 @@ export function hashWorld(world: World): string {
     for (const k of Object.keys(f.resources).sort()) mix(q(f.resources[k as keyof typeof f.resources]));
     mix(q(f.castleMorale));
   }
+  for (const id of Object.keys(world.ext.parties).sort()) {
+    const p = world.ext.parties[id];
+    for (const f of Object.keys(p.favor).sort()) mix(q(p.favor[f]));
+    mix(p.ally ? p.ally.length : 0);
+  }
+  mix(world.ext.tatu.batch);
   return (h >>> 0).toString(16).padStart(8, '0');
 }

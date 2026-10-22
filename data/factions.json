@@ -55,7 +55,8 @@
       "pacifyMul": 1.5,
       "allianceBonus": {
         "type": "none"
-      }
+      },
+      "warriors": 4
     },
     {
       "id": "mattau",
@@ -74,7 +75,8 @@
       "allianceBonus": {
         "type": "warriors",
         "count": 8
-      }
+      },
+      "warriors": 12
     },
     {
       "id": "soulang",
@@ -93,7 +95,8 @@
       "allianceBonus": {
         "type": "daily_deerskin",
         "amount": 20
-      }
+      },
+      "warriors": 4
     },
     {
       "id": "bakloan",
@@ -112,12 +115,17 @@
       "allianceBonus": {
         "type": "territory_speed",
         "mul": 1.2
-      }
+      },
+      "warriors": 4
     }
   ],
   "settlers": {
     "id": "faction_settlers",
     "nameKey": "faction.faction_settlers.name",
-    "color": "#f5f0e1"
+    "color": "#f5f0e1",
+    "favor": {
+      "faction_zheng": 50,
+      "faction_voc": 30
+    }
   }
 }

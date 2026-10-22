@@ -135,6 +135,7 @@ export const VillageSchema = z.object({
   favor: z.object({ faction_zheng: z.number().min(0).max(100), faction_voc: z.number().min(0).max(100) }),
   pacifyMul: z.number().positive(),
   allianceBonus: z.object({ type: z.string() }).passthrough(),
+  warriors: z.number().int().min(0).optional(),
 });
 
 export const FactionsSchema = z.object({
@@ -149,7 +150,12 @@ export const FactionsSchema = z.object({
     }),
   ),
   villages: z.array(VillageSchema),
-  settlers: z.object({ id: z.string(), nameKey: z.string(), color: z.string() }),
+  settlers: z.object({
+    id: z.string(),
+    nameKey: z.string(),
+    color: z.string(),
+    favor: z.object({ faction_zheng: z.number(), faction_voc: z.number() }).optional(),
+  }),
 });
 
 export const AiPlanSchema = z.object({

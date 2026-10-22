@@ -88,3 +88,29 @@ html, body { margin: 0; height: 100%; overflow: hidden; background: var(--bg); c
   .selpanel { left: 8px; right: 260px; bottom: 166px; height: 110px; }
   .res-name { display: none; }
 }
+
+/* --- diplomacy panel (above the selection panel) --- */
+.diplo { position: absolute; left: 216px; bottom: 166px; width: 300px; padding: 8px 10px; font-size: 13px; }
+.diplo-title { font-weight: bold; margin-bottom: 6px; }
+.favor-row { display: grid; grid-template-columns: 140px 1fr; align-items: center; gap: 6px; margin: 3px 0; font-size: 12px; }
+.bar.favor .bar-fill { background: #c9a227; }
+.diplo-log-title { margin-top: 6px; color: var(--muted); font-size: 12px; }
+.diplo-log { margin: 2px 0 0; padding-left: 18px; font-size: 12px; }
+
+/* --- faction HUD under the clocks --- */
+.faction-hud { flex-direction: column; gap: 4px; padding: 6px; pointer-events: none; }
+.bar.castle { max-width: none; }
+.hud-line { font-size: 12px; color: var(--text); }
+
+/* --- typhoon --- */
+.typhoon { position: absolute; inset: 0; pointer-events: none !important; opacity: 0; transition: opacity 2s;
+  background: repeating-linear-gradient(105deg, rgba(200,220,255,.18) 0 1px, transparent 1px 14px), rgba(20,35,60,.35);
+  background-size: 100% 100%; animation: rain .35s linear infinite; }
+.typhoon.active { opacity: 1; }
+@keyframes rain { from { background-position: 0 0; } to { background-position: -14px 40px; } }
+
+/* --- sandbox --- */
+.sandbox { position: absolute; left: 8px; top: 44px; width: 140px; padding: 6px; display: flex; flex-direction: column; gap: 3px; }
+.sandbox-title { font-weight: bold; font-size: 12px; color: var(--accent); }
+.sandbox-btn { background: #3a3024; border: 1px solid var(--panel-border); color: var(--text); font-size: 12px; padding: 3px; cursor: pointer; border-radius: 3px; }
+.sandbox-btn:hover { background: #54442f; }

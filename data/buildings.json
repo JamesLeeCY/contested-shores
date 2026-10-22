@@ -468,7 +468,7 @@
     "popCap": 0,
     "size": 3,
     "sight": 8,
-    "dropoff": false,
+    "dropoff": true,
     "produces": [],
     "researches": [],
     "garrison": 0,
