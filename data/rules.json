@@ -650,6 +650,12 @@
       "lower_town_wall",
       "farm"
     ],
-    "leashRadius": 12
+    "leashRadius": 12,
+    "anchorage": {
+      "faction_zheng": [
+        95.5,
+        30.5
+      ]
+    }
   }
 }

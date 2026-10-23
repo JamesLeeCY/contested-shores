@@ -16,6 +16,8 @@ const FLAG: [number, number] = [119.5, 44.5];
 export function setupTutorial(w: World) {
   for (const f of w.factions.values()) f.stage = 2;
   Object.assign(w.faction(Z)!.resources, { grain: 500, wood: 250, powder: 60, deerskin: 40 });
+  // No powder for the VOC here: Provintia's guns stay silent while the player learns.
+  w.faction(V)!.resources.powder = 0;
   // Disease and upkeep would only distract here.
   w.rules.disease.chanceZheng = 0;
   w.rules.disease.chanceVoc = 0;

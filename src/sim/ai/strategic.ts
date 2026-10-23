@@ -217,6 +217,25 @@ function leash(ctx: AiCtx, defending: boolean) {
   if (strays.length) issue(ctx, { type: 'move', ids: strays.map((u) => u.id), x: hx, y: hy });
 }
 
+/** Heroes stay near home (their death loses the chapter). */
+function guardHeroes(ctx: AiCtx) {
+  const w = ctx.world;
+  const [hx, hy] = ctx.ai.home;
+  // Heroes leading a plan group (e.g. 拔鬼仔's sortie) go with their men.
+  const group = new Set((ctx.ai.mem.group as number[] | undefined) ?? []);
+  const far = army(w, ctx.owner).filter((u) => isHero(w, u) && !group.has(u.id) && !isMoving(u) && Math.hypot(u.x - hx, u.y - hy) > 6);
+  if (far.length) issue(ctx, { type: 'move', ids: far.map((u) => u.id), x: hx, y: hy });
+}
+
+/** Empty transports with nothing to do sail to a safe anchorage (data: rules.ai.anchorage). */
+function stowTransports(ctx: AiCtx) {
+  const w = ctx.world;
+  const spot = (w.rules.ai.anchorage as unknown as Record<string, [number, number]>)[ctx.owner];
+  if (!spot) return;
+  const idle = units(w, ctx.owner, (u) => u.moveClass !== 'foot' && !u.cargo?.length && w.data.units.get(u.type)!.traits.some((t) => t.startsWith('transport_')) && !isMoving(u) && (u.order?.type ?? 'idle') === 'idle' && Math.hypot(u.x - spot[0], u.y - spot[1]) > 8);
+  if (idle.length && (w.tick / w.ticksPerSecond) > 60) issue(ctx, { type: 'move', ids: idle.map((u) => u.id), x: spot[0], y: spot[1] });
+}
+
 // --- plan runner -------------------------------------------------------------------------------------
 
 /** Runs background behaviours, then the current plan step. Returns true while a plan is active. */
@@ -269,16 +288,18 @@ export function strategic(ctx: AiCtx) {
   timed('research', () => research(ctx));
   if (ai.siege) timed('tuntian', () => tuntian(ctx));
 
-  const danger = threats(ctx);
+  let danger: Entity[] = [];
+  timed('threats', () => (danger = threats(ctx)));
   if (danger.length) {
     if (ai.state !== 'DEFEND') setState(ctx, 'DEFEND');
     ai.calmSince = w.tick;
-    defend(ctx, danger);
+    timed('defend', () => defend(ctx, danger));
   } else if (ai.state === 'DEFEND' && w.tick - ai.calmSince > w.rules.ai.defendCalmSeconds * w.ticksPerSecond) setState(ctx, ai.prevState === 'DEFEND' ? 'BUILDUP' : ai.prevState);
 
   let planActive = false;
   timed('plans', () => (planActive = runPlans(ctx)));
-  if (ai.siege) leash(ctx, ai.state === 'DEFEND');
+  timed('leash', () => (ai.siege ? leash(ctx, ai.state === 'DEFEND') : guardHeroes(ctx)));
+  timed('stow', () => stowTransports(ctx));
   timed('produce', () => produce(ctx));
   if (planActive || ai.state === 'DEFEND') return;
 

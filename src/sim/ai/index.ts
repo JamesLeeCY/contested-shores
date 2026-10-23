@@ -29,7 +29,8 @@ export function enableAi(world: World, owner: Owner, spec: AiSpec, difficulty: D
     mem: {},
     // Stagger the two AIs so they never decide on the same tick.
     lastStrategic: world.tick - (owner === 'faction_voc' ? 50 : 0),
-    lastTactical: world.tick,
+    // Offset by half a second so tactical and strategic decisions never share a tick.
+    lastTactical: world.tick - 10,
     armyAtAttack: 0,
     calmSince: world.tick,
   };
@@ -38,7 +39,7 @@ export function enableAi(world: World, owner: Owner, spec: AiSpec, difficulty: D
 }
 
 /** Wall-clock cost of AI decisions, measured outside the simulation by the headless runner. */
-export const aiTiming = { enabled: false, samples: [] as number[], now: () => 0 };
+export const aiTiming = { enabled: false, samples: [] as number[], now: () => 0, lastTactical: 0 };
 
 export function aiSystem(world: World) {
   for (const owner of Object.keys(world.ext.ai).sort()) {
@@ -53,7 +54,9 @@ export function aiSystem(world: World) {
     }
     if (world.tick - ai.lastTactical >= world.rules.ai.tacticalSeconds * hz) {
       ai.lastTactical = world.tick;
+      const t1 = aiTiming.enabled ? aiTiming.now() : 0;
       tactical(ctx);
+      if (aiTiming.enabled) aiTiming.lastTactical = aiTiming.now() - t1;
     }
     if (aiTiming.enabled) {
       const dt = aiTiming.now() - t0;

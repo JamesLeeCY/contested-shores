@@ -278,6 +278,19 @@ describe('chapter 4: 烏特勒支堡', () => {
     expect(outcomeOf(w, Z)).toBe('victory');
   });
 
+  it('holding Utrecht for 3 minutes wins the chapter for Zheng', () => {
+    const w = chapter(4);
+    run(w, 5);
+    w.rebuildSpatial();
+    captureBuilding(w, w.buildings().find((b) => b.type === 'utrecht_redoubt')!, Z);
+    run(w, 5);
+    expect(outcomeOf(w, Z)).toBeUndefined();
+    at(w, w.tick / 20 + 181);
+    collect(w);
+    expect(outcomeOf(w, Z)).toBe('victory');
+    expect(outcomeOf(w, V)).toBe('historical');
+  });
+
   it('VOC holds Utrecht for 25 minutes', () => {
     const w = chapter(4);
     at(w, 1500);

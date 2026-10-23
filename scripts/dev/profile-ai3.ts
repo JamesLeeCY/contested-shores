@@ -2,13 +2,15 @@
 import { loadGameData } from '../../src/data/load';
 import { loadMap } from '../../src/data/map';
 import { scenarioById } from '../../src/data/scenarios';
-import { aiSystem, enableAi } from '../../src/sim/ai';
+import { aiSystem, aiTiming, enableAi } from '../../src/sim/ai';
 import { sectionTiming } from '../../src/sim/ai/strategic';
 import { SYSTEMS } from '../../src/sim/systems';
 import { executeCommand } from '../../src/sim/commands';
 import { applyScenario } from '../../src/sim/scenario/setup';
 import { World } from '../../src/sim/world';
 sectionTiming.now = () => performance.now();
+aiTiming.enabled = true;
+aiTiming.now = () => performance.now();
 const ch = Number(process.argv[2] ?? 4);
 const sc = scenarioById(`ch${ch}`);
 // Warm-up: play other seeds first so V8 has compiled the hot paths.
@@ -48,7 +50,7 @@ for (let t = 0; t < 20 * Number(process.argv[3] ?? 300); t++) {
     const d = performance.now() - a;
     maxMs = Math.max(maxMs, d);
     calls++;
-    if (d > 2 && w.tick > 200) console.log(w.tick, d.toFixed(2), JSON.stringify(Object.fromEntries(Object.entries(sectionTiming.log).map(([k, v]) => [k, +v.toFixed(2)]))), Object.values(w.ext.ai).map((a) => a.owner + ':' + a.stepIdx + ':' + a.state).join(' '));
+    if (d > 2 && w.tick > 200) console.log(w.tick, d.toFixed(2), JSON.stringify(Object.fromEntries(Object.entries(sectionTiming.log).map(([k, v]) => [k, +v.toFixed(2)]))), Object.values(w.ext.ai).map((a) => a.owner + ':' + a.stepIdx + ':' + a.state).join(' '), 'tactical', aiTiming.lastTactical.toFixed(2));
   }
   w.tick++;
 }

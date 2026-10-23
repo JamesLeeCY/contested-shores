@@ -62,6 +62,6 @@ for (let seed = 101; seed < 101 + N; seed++) {
     }
   }
   if (won) wins++;
-  lines.push(`${won ? 'Z' : 'V'}@${Math.round(w.tick / 20)}s(z${armyPop(w, 'faction_zheng')},v${armyPop(w, 'faction_voc')})`);
+  lines.push(`${won ? 'Z' : 'V'}@${Math.round(w.tick / 20)}s(z${armyPop(w, 'faction_zheng')},v${armyPop(w, 'faction_voc')})${process.env.REASON ? '[' + w.ext.flags['outcomeReason:faction_zheng'] + ']' : ''}`);
 }
 console.log(`ch${chapter} ${overrides.join(' ') || '(baseline)'}: Zheng ${wins}/${N}  ${lines.join(' ')}`);

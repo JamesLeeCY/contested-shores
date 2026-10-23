@@ -325,7 +325,7 @@
     "id": "provintia_fort",
     "faction": "faction_voc",
     "nameKey": "building.provintia_fort.name",
-    "hp": 4000,
+    "hp": 3800,
     "armor": 7,
     "armorType": "building",
     "preset": true,
@@ -536,7 +536,7 @@
     "id": "battery",
     "faction": "any",
     "nameKey": "building.battery.name",
-    "hp": 1600,
+    "hp": 2000,
     "armor": 7,
     "cost": {
       "grain": 0,

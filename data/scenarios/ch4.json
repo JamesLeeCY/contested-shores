@@ -346,11 +346,50 @@
           "kind": "warn"
         },
         {
+          "type": "start_timer",
+          "id": "utrecht_hold",
+          "seconds": 180
+        },
+        {
           "type": "set_ai_plan",
           "faction": "faction_zheng",
           "plans": [
-            "besiege_castle"
+            "hold_utrecht_zheng"
           ]
+        }
+      ]
+    },
+    {
+      "id": "ch4_utrecht_held",
+      "when": {
+        "type": "all_of",
+        "conditions": [
+          {
+            "type": "timer_expired",
+            "id": "utrecht_hold"
+          },
+          {
+            "type": "building_captured",
+            "building": "utrecht_redoubt",
+            "by": "faction_zheng"
+          }
+        ]
+      },
+      "do": [
+        {
+          "type": "show_cutscene",
+          "id": "ch4_treaty"
+        },
+        {
+          "type": "complete_objective",
+          "id": "castle",
+          "faction": "faction_zheng"
+        },
+        {
+          "type": "win_mission",
+          "faction": "faction_zheng",
+          "rating": "victory",
+          "reasonKey": "ch4.end.utrecht_held"
         }
       ]
     },

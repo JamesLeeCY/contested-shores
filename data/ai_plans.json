@@ -133,5 +133,15 @@
       "mine:zeelandia_castle",
       "assault:zeelandia_castle"
     ]
+  },
+  {
+    "id": "hold_utrecht_zheng",
+    "faction": "faction_zheng",
+    "chapters": [
+      4
+    ],
+    "steps": [
+      "hold:utrecht_redoubt"
+    ]
   }
 ]
