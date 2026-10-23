@@ -11,6 +11,7 @@ import { buildingAttack } from '../stats';
 import type { Entity } from '../types';
 import { isMoving } from '../systems/movement';
 import { isElevated } from '../systems/combat';
+import { MOUNTAIN_STEPS } from './mountain';
 import {
   army,
   centroid,
@@ -278,7 +279,7 @@ const strike_when: Handler = (ctx) => {
     if (t) issue(ctx, { type: 'attack', ids: [f.id], target: t.id });
     else if (!isMoving(f)) {
       // The plan knows the fleet is out there: close in until it comes into view.
-      const known = units(ctx.world, ctx.owner === 'faction_zheng' ? 'faction_voc' : 'faction_zheng', (e) => e.moveClass !== 'foot');
+      const known = units(ctx.world, ctx.world.enemyOf(ctx.owner), (e) => e.moveClass !== 'foot');
       const k = nearest(known.filter((e) => Math.hypot(e.x - f.x, e.y - f.y) < r), f.x, f.y);
       if (k) issue(ctx, { type: 'move', ids: [f.id], x: k.x, y: k.y });
     }
@@ -567,7 +568,7 @@ function isMineDetected(ctx: AiCtx, b: Entity) {
  */
 const strike: Handler = (ctx, region) => {
   const w = ctx.world;
-  const foes = units(w, ctx.owner === 'faction_zheng' ? 'faction_voc' : 'faction_zheng', (e) => e.moveClass === 'foot' && !e.insideOf && inRegion(w, region, e));
+  const foes = units(w, w.enemyOf(ctx.owner), (e) => e.moveClass === 'foot' && !e.insideOf && inRegion(w, region, e));
   if (!foes.length) return 'persist';
   const [fx, fy] = centroid(foes);
   const force = army(w, ctx.owner).filter((u) => !isGun(w, u) && !isHero(w, u) && u.order?.type !== 'tuntian');
@@ -618,4 +619,5 @@ export const STEP_HANDLERS: Record<string, Handler> = {
   hold,
   sortie,
   counter_mine,
+  ...MOUNTAIN_STEPS,
 };

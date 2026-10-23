@@ -52,6 +52,11 @@ export class ClockHud {
     this.root.appendChild(this.ring);
     const info = el('div', 'clock-info', this.root);
     this.tideText = el('div', 'tide-text', info);
+    // Only the Taijiang lagoon has tides that matter; the 1874 mountain map hides the dial.
+    if (world.map.id !== 'taijiang') {
+      this.ring.style.display = 'none';
+      this.tideText.style.display = 'none';
+    }
     this.dayText = el('div', 'day-text', info);
     this.timerText = el('div', 'timer-text', info);
     this.speedText = el('div', 'speed-text', info);

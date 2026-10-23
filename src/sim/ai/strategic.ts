@@ -284,6 +284,11 @@ export function strategic(ctx: AiCtx) {
   const w = ctx.world;
   const ai = ctx.ai;
   sectionTiming.log = {};
+  if (ai.scripted) {
+    runPlans(ctx);
+    produce(ctx);
+    return;
+  }
   timed('economy', () => economy(ctx));
   timed('research', () => research(ctx));
   if (ai.siege) timed('tuntian', () => tuntian(ctx));

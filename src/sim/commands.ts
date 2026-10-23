@@ -3,7 +3,10 @@ import { clearMove, moveGroup } from './systems/movement';
 import type { Owner } from './types';
 import type { World } from './world';
 
-export type Command =
+/** `ai` marks commands the AI issued: replays skip them because the AI issues them again. */
+export type Command = BaseCommand & { ai?: true };
+
+type BaseCommand =
   | { type: 'move'; owner: Owner; ids: number[]; x: number; y: number }
   | { type: 'stop'; owner: Owner; ids: number[] }
   | { type: 'gather'; owner: Owner; ids: number[]; target?: number; tile?: number }
@@ -18,6 +21,7 @@ export type Command =
   | { type: 'attack'; owner: Owner; ids: number[]; target: number }
   | { type: 'attack_move'; owner: Owner; ids: number[]; x: number; y: number }
   | { type: 'attack_ground'; owner: Owner; ids: number[]; x: number; y: number }
+  | { type: 'stance'; owner: Owner; ids: number[]; hold: boolean }
   | { type: 'patrol'; owner: Owner; ids: number[]; x: number; y: number }
   | { type: 'dig_mine'; owner: Owner; ids: number[]; target: number }
   | { type: 'embark'; owner: Owner; ids: number[]; target: number }

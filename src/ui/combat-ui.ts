@@ -54,6 +54,18 @@ buttonProviders.unshift((ctx) => {
         },
       },
     );
+  if (combatants.length) {
+    // 固守: toggles hold-position for the selection (on unless every selected unit already holds).
+    const holding = combatants.every((u) => u.hold);
+    out.push({
+      id: 'stance',
+      label: t(holding ? 'cmd.free' : 'cmd.hold'),
+      hotkey: 'D',
+      active: holding,
+      reason: t('cmd.hold_tip'),
+      run: () => s.issue({ type: 'stance', owner: s.player, ids: combatants.map((u) => u.id), hold: !holding }),
+    });
+  }
   const loaded = units.filter((u) => u.cargo?.length);
   if (loaded.length)
     out.push({ id: 'unload', label: t('cmd.unload_here'), hotkey: 'U', run: () => s.issue({ type: 'unload', owner: s.player, ids: loaded.map((u) => u.id) }) });

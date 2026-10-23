@@ -1,11 +1,14 @@
-// Game flow: title menu → chapter / side / difficulty → chapter (cutscenes, objectives) → result
-// screen → next chapter, carrying the campaign state; ending after chapter 4 (spec §7, §11 stage 7).
+// Game flow: title menu → campaign / side / difficulty → scenario (cutscenes, objectives) → result
+// screen → next scenario of the campaign, carrying the campaign state; the 1661 campaign ends with
+// one of six endings (spec §7, §11 stage 7). Campaigns: 大員之圍 1661, 牡丹社事件 1874.
 import type { Application } from 'pixi.js';
-import { SCENARIOS, scenarioById } from '../data/scenarios';
+import { loadMap } from '../data/map';
+import { CAMPAIGNS, SCENARIOS, campaignOf, scenarioById, scenariosOf } from '../data/scenarios';
 import type { World } from '../sim/world';
 import { buildSave, downloadSave, loadSave, pickSaveFile, readStoredSave, storeSave, type SaveFile, type SaveMeta } from './save';
 import { setupSandbox, type SandboxMode } from '../sim/sandbox';
 import type { Rating } from '../sim/scenario/triggers';
+import type { Scenario } from '../sim/scenario/types';
 import type { Difficulty } from '../sim/state';
 import type { SimData } from '../sim/types';
 import type { GameMap } from '../sim/map';
@@ -15,6 +18,7 @@ import { el } from './dom';
 import { t } from './i18n';
 import { ObjectivePanel } from './objectives';
 import { runTutorial, setupTutorial } from './tutorial';
+import { Session } from './session';
 
 function tutorialDone() {
   try {
@@ -23,10 +27,21 @@ function tutorialDone() {
     return false;
   }
 }
-import { Session } from './session';
+
+const MENU_CAMPAIGN_KEY = 'tayouan1661.menuCampaign';
+function storedMenuCampaign(): string {
+  try {
+    const id = localStorage.getItem(MENU_CAMPAIGN_KEY);
+    return CAMPAIGNS.some((c) => c.id === id) ? id! : CAMPAIGNS[0].id;
+  } catch {
+    return CAMPAIGNS[0].id;
+  }
+}
 
 export interface StartOptions {
-  chapter: number;
+  /** Scenario id (e.g. `ch2`, `mudan1`); `chapter` alone means a 1661 chapter. */
+  scenario?: string;
+  chapter?: number;
   player: string;
   difficulty: Difficulty;
   seed?: number;
@@ -34,13 +49,21 @@ export interface StartOptions {
   spectate?: boolean;
 }
 
-const FACTIONS = ['faction_zheng', 'faction_voc'];
 const DIFFS: Difficulty[] = ['easy', 'normal', 'hard'];
+const DEFAULT_FACTIONS = ['faction_zheng', 'faction_voc'];
+
+export function resolveScenario(o: Pick<StartOptions, 'scenario' | 'chapter'>): Scenario {
+  if (o.scenario) return scenarioById(o.scenario);
+  return SCENARIOS.find((s) => campaignOf(s) === 'koxinga' && s.chapter === o.chapter) ?? SCENARIOS[0];
+}
+
+const factionsOf = (sc: Scenario) => sc.factions ?? DEFAULT_FACTIONS;
 
 export class GameApp {
   session: Session | null = null;
-  private campaign: StoredCampaign = loadCampaign();
+  private campaigns = new Map<string, StoredCampaign>();
   private menu: HTMLDivElement | null = null;
+  private menuCampaign = storedMenuCampaign();
 
   constructor(
     readonly app: Application,
@@ -49,6 +72,16 @@ export class GameApp {
     readonly data: SimData,
     readonly map: GameMap,
   ) {}
+
+  private campaign(id: string): StoredCampaign {
+    let c = this.campaigns.get(id);
+    if (!c) this.campaigns.set(id, (c = loadCampaign(id)));
+    return c;
+  }
+  private setCampaign(id: string, c: StoredCampaign) {
+    this.campaigns.set(id, c);
+    saveCampaign(id, c);
+  }
 
   private clear() {
     this.session?.destroy();
@@ -62,23 +95,41 @@ export class GameApp {
     this.clear();
     const m = (this.menu = el('div', 'menu', this.overlay));
     const card = el('div', 'menu-card', m);
-    el('h1', 'menu-title', card, t('game.title'));
-    el('div', 'menu-sub', card, t('menu.subtitle'));
+    const cid = this.menuCampaign;
+    const camp = CAMPAIGNS.find((c) => c.id === cid)!;
+    const stored = this.campaign(cid);
+
+    const tabs = el('div', 'menu-tabs', card);
+    for (const c of CAMPAIGNS) {
+      const b = el('button', 'menu-tab' + (c.id === cid ? ' on' : ''), tabs, t(`campaign.${c.id}.name`));
+      b.onclick = () => {
+        this.menuCampaign = c.id;
+        try {
+          localStorage.setItem(MENU_CAMPAIGN_KEY, c.id);
+        } catch {
+          // remembered for this page only
+        }
+        this.showMenu();
+      };
+    }
+    el('h1', 'menu-title', card, t(`campaign.${cid}.name`));
+    el('div', 'menu-sub', card, t(`campaign.${cid}.sub`));
     const tutRow = el('div', 'menu-row menu-tutorial', card);
     const tut = el('button', 'menu-btn' + (tutorialDone() ? '' : ' primary pulse'), tutRow, t('menu.tutorial'));
     tut.onclick = () => this.startTutorial();
     if (!tutorialDone()) el('span', 'menu-hint', tutRow, t('menu.tutorial_hint'));
     const chapters = el('div', 'menu-chapters', card);
-    let player = this.campaign.player ?? 'faction_zheng';
-    let diff: Difficulty = (this.campaign.difficulty as Difficulty) ?? 'normal';
+    const sides: readonly string[] = camp.factions;
+    let player = stored.player && sides.includes(stored.player) ? stored.player : sides[0];
+    let diff: Difficulty = (stored.difficulty as Difficulty) ?? 'normal';
 
     const sideRow = el('div', 'menu-row', card);
     el('span', 'menu-label', sideRow, t('menu.side'));
-    const sideBtns = FACTIONS.map((f) => {
+    const sideBtns = sides.map((f) => {
       const b = el('button', 'menu-toggle', sideRow, t(`faction.${f}.name`));
       b.onclick = () => {
         player = f;
-        sideBtns.forEach((x, i) => x.classList.toggle('on', FACTIONS[i] === f));
+        sideBtns.forEach((x, i) => x.classList.toggle('on', sides[i] === f));
         drawChapters();
       };
       b.classList.toggle('on', f === player);
@@ -98,43 +149,44 @@ export class GameApp {
 
     const drawChapters = () => {
       chapters.replaceChildren();
-      for (const sc of SCENARIOS) {
-        const r = this.campaign.ratings?.[sc.id]?.[player] as Rating | undefined;
+      for (const sc of scenariosOf(cid)) {
+        const r = this.campaign(cid).ratings?.[sc.id]?.[player] as Rating | undefined;
         const b = el('button', 'menu-chapter', chapters);
         el('div', 'mc-name', b, t(sc.nameKey));
         el('div', 'mc-date', b, t(sc.dateKey));
         el('div', `mc-rating rating-${r ?? 'none'}`, b, r ? t(`rating.${r}`) : '');
         b.onclick = () => {
-          this.campaign = { ...this.campaign, player, difficulty: diff };
-          saveCampaign(this.campaign);
-          void this.startChapter({ chapter: sc.chapter, player, difficulty: diff });
+          this.setCampaign(cid, { ...this.campaign(cid), player, difficulty: diff });
+          void this.startChapter({ scenario: sc.id, player, difficulty: diff });
         };
       }
     };
     drawChapters();
 
     const extra = el('div', 'menu-row menu-extra', card);
-    const stored = readStoredSave();
-    if (stored) {
+    const save = readStoredSave();
+    if (save) {
       const load = el('button', 'menu-btn primary', extra, t('menu.load'));
-      load.onclick = () => this.loadGame(stored);
+      load.onclick = () => this.loadGame(save);
     }
     const imp = el('button', 'menu-btn', extra, t('menu.import'));
     imp.onclick = async () => {
       const f = await pickSaveFile();
       if (f) this.loadGame(f);
     };
-    const sandbox = el('button', 'menu-btn', extra, t('menu.sandbox'));
-    sandbox.onclick = () => this.startSandbox('armies', player);
-    const eco = el('button', 'menu-btn', extra, t('menu.sandbox_economy'));
-    eco.onclick = () => this.startSandbox('economy', player);
+    // The sandboxes use the 1661 map and armies.
+    if (cid === 'koxinga') {
+      const sandbox = el('button', 'menu-btn', extra, t('menu.sandbox'));
+      sandbox.onclick = () => this.startSandbox('armies', player);
+      const eco = el('button', 'menu-btn', extra, t('menu.sandbox_economy'));
+      eco.onclick = () => this.startSandbox('economy', player);
+    }
     const reset = el('button', 'menu-btn', extra, t('menu.reset'));
     reset.onclick = () => {
-      this.campaign = {};
-      saveCampaign(this.campaign);
+      this.setCampaign(cid, {});
       drawChapters();
     };
-    if (this.campaign.ratings?.ch4) {
+    if (cid === 'koxinga' && stored.ratings?.ch4) {
       const end = el('button', 'menu-btn', extra, t('menu.ending'));
       end.onclick = () => this.showEnding();
     }
@@ -207,34 +259,38 @@ export class GameApp {
   loadGame(file: SaveFile) {
     let w: World;
     try {
-      w = loadSave(file, this.data, this.map, scenarioById);
+      w = loadSave(file, this.data, loadMap, scenarioById);
     } catch (e) {
       alert(`${t('msg.load_failed')}\n${String(e)}`);
       return;
     }
     const m = file.meta;
-    if (m.kind === 'chapter') void this.startChapter({ chapter: m.chapter!, player: m.player, difficulty: m.difficulty as Difficulty, skipCutscenes: true }, w);
+    if (m.kind === 'chapter')
+      void this.startChapter({ scenario: m.scenario, chapter: m.chapter, player: m.player, difficulty: m.difficulty as Difficulty, skipCutscenes: true }, w);
     else if (m.sandboxMode === 'tutorial') this.startTutorial();
     else this.startSandbox((m.sandboxMode as SandboxMode) ?? 'armies', m.player, w);
   }
 
   async startChapter(o: StartOptions, restored?: World) {
     this.clear();
-    const sc = SCENARIOS.find((s) => s.chapter === o.chapter)!;
+    const sc = resolveScenario(o);
+    const cid = campaignOf(sc);
+    const player = factionsOf(sc).includes(o.player) ? o.player : factionsOf(sc)[0];
+    const opts: StartOptions = { ...o, scenario: sc.id, chapter: sc.chapter, player };
     const s = (this.session = new Session(this.app, this.ui, {
       data: this.data,
-      map: this.map,
-      player: o.player,
-      seed: o.seed ?? 1661 + o.chapter,
+      map: loadMap(sc.map ?? 'taijiang'),
+      player,
+      seed: o.seed ?? (cid === 'koxinga' ? 1661 : 1874) + sc.chapter,
       scenario: sc,
-      campaign: this.campaign,
+      campaign: this.campaign(cid),
       difficulty: o.difficulty,
       spectate: o.spectate,
       restored,
     }));
     const objectives = new ObjectivePanel(s);
     s.frameHooks.push(() => objectives.update());
-    this.addGameMenu({ kind: 'chapter', chapter: o.chapter, player: o.player, difficulty: o.difficulty });
+    this.addGameMenu({ kind: 'chapter', scenario: sc.id, chapter: sc.chapter, player, difficulty: o.difficulty });
     let ended = false;
     s.eventHooks.push((ss, ev) => {
       if (ev.type === 'cutscene' && !o.skipCutscenes) {
@@ -244,16 +300,15 @@ export class GameApp {
       if (ev.type === 'mission_outcome' && !ended && ss.world.ext.flags.missionOver) {
         ended = true;
         // Let the last events (cutscene) play first.
-        setTimeout(() => this.showResult(o, ss), 600);
+        setTimeout(() => this.showResult(opts, sc, ss), 600);
       }
     });
   }
 
-  private showResult(o: StartOptions, s: Session) {
+  private showResult(o: StartOptions, sc: Scenario, s: Session) {
     s.modal = true;
-    const sc = SCENARIOS.find((x) => x.chapter === o.chapter)!;
-    this.campaign = recordChapter(this.campaign, sc.id, s.world);
-    saveCampaign(this.campaign);
+    const cid = campaignOf(sc);
+    this.setCampaign(cid, recordChapter(this.campaign(cid), sc, s.world));
     const waitCutscene = () => (this.overlay.querySelector('.cutscene') ? setTimeout(waitCutscene, 300) : render());
     const render = () => {
       const box = el('div', 'result', this.overlay);
@@ -263,22 +318,24 @@ export class GameApp {
       el('h2', 'result-title', card, t(sc.nameKey));
       el('p', 'result-reason', card, t(String(s.world.ext.flags[`outcomeReason:${o.player}`] ?? '')));
       const table = el('div', 'result-table', card);
-      for (const f of FACTIONS) {
+      for (const f of factionsOf(sc)) {
         const row = el('div', 'result-row', table);
         el('span', '', row, t(`faction.${f}.name`));
         const r = s.world.ext.flags[`outcome:${f}`] as Rating;
         el('span', `rating-${r}`, row, t(`rating.${r}`));
       }
-      el('p', 'result-history', card, t(HISTORY_CARDS[o.chapter - 1]));
+      el('p', 'result-history', card, t(sc.historyKey ?? HISTORY_CARDS[sc.chapter - 1]));
       const bar = el('div', 'result-bar', card);
-      if (o.chapter < 4) {
-        const next = el('button', 'menu-btn primary', bar, t('menu.next_chapter'));
-        next.onclick = () => void this.startChapter({ ...o, chapter: o.chapter + 1, seed: undefined });
-      } else {
+      const list = scenariosOf(cid);
+      const next = list[list.findIndex((x) => x.id === sc.id) + 1];
+      if (next) {
+        const b = el('button', 'menu-btn primary', bar, t('menu.next_chapter'));
+        b.onclick = () => void this.startChapter({ ...o, scenario: next.id, chapter: next.chapter, seed: undefined });
+      } else if (cid === 'koxinga') {
         const end = el('button', 'menu-btn primary', bar, t('menu.ending'));
         end.onclick = () => this.showEnding();
       }
-      const again = el('button', 'menu-btn', bar, t('menu.retry'));
+      const again = el('button', 'menu-btn' + (next || cid === 'koxinga' ? '' : ' primary'), bar, t('menu.retry'));
       again.onclick = () => void this.startChapter(o);
       const menu = el('button', 'menu-btn', bar, t('menu.back'));
       menu.onclick = () => this.showMenu();
@@ -290,7 +347,7 @@ export class GameApp {
     this.clear();
     const m = (this.menu = el('div', 'menu', this.overlay));
     const card = el('div', 'menu-card ending', m);
-    const key = endingKey(this.campaign);
+    const key = endingKey(this.campaign('koxinga'));
     el('h1', 'menu-title', card, t(`${key}.title`));
     el('p', 'ending-text', card, t(key));
     el('h3', '', card, t('ending.history_title'));

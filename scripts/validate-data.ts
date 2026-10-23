@@ -18,19 +18,23 @@ const errors = validateData({
 });
 
 // Scenarios and cutscenes.
-const map = read('data/maps/taijiang.json');
-const regions = new Set<string>(map.layers.find((l: { name: string }) => l.name === 'regions').objects.map((o: { name: string }) => o.name));
+// Regions are checked against the scenario's own map.
+const regionsOf = (mapId: string) =>
+  new Set<string>(read(`data/maps/${mapId}.json`).layers.find((l: { name: string }) => l.name === 'regions').objects.map((o: { name: string }) => o.name));
 const cutscenes = read('data/cutscenes.json');
 const i18n = read('i18n/zh-TW.json');
 const ctx = {
   units: new Set<string>(read('data/units.json').map((u: { id: string }) => u.id)),
   buildings: new Set<string>(read('data/buildings.json').map((b: { id: string }) => b.id)),
   plans: new Set<string>(read('data/ai_plans.json').map((p: { id: string }) => p.id)),
-  regions,
+  regions: new Set<string>(),
   cutscenes,
   i18n,
 };
-for (const f of readdirSync(join(root, 'data/scenarios'))) errors.push(...validateScenario(f, read(`data/scenarios/${f}`), ctx));
+for (const f of readdirSync(join(root, 'data/scenarios'))) {
+  const sc = read(`data/scenarios/${f}`);
+  errors.push(...validateScenario(f, sc, { ...ctx, regions: regionsOf(sc.map ?? 'taijiang') }));
+}
 errors.push(...validateCutscenes(cutscenes, i18n));
 
 if (errors.length) {

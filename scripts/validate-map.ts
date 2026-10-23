@@ -1,13 +1,18 @@
-// Spec §6.4: path-finding checks on data/maps/taijiang.json.
+// Spec §6.4: path-finding checks on data/maps/taijiang.json, plus the 1874 map's checks.
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
-import { checkMap } from '../src/sim/mapcheck';
+import { checkHengchun, checkMap } from '../src/sim/mapcheck';
 import { mapFromTiled } from '../src/sim/map';
 
 const root = join(import.meta.dirname, '..');
 const read = (p: string) => JSON.parse(readFileSync(join(root, p), 'utf8'));
 const map = mapFromTiled('taijiang', read('data/maps/taijiang.json'));
-const results = checkMap(map, read('data/rules.json'), read('data/buildings.json'));
+const rules = read('data/rules.json');
+const hunter = read('data/units.json').find((u: { id: string }) => u.id === 'paiwan_hunter');
+const results = [
+  ...checkMap(map, rules, read('data/buildings.json')),
+  ...checkHengchun(mapFromTiled('hengchun', read('data/maps/hengchun.json')), rules, hunter.range),
+];
 
 let failed = 0;
 for (const r of results) {

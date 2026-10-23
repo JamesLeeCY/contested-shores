@@ -2,7 +2,7 @@
 // powder use, and death handling.
 import { ownedUnits, registerCommand } from '../commands';
 import { distToEntity, entityDistance } from '../geometry';
-import { T } from '../map';
+import { TERRAIN_IDS } from '../map';
 import { buildingAttack, hasTrait, unitStat } from '../stats';
 import { traitsOf } from '../traits';
 import type { AttackCtx } from '../traits/types';
@@ -41,9 +41,14 @@ export function inTrench(world: World, e: Entity): boolean {
   return !!b && b.type === 'trench' && (b.built ?? 1) >= 1;
 }
 
+/** Ground height under an entity: 0 lowland, 1 slope (mountain), 2 summit (hill); see rules.terrain. */
+export function heightOf(world: World, e: Entity): number {
+  const t = e.kind === 'building' ? world.map.terrain[(e.ty! + Math.floor(e.h! / 2)) * world.map.width + e.tx! + Math.floor(e.w! / 2)] : tileOf(world, e);
+  return (world.rules.terrain.types[TERRAIN_IDS[t]] as { height?: number }).height ?? 0;
+}
+
 export function isElevated(world: World, e: Entity): boolean {
-  if (e.kind === 'building') return world.map.terrain[(e.ty! + Math.floor(e.h! / 2)) * world.map.width + e.tx! + Math.floor(e.w! / 2)] === T.hill;
-  return tileOf(world, e) === T.hill;
+  return heightOf(world, e) > 0;
 }
 
 /** The entity an attacker physically fires from: its garrison building, or itself. */
@@ -144,6 +149,9 @@ export function takenMul(ctx: AttackCtx): number {
     if ((atkType === 'arrow' || atkType === 'musket') && inTrench(world, t)) m *= world.rules.combat.trenchCoverMul;
     if (onBattery(world, t)) m *= world.rules.siege.battery.damageTakenMul;
     if (t.stranded) m *= world.rules.tide.strandedDamageTakenMul;
+    // Shooting uphill at soldiers on a height (1874 scenarios set this below 1; default 1).
+    const uphill = (world.rules.combat as { uphillUnitDamageMul?: number }).uphillUnitDamageMul ?? 1;
+    if (uphill !== 1 && (atkType === 'arrow' || atkType === 'musket') && heightOf(world, t) > heightOf(world, ctx.attacker)) m *= uphill;
   } else if (t.kind === 'building') {
     const aura = world.rules.heroes.aura_coyett;
     for (const h of world.heroes())
@@ -200,6 +208,8 @@ export function killEntity(world: World, e: Entity, killer?: Entity) {
 function canTarget(world: World, a: Entity, t: Entity, melee: boolean): boolean {
   if (t.dead || t.insideOf || t.kind === 'resource') return false;
   if (!isEnemy(world, a.owner, t.owner)) return false;
+  // Civilians (族人 on the move) are never fought over.
+  if (t.kind === 'unit' && world.data.units.get(t.type)!.traits.includes('civilian')) return false;
   if (!isVisibleTo(world, a.owner, t)) return false;
   // Melee units cannot reach ships afloat; ships cannot ram buildings inland except with guns.
   if (melee && t.kind === 'unit' && t.moveClass !== 'foot' && !t.stranded && a.moveClass === 'foot') return false;
@@ -241,6 +251,17 @@ registerCommand('attack', (world, cmd) => {
     clearMove(world, u);
     u.order = { type: 'attack', target: t.id };
     u.attackTarget = t.id;
+  }
+});
+
+registerCommand('stance', (world, cmd) => {
+  for (const u of ownedUnits(world, cmd.owner, cmd.ids)) {
+    u.hold = cmd.hold || undefined;
+    if (cmd.hold && u.chasing) {
+      clearMove(world, u);
+      u.chasing = false;
+      u.attackTarget = undefined;
+    }
   }
 });
 
@@ -376,6 +397,9 @@ function unitCombat(world: World, u: Entity) {
     u.cooldown = Math.max(1, Math.round(unitStat(world, u, 'atkInterval') * hz));
     fire(world, u, target, prof, unitStat(world, u, 'hitChance'), garrisoned);
     u.lastCombat = world.tick;
+    // Black-powder smoke gives a hidden marksman away for a moment (bows do not).
+    if (prof.atkType === 'musket' && (def.traits.includes('forest_stealth') || def.traits.includes('mountain_stealth')))
+      u.revealedUntil = world.tick + Math.round((world.rules.combat.traits.forest_stealth.revealOnFireSeconds ?? 0) * hz);
     // Broadside: extra targets in range.
     for (const tr of traitsOf(def.traits)) {
       if (!tr.extraTargets || target.dead) continue;
@@ -385,8 +409,12 @@ function unitCombat(world: World, u: Entity) {
     }
     return;
   }
-  // Out of range: chase (garrisoned units and deployed guns hold position unless ordered).
+  // Out of range: chase (garrisoned units, deployed guns and units holding position stay put unless ordered).
   if (garrisoned) return;
+  if (u.hold && o.type !== 'attack') {
+    u.attackTarget = undefined;
+    return;
+  }
   if (o.type !== 'attack' && def.traits.includes('must_deploy') && !isMoving(u)) {
     // Auto-acquired targets beyond range: guns stay put.
     return;

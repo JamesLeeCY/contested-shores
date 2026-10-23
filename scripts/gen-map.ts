@@ -1,55 +1,15 @@
 // Generates data/maps/taijiang.json (Tiled 1.10 JSON) and the placeholder terrain tileset image
 // from the region layout in spec §6.3. Re-run after editing; the output can also be opened in Tiled.
-import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
-import { join } from 'node:path';
-import { crc32, deflateSync } from 'node:zlib';
-import { T, TERRAIN_IDS, type TiledMap, type TiledObject, type TiledProperty } from '../src/sim/map';
+import { T } from '../src/sim/map';
+import { Painter, readJson, writeTiled, writeTileset } from './map-kit';
 
-const root = join(import.meta.dirname, '..');
-const rules = JSON.parse(readFileSync(join(root, 'data/rules.json'), 'utf8'));
-const factions = JSON.parse(readFileSync(join(root, 'data/factions.json'), 'utf8'));
-const buildingDefs: { id: string; size: number }[] = JSON.parse(
-  readFileSync(join(root, 'data/buildings.json'), 'utf8'),
-);
-const sizeOf = (id: string) => buildingDefs.find((b) => b.id === id)?.size ?? 1;
+const rules = readJson('data/rules.json');
+const factions = readJson('data/factions.json');
 
 const W = 160;
 const H = 120;
-const TW = 64;
-const TH = 32;
-const terrain = new Uint8Array(W * H).fill(T.plain);
-
-// Deterministic per-tile hash for scattering forests.
-const hash = (x: number, y: number, s = 0) => {
-  let h = (x * 374761393 + y * 668265263 + s * 2147483647) | 0;
-  h = Math.imul(h ^ (h >>> 13), 1274126177);
-  return ((h ^ (h >>> 16)) >>> 0) / 4294967296;
-};
-const set = (x: number, y: number, t: number) => {
-  if (x >= 0 && y >= 0 && x < W && y < H) terrain[y * W + x] = t;
-};
-const get = (x: number, y: number) => terrain[y * W + x];
-const rect = (x0: number, y0: number, x1: number, y1: number, t: number) => {
-  for (let y = y0; y <= y1; y++) for (let x = x0; x <= x1; x++) set(x, y, t);
-};
-const disc = (cx: number, cy: number, r: number, t: number, only?: number[]) => {
-  for (let y = Math.floor(cy - r); y <= Math.ceil(cy + r); y++)
-    for (let x = Math.floor(cx - r); x <= Math.ceil(cx + r); x++)
-      if ((x - cx) ** 2 + (y - cy) ** 2 <= r * r && x >= 0 && y >= 0 && x < W && y < H)
-        if (!only || only.includes(get(x, y))) set(x, y, t);
-};
-const scatter = (x0: number, y0: number, x1: number, y1: number, density: number, t: number, onto: number[], seed: number) => {
-  for (let y = y0; y <= y1; y++)
-    for (let x = x0; x <= x1; x++) if (onto.includes(get(x, y)) && hash(x, y, seed) < density) set(x, y, t);
-};
-const line = (ax: number, ay: number, bx: number, by: number, t: number, onto: number[]) => {
-  const n = Math.max(Math.abs(bx - ax), Math.abs(by - ay));
-  for (let i = 0; i <= n; i++) {
-    const x = Math.round(ax + ((bx - ax) * i) / n);
-    const y = Math.round(ay + ((by - ay) * i) / n);
-    if (onto.includes(get(x, y))) set(x, y, t);
-  }
-};
+const p = new Painter(W, H, T.plain);
+const { set, rect, disc, scatter, line, place, clearUnder } = p;
 
 // --- Terrain, painted back to front (later strokes win). ---------------------------------
 // North coast and everything not otherwise specified: plain, with woods.
@@ -100,23 +60,6 @@ scatter(111, 20, 136, 34, 0.2, T.forest, [T.plain], 6);
 scatter(137, 0, 159, H - 1, 0.18, T.forest, [T.plain], 7);
 
 // --- Objects -------------------------------------------------------------------------------
-interface Obj {
-  type: string;
-  name?: string;
-  cx: number;
-  cy: number;
-  size?: number;
-  props?: Record<string, string | number | boolean>;
-}
-const objs: Obj[] = [];
-const place = (o: Obj) => {
-  const size = o.size ?? sizeOf(o.type);
-  objs.push({ ...o, size });
-  const x0 = o.cx - Math.floor(size / 2);
-  const y0 = o.cy - Math.floor(size / 2);
-  return { x0, y0, x1: x0 + size - 1, y1: y0 + size - 1 };
-};
-const clearUnder = (b: { x0: number; y0: number; x1: number; y1: number }, t: number) => rect(b.x0, b.y0, b.x1, b.y1, t);
 
 // Tayouan fortress. Coordinates are building centres (spec §6.3).
 clearUnder(place({ type: 'zeelandia_castle', cx: 44, cy: 57, props: { owner: 'faction_voc' } }), T.sand);
@@ -174,117 +117,5 @@ const regions: [string, number, number, number, number][] = [
   ['heliao', 111, 37, 113, 39],
 ];
 
-// --- Tiled JSON -------------------------------------------------------------------------------
-const prop = (name: string, value: string | number | boolean): TiledProperty => ({
-  name,
-  type: typeof value === 'boolean' ? 'bool' : typeof value === 'number' ? (Number.isInteger(value) ? 'int' : 'float') : 'string',
-  value,
-});
-let nextId = 1;
-const obj = (name: string, type: string, x: number, y: number, w: number, h: number, props: Record<string, string | number | boolean> = {}): TiledObject => ({
-  id: nextId++,
-  name,
-  type,
-  x: x * TH,
-  y: y * TH,
-  width: w * TH,
-  height: h * TH,
-  rotation: 0,
-  visible: true,
-  ...(Object.keys(props).length ? { properties: Object.entries(props).map(([k, v]) => prop(k, v)) } : {}),
-});
-
-const tiled: TiledMap = {
-  type: 'map',
-  version: '1.10',
-  tiledversion: '1.10.2',
-  orientation: 'isometric',
-  renderorder: 'right-down',
-  width: W,
-  height: H,
-  tilewidth: TW,
-  tileheight: TH,
-  infinite: false,
-  nextlayerid: 4,
-  nextobjectid: 0,
-  layers: [
-    { id: 1, name: 'terrain', type: 'tilelayer', width: W, height: H, data: Array.from(terrain, (t) => t + 1), x: 0, y: 0, opacity: 1, visible: true },
-    {
-      id: 2,
-      name: 'objects',
-      type: 'objectgroup',
-      objects: objs.map((o) => {
-        const s = o.size!;
-        return obj(o.name ?? '', o.type, o.cx - Math.floor(s / 2), o.cy - Math.floor(s / 2), s, s, o.props);
-      }),
-      x: 0,
-      y: 0,
-      opacity: 1,
-      visible: true,
-    },
-    {
-      id: 3,
-      name: 'regions',
-      type: 'objectgroup',
-      objects: regions.map(([id, x0, y0, x1, y1]) => obj(id, 'region', x0, y0, x1 - x0 + 1, y1 - y0 + 1)),
-      x: 0,
-      y: 0,
-      opacity: 1,
-      visible: true,
-    },
-  ],
-  tilesets: [
-    {
-      firstgid: 1,
-      name: 'terrain',
-      image: '../../assets/tiles/terrain.png',
-      imagewidth: TW * TERRAIN_IDS.length,
-      imageheight: TH,
-      tilewidth: TW,
-      tileheight: TH,
-      tilecount: TERRAIN_IDS.length,
-      columns: TERRAIN_IDS.length,
-      margin: 0,
-      spacing: 0,
-      tiles: TERRAIN_IDS.map((id, i) => ({ id: i, type: id })),
-    },
-  ],
-};
-tiled.nextobjectid = nextId;
-mkdirSync(join(root, 'data/maps'), { recursive: true });
-writeFileSync(join(root, 'data/maps/taijiang.json'), JSON.stringify(tiled) + '\n');
-
-// --- Placeholder tileset PNG (one flat-colour diamond per terrain) ----------------------------
-function png(width: number, height: number, rgba: Uint8Array): Buffer {
-  const chunk = (type: string, data: Buffer) => {
-    const len = Buffer.alloc(4);
-    len.writeUInt32BE(data.length);
-    const td = Buffer.concat([Buffer.from(type, 'ascii'), data]);
-    const crc = Buffer.alloc(4);
-    crc.writeUInt32BE(crc32(td));
-    return Buffer.concat([len, td, crc]);
-  };
-  const ihdr = Buffer.alloc(13);
-  ihdr.writeUInt32BE(width, 0);
-  ihdr.writeUInt32BE(height, 4);
-  ihdr[8] = 8;
-  ihdr[9] = 6;
-  const raw = Buffer.alloc((width * 4 + 1) * height);
-  for (let y = 0; y < height; y++) Buffer.from(rgba.buffer, y * width * 4, width * 4).copy(raw, y * (width * 4 + 1) + 1);
-  return Buffer.concat([Buffer.from([137, 80, 78, 71, 13, 10, 26, 10]), chunk('IHDR', ihdr), chunk('IDAT', deflateSync(raw)), chunk('IEND', Buffer.alloc(0))]);
-}
-const imgW = TW * TERRAIN_IDS.length;
-const rgba = new Uint8Array(imgW * TH * 4);
-TERRAIN_IDS.forEach((id, i) => {
-  const hex: string = rules.terrain.types[id].color;
-  const [r, g, b] = [1, 3, 5].map((o) => parseInt(hex.slice(o, o + 2), 16));
-  for (let y = 0; y < TH; y++)
-    for (let x = 0; x < TW; x++)
-      if (Math.abs(x + 0.5 - TW / 2) / (TW / 2) + Math.abs(y + 0.5 - TH / 2) / (TH / 2) <= 1) {
-        const p = (y * imgW + i * TW + x) * 4;
-        rgba.set([r, g, b, 255], p);
-      }
-});
-mkdirSync(join(root, 'assets/tiles'), { recursive: true });
-writeFileSync(join(root, 'assets/tiles/terrain.png'), png(imgW, TH, rgba));
-console.log(`gen-map: ${W}×${H}, ${objs.length} objects, ${regions.length} regions`);
+writeTiled('taijiang', p, regions);
+writeTileset();

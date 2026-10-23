@@ -10,6 +10,9 @@ export const TERRAIN_IDS = [
   'forest',
   'hill',
   'road',
+  // 恆春半島 (1874 scenarios): stream beds and steep mountain slopes.
+  'stream',
+  'mountain',
 ] as const;
 export type TerrainId = (typeof TERRAIN_IDS)[number];
 export const T = Object.fromEntries(TERRAIN_IDS.map((id, i) => [id, i])) as Record<TerrainId, number>;

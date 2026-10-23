@@ -1,5 +1,5 @@
 import { Container, Graphics } from 'pixi.js';
-import { TERRAIN_IDS, type GameMap } from '../sim/map';
+import { T, TERRAIN_IDS, type GameMap } from '../sim/map';
 import { TILE_H, TILE_W, toScreen } from './iso';
 
 const shade = (hex: number, f: number) => {
@@ -8,6 +8,8 @@ const shade = (hex: number, f: number) => {
   const b = Math.min(255, Math.round((hex & 255) * f));
   return (r << 16) | (g << 8) | b;
 };
+
+const { mountain: MOUNTAIN, hill: HILL, stream: STREAM } = T;
 
 /** Static terrain as batched diamond geometry, split into 16×16-tile chunks for culling. */
 export function buildTerrain(map: GameMap, colors: Record<string, string>): Container {
@@ -26,6 +28,13 @@ export function buildTerrain(map: GameMap, colors: Record<string, string>): Cont
           g.poly([p.x, p.y, p.x + TILE_W / 2, p.y + TILE_H / 2, p.x, p.y + TILE_H, p.x - TILE_W / 2, p.y + TILE_H / 2]).fill(
             shade(base[t], 0.94 + n * 0.02),
           );
+          // Relief marks: ridge lines on mountain slopes, rock dots on summits, ripples on streams.
+          if (t === MOUNTAIN && n % 2 === 0) {
+            const cx = p.x + (n - 3) * 3;
+            const cy = p.y + TILE_H / 2 + 2;
+            g.moveTo(cx - 9, cy + 3).lineTo(cx, cy - 4).lineTo(cx + 9, cy + 3).stroke({ color: shade(base[t], 0.7), width: 1.5 });
+          } else if (t === HILL && n % 3 === 0) g.circle(p.x + (n - 3) * 4, p.y + TILE_H / 2, 2).fill(shade(base[t], 0.75));
+          else if (t === STREAM && n % 2 === 1) g.moveTo(p.x - 8, p.y + TILE_H / 2).lineTo(p.x + 8, p.y + TILE_H / 2 + 2).stroke({ color: shade(base[t], 1.25), width: 1 });
         }
       g.cullable = true;
       root.addChild(g);

@@ -69,7 +69,8 @@ export function scenarioSystem(world: World) {
   }
   if (world.ext.flags.missionOver || world.tick % TRIGGER_TICKS !== 0) return;
   runTriggers(world, (sc.triggers ?? []) as Trigger[]);
-  runTriggers(world, GLOBAL);
+  // The 1661 campaign's standing rules (鄭成功 falls, castle taken, castle morale).
+  if ((sc.campaign ?? 'koxinga') === 'koxinga') runTriggers(world, GLOBAL);
 }
 
 /** Seconds left on the chapter timer (null outside scenarios). */

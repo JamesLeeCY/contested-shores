@@ -143,5 +143,37 @@
     "steps": [
       "hold:utrecht_redoubt"
     ]
+  },
+  {
+    "id": "shimen_assault",
+    "faction": "faction_japan",
+    "chapters": [
+      1
+    ],
+    "steps": [
+      "push:tongpu",
+      "flank:shimen_n/10",
+      "push:gorge_mouth",
+      "flank:shimen_s/8",
+      "push:beyond_gorge",
+      "hold_region:beyond_gorge"
+    ]
+  },
+  {
+    "id": "shimen_defense",
+    "faction": "faction_paiwan",
+    "chapters": [
+      1
+    ],
+    "steps": [
+      "ambush:shimen_n/10/gorge",
+      "ambush:shimen_s/10/gorge",
+      "guard:shimen_n/6",
+      "guard:shimen_s/6",
+      "ambush:shimen_s/16/gorge",
+      "guard:shimen_s/10",
+      "ambush:shimen_n/16/gorge",
+      "guard:shimen_n/10"
+    ]
   }
 ]

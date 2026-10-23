@@ -1,5 +1,5 @@
 // Declarative scenario triggers (spec §7.1): `when` conditions → `do` actions.
-import { findRegion, regionContains } from '../map';
+import { findRegion, objectCenter, regionContains } from '../map';
 import type { Entity, Owner } from '../types';
 import type { World } from '../world';
 import { armyPop } from '../ai/common';
@@ -9,6 +9,7 @@ import { changeFavor, ensureParties } from '../systems/diplomacy';
 import { fogOf } from '../systems/fog';
 import { changeCastleMorale } from '../systems/morale';
 import { scheduleTyphoon } from '../systems/weather';
+import { moveGroup } from '../systems/movement';
 import { spawnFleet, spawnGroup, spawnRelief } from './setup';
 import type { FleetSpec, UnitSpec } from './types';
 
@@ -57,7 +58,8 @@ export type Action =
   | { type: 'reveal_area'; region?: string; around?: string; radius?: number; faction: Owner }
   | { type: 'set_ai_plan'; faction: Owner; plans: string[] }
   | { type: 'set_flag'; name: string; value: number | boolean | string }
-  | { type: 'mark_army'; owner: Owner; mark: string };
+  | { type: 'mark_army'; owner: Owner; mark: string }
+  | { type: 'move_units'; unitTag: string; region: string };
 
 export interface Trigger {
   id: string;
@@ -107,7 +109,7 @@ export function setOutcome(world: World, faction: Owner, rating: Rating, reasonK
   world.ext.flags[`outcomeReason:${faction}`] = reasonKey;
   world.emit({ type: 'mission_outcome', faction, rating, reasonKey });
   if (keepOpen) return;
-  const other = faction === 'faction_zheng' ? 'faction_voc' : 'faction_zheng';
+  const other = world.enemyOf(faction);
   if (!outcomeOf(world, other)) {
     // A side that loses the way history went earns "historical" rather than "defeat".
     const historicalLoser = world.scenario?.historicalLoser as Owner | undefined;
@@ -122,6 +124,16 @@ export function setOutcome(world: World, faction: Owner, rating: Rating, reasonK
 /** Pop of units of a type lost so far, per owner (from death events). */
 function lostCount(world: World, owner: Owner, type: string): number {
   return Number(world.ext.flags[`lost:${owner}:${type}`] ?? 0);
+}
+
+/** Population of an owner's units standing in a region (each unit counts at least 1). */
+export function regionPop(world: World, region: string, owner: Owner, unitTag?: string): number {
+  const r = findRegion(world.map, region);
+  let pop = 0;
+  for (const e of world.all())
+    if (e.kind === 'unit' && e.owner === owner && !e.insideOf && (!unitTag || e.tag === unitTag) && regionContains(r, Math.floor(e.x), Math.floor(e.y)))
+      pop += Math.max(1, world.data.units.get(e.type)!.pop);
+  return pop;
 }
 
 // --- conditions ---------------------------------------------------------------------------------
@@ -142,14 +154,8 @@ export function evaluate(world: World, c: Condition): boolean {
     }
     case 'building_captured':
       return world.buildings().some((b) => (b.type === c.building || b.tag === c.building) && (c.by ? b.owner === c.by : b.owner !== world.ext.flags[`origOwner:${b.id}`]));
-    case 'area_entered': {
-      const r = findRegion(world.map, c.region);
-      let pop = 0;
-      for (const e of world.all())
-        if (e.kind === 'unit' && e.owner === c.owner && !e.insideOf && (!c.unitTag || e.tag === c.unitTag) && regionContains(r, Math.floor(e.x), Math.floor(e.y)))
-          pop += Math.max(1, world.data.units.get(e.type)!.pop);
-      return pop >= (c.pop ?? 1);
-    }
+    case 'area_entered':
+      return regionPop(world, c.region, c.owner, c.unitTag) >= (c.pop ?? 1);
     case 'favor_reached': {
       const v = ensureParties(world)[c.party]?.favor[c.faction] ?? 0;
       return c.below ? v < c.value : v >= c.value;
@@ -302,6 +308,15 @@ export function act(world: World, a: Action) {
       } else if (world.scenario?.ai?.[a.faction] && world.ext.flags.player !== a.faction) {
         enableAi(world, a.faction, { ...world.scenario.ai[a.faction], plans: a.plans });
       }
+      break;
+    }
+    case 'move_units': {
+      const list = tagged(world, a.unitTag);
+      if (!list.length) break;
+      const [x, y] = objectCenter(findRegion(world.map, a.region));
+      // Applied directly (not as a command) so replays of a save do not issue it twice.
+      for (const u of list) u.order = { type: 'move', x, y };
+      moveGroup(world, list, x, y);
       break;
     }
     case 'set_flag':

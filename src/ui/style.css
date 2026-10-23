@@ -54,6 +54,7 @@ html, body { margin: 0; height: 100%; overflow: hidden; background: var(--bg); c
 .sel-portrait { width: 56px; height: 56px; flex: none; display: grid; place-items: center; font-size: 28px; font-weight: bold;
   border: 2px solid var(--panel-border); border-radius: 4px; background: #444; }
 .owner-faction_zheng { background: #c0392b; } .owner-faction_voc { background: #e67e22; }
+.owner-faction_paiwan { background: #b8860b; } .owner-faction_japan { background: #2c4a8c; }
 .owner-faction_settlers { background: #b8ad8f; color: #222; }
 .sel-info { flex: 1; display: flex; flex-direction: column; gap: 3px; min-width: 0; }
 .sel-name { font-weight: bold; font-size: 15px; }
@@ -142,6 +143,7 @@ html, body { margin: 0; height: 100%; overflow: hidden; background: var(--bg); c
 .history-card { color: var(--muted); font-size: 13px; border-left: 3px solid var(--panel-border); padding-left: 10px; }
 .cut-art { height: 180px; border-radius: 4px; margin-bottom: 12px; background-size: cover; }
 .art-sea { background: linear-gradient(180deg, #2b4a63 0%, #3f6f86 55%, #c9b27a 56%, #a08a5c 100%); }
+.art-mountain { background: linear-gradient(170deg, #4d5a4a 0%, #6f7a5c 40%, #3e5233 41%, #556b3c 70%, #5d9aa6 71%, #7fb3bc 100%); }
 .art-fort { background: linear-gradient(180deg, #4a5560 0%, #6d7a83 50%, #d9c58f 51%, #b8a26a 100%); }
 .art-hill { background: radial-gradient(ellipse at 50% 100%, #8a7448 0 40%, transparent 41%), linear-gradient(180deg, #3d4a55, #6a7d86 60%, #d9c58f 61%); }
 .art-letter { background: repeating-linear-gradient(0deg, #e8dcc0 0 22px, #d8caa6 22px 23px); }
@@ -209,3 +211,7 @@ html, body { margin: 0; height: 100%; overflow: hidden; background: var(--bg); c
   padding: 10px 14px; z-index: 30; font-size: 14px; line-height: 1.5; }
 .touchpad-hint-row { display: flex; gap: 8px; justify-content: flex-end; margin-top: 8px; }
 .touchpad-hint-row .menu-btn { margin: 0; width: auto; padding: 4px 12px; }
+.menu-tabs { display: flex; gap: 6px; margin-bottom: 10px; flex-wrap: wrap; }
+.menu-tab { background: transparent; border: 1px solid var(--panel-border); color: var(--muted); padding: 4px 12px; border-radius: 3px; cursor: pointer; font-size: 13px; }
+.menu-tab.on { background: #2d261c; color: var(--text); border-color: #8a6d3b; }
+.obj-status { font-size: 12px; color: var(--muted); margin-top: 4px; }

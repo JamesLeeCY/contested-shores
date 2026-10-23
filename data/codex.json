@@ -392,5 +392,142 @@
     "sources": [
       "src.wiki"
     ]
+  },
+  {
+    "id": "paiwan_hunter",
+    "category": "units",
+    "dispute": false,
+    "sources": [
+      "src.house",
+      "src.eskildsen",
+      "src.mudan_wiki"
+    ]
+  },
+  {
+    "id": "paiwan_warrior",
+    "category": "units",
+    "dispute": false,
+    "sources": [
+      "src.house",
+      "src.eskildsen",
+      "src.mudan_wiki"
+    ]
+  },
+  {
+    "id": "paiwan_family",
+    "category": "units",
+    "dispute": false,
+    "sources": [
+      "src.mudan_wiki"
+    ]
+  },
+  {
+    "id": "japan_infantry",
+    "category": "units",
+    "dispute": false,
+    "sources": [
+      "src.house",
+      "src.eskildsen",
+      "src.mudan_wiki"
+    ]
+  },
+  {
+    "id": "japan_volunteer",
+    "category": "units",
+    "dispute": false,
+    "sources": [
+      "src.eskildsen",
+      "src.mudan_wiki"
+    ]
+  },
+  {
+    "id": "aruqu",
+    "category": "people",
+    "dispute": false,
+    "sources": [
+      "src.house",
+      "src.eskildsen",
+      "src.mudan_wiki"
+    ]
+  },
+  {
+    "id": "sakuma",
+    "category": "people",
+    "dispute": false,
+    "sources": [
+      "src.mudan_wiki"
+    ]
+  },
+  {
+    "id": "m_saigo",
+    "category": "people",
+    "dispute": false,
+    "sources": [
+      "src.eskildsen",
+      "src.mudan_wiki"
+    ]
+  },
+  {
+    "id": "m_legendre",
+    "category": "people",
+    "dispute": false,
+    "sources": [
+      "src.eskildsen",
+      "src.mudan_wiki"
+    ]
+  },
+  {
+    "id": "m_shimen",
+    "category": "places",
+    "dispute": false,
+    "sources": [
+      "src.house",
+      "src.eskildsen",
+      "src.mudan_wiki"
+    ]
+  },
+  {
+    "id": "m_mudan",
+    "category": "places",
+    "dispute": false,
+    "sources": [
+      "src.mudan_wiki"
+    ]
+  },
+  {
+    "id": "m_kuskus",
+    "category": "places",
+    "dispute": false,
+    "sources": [
+      "src.mudan_wiki"
+    ]
+  },
+  {
+    "id": "m_sialiao",
+    "category": "places",
+    "dispute": false,
+    "sources": [
+      "src.house",
+      "src.mudan_wiki"
+    ]
+  },
+  {
+    "id": "m_1871",
+    "category": "disputes",
+    "dispute": true,
+    "sources": [
+      "src.mudan_wiki",
+      "src.eskildsen"
+    ]
+  },
+  {
+    "id": "m_numbers",
+    "category": "disputes",
+    "dispute": true,
+    "sources": [
+      "src.house",
+      "src.eskildsen",
+      "src.mudan_wiki"
+    ]
   }
 ]

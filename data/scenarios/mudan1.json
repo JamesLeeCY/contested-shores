@@ -1,0 +1,674 @@
+{
+  "id": "mudan1",
+  "campaign": "mudan",
+  "map": "hengchun",
+  "factions": [
+    "faction_paiwan",
+    "faction_japan"
+  ],
+  "historyKey": "history.mudan1",
+  "chapter": 1,
+  "nameKey": "scenario.mudan1.name",
+  "dateKey": "scenario.mudan1.date",
+  "timerMinutes": 8,
+  "stage": {
+    "faction_paiwan": 1,
+    "faction_japan": 1
+  },
+  "resources": {
+    "faction_paiwan": {
+      "grain": 250
+    },
+    "faction_japan": {
+      "grain": 420
+    }
+  },
+  "castleMorale": 0,
+  "rules": {
+    "combat.uphillUnitDamageMul": 0.5
+  },
+  "units": [
+    {
+      "type": "sakuma",
+      "owner": "faction_japan",
+      "count": 1,
+      "at": [
+        37,
+        43
+      ]
+    },
+    {
+      "type": "japan_infantry",
+      "owner": "faction_japan",
+      "count": 24,
+      "at": [
+        34,
+        44
+      ]
+    },
+    {
+      "type": "japan_volunteer",
+      "owner": "faction_japan",
+      "count": 8,
+      "at": [
+        38,
+        46
+      ]
+    },
+    {
+      "type": "aruqu",
+      "owner": "faction_paiwan",
+      "count": 1,
+      "at": [
+        58,
+        33
+      ]
+    },
+    {
+      "type": "paiwan_hunter",
+      "owner": "faction_paiwan",
+      "count": 10,
+      "at": [
+        57,
+        34
+      ]
+    },
+    {
+      "type": "paiwan_hunter",
+      "owner": "faction_paiwan",
+      "count": 10,
+      "at": [
+        57,
+        50
+      ]
+    },
+    {
+      "type": "paiwan_warrior",
+      "owner": "faction_paiwan",
+      "count": 6,
+      "at": [
+        60,
+        33
+      ]
+    },
+    {
+      "type": "paiwan_warrior",
+      "owner": "faction_paiwan",
+      "count": 6,
+      "at": [
+        60,
+        51
+      ]
+    },
+    {
+      "type": "paiwan_family",
+      "owner": "faction_paiwan",
+      "count": 8,
+      "at": [
+        101,
+        21
+      ],
+      "tag": "families"
+    },
+    {
+      "type": "paiwan_family",
+      "owner": "faction_paiwan",
+      "count": 5,
+      "at": [
+        90,
+        62
+      ],
+      "tag": "families"
+    },
+    {
+      "type": "paiwan_family",
+      "owner": "faction_paiwan",
+      "count": 5,
+      "at": [
+        114,
+        48
+      ],
+      "tag": "families"
+    }
+  ],
+  "ai": {
+    "faction_japan": {
+      "plans": [
+        "shimen_assault"
+      ],
+      "composition": {
+        "japan_infantry": 1
+      },
+      "targetArmy": 60,
+      "home": [
+        34,
+        44
+      ],
+      "scripted": true
+    },
+    "faction_paiwan": {
+      "plans": [
+        "shimen_defense"
+      ],
+      "composition": {
+        "paiwan_hunter": 0.5,
+        "paiwan_warrior": 0.5
+      },
+      "targetArmy": 40,
+      "home": [
+        101,
+        17
+      ],
+      "scripted": true
+    }
+  },
+  "historicalLoser": "faction_paiwan",
+  "objectives": {
+    "faction_japan": [
+      "mudan1.obj.take"
+    ],
+    "faction_paiwan": [
+      "mudan1.obj.hold",
+      "mudan1.obj.aruqu"
+    ]
+  },
+  "status": [
+    {
+      "textKey": "mudan1.status.heights",
+      "counts": [
+        [
+          "shimen_n",
+          "faction_paiwan"
+        ],
+        [
+          "shimen_s",
+          "faction_paiwan"
+        ]
+      ]
+    },
+    {
+      "textKey": "mudan1.status.through",
+      "counts": [
+        [
+          "beyond_gorge",
+          "faction_japan"
+        ]
+      ]
+    }
+  ],
+  "triggers": [
+    {
+      "id": "m1_start",
+      "when": {
+        "type": "time_elapsed",
+        "seconds": 0
+      },
+      "do": [
+        {
+          "type": "show_cutscene",
+          "id": "mudan1_intro"
+        },
+        {
+          "type": "set_objective",
+          "id": "take",
+          "faction": "faction_japan",
+          "textKey": "mudan1.obj.take",
+          "primary": true
+        },
+        {
+          "type": "set_objective",
+          "id": "hold",
+          "faction": "faction_paiwan",
+          "textKey": "mudan1.obj.hold",
+          "primary": true
+        },
+        {
+          "type": "set_objective",
+          "id": "aruqu",
+          "faction": "faction_paiwan",
+          "textKey": "mudan1.obj.aruqu",
+          "primary": false
+        },
+        {
+          "type": "move_units",
+          "unitTag": "families",
+          "region": "refuge"
+        },
+        {
+          "type": "show_message",
+          "textKey": "mudan1.msg.families",
+          "kind": "info"
+        }
+      ]
+    },
+    {
+      "id": "m1_kuskus",
+      "when": {
+        "type": "time_elapsed",
+        "seconds": 150
+      },
+      "do": [
+        {
+          "type": "spawn_units",
+          "units": [
+            {
+              "type": "paiwan_hunter",
+              "owner": "faction_paiwan",
+              "count": 5,
+              "at": [
+                112,
+                49
+              ],
+              "tag": "kuskus_men"
+            },
+            {
+              "type": "paiwan_warrior",
+              "owner": "faction_paiwan",
+              "count": 4,
+              "at": [
+                115,
+                49
+              ],
+              "tag": "kuskus_men"
+            }
+          ]
+        },
+        {
+          "type": "show_message",
+          "textKey": "mudan1.msg.kuskus",
+          "kind": "good",
+          "to": "faction_paiwan"
+        },
+        {
+          "type": "show_message",
+          "textKey": "mudan1.msg.kuskus_enemy",
+          "kind": "warn",
+          "to": "faction_japan"
+        }
+      ]
+    },
+    {
+      "id": "m1_second_wave",
+      "when": {
+        "type": "time_elapsed",
+        "seconds": 180
+      },
+      "do": [
+        {
+          "type": "spawn_units",
+          "units": [
+            {
+              "type": "japan_infantry",
+              "owner": "faction_japan",
+              "count": 12,
+              "at": [
+                16,
+                46
+              ],
+              "tag": "second_wave"
+            }
+          ]
+        },
+        {
+          "type": "show_message",
+          "textKey": "mudan1.msg.second_wave",
+          "kind": "good",
+          "to": "faction_japan"
+        }
+      ]
+    },
+    {
+      "id": "m1_nunai",
+      "when": {
+        "type": "time_elapsed",
+        "seconds": 300
+      },
+      "do": [
+        {
+          "type": "spawn_units",
+          "units": [
+            {
+              "type": "paiwan_hunter",
+              "owner": "faction_paiwan",
+              "count": 4,
+              "at": [
+                89,
+                56
+              ],
+              "tag": "nunai_men"
+            },
+            {
+              "type": "paiwan_warrior",
+              "owner": "faction_paiwan",
+              "count": 3,
+              "at": [
+                92,
+                56
+              ],
+              "tag": "nunai_men"
+            }
+          ]
+        },
+        {
+          "type": "show_message",
+          "textKey": "mudan1.msg.nunai",
+          "kind": "good",
+          "to": "faction_paiwan"
+        }
+      ]
+    },
+    {
+      "id": "m1_main_body",
+      "when": {
+        "type": "time_elapsed",
+        "seconds": 300
+      },
+      "do": [
+        {
+          "type": "spawn_units",
+          "units": [
+            {
+              "type": "japan_infantry",
+              "owner": "faction_japan",
+              "count": 12,
+              "at": [
+                16,
+                46
+              ],
+              "tag": "main_body"
+            }
+          ]
+        },
+        {
+          "type": "show_message",
+          "textKey": "mudan1.msg.main_body",
+          "kind": "good",
+          "to": "faction_japan"
+        },
+        {
+          "type": "show_message",
+          "textKey": "mudan1.msg.main_body_enemy",
+          "kind": "warn",
+          "to": "faction_paiwan"
+        }
+      ]
+    },
+    {
+      "id": "m1_aruqu",
+      "when": {
+        "type": "unit_dead",
+        "unitTag": "aruqu"
+      },
+      "do": [
+        {
+          "type": "set_flag",
+          "name": "aruqu_dead",
+          "value": true
+        },
+        {
+          "type": "complete_objective",
+          "id": "aruqu",
+          "faction": "faction_paiwan",
+          "failed": true
+        },
+        {
+          "type": "show_message",
+          "textKey": "mudan1.msg.aruqu",
+          "kind": "warn"
+        }
+      ]
+    },
+    {
+      "id": "m1_taken_rout",
+      "when": {
+        "type": "all_of",
+        "conditions": [
+          {
+            "type": "all_of",
+            "conditions": [
+              {
+                "type": "area_entered",
+                "region": "beyond_gorge",
+                "owner": "faction_japan",
+                "pop": 6
+              },
+              {
+                "type": "not",
+                "condition": {
+                  "type": "area_entered",
+                  "region": "shimen_n",
+                  "owner": "faction_paiwan",
+                  "pop": 3
+                }
+              },
+              {
+                "type": "not",
+                "condition": {
+                  "type": "area_entered",
+                  "region": "shimen_s",
+                  "owner": "faction_paiwan",
+                  "pop": 3
+                }
+              }
+            ]
+          },
+          {
+            "type": "army_pop_below",
+            "owner": "faction_paiwan",
+            "pop": 4
+          }
+        ]
+      },
+      "do": [
+        {
+          "type": "complete_objective",
+          "id": "take",
+          "faction": "faction_japan"
+        },
+        {
+          "type": "complete_objective",
+          "id": "hold",
+          "faction": "faction_paiwan",
+          "failed": true
+        },
+        {
+          "type": "fail_mission",
+          "faction": "faction_paiwan",
+          "reasonKey": "mudan1.end.rout",
+          "keepOpen": true
+        },
+        {
+          "type": "win_mission",
+          "faction": "faction_japan",
+          "rating": "victory",
+          "reasonKey": "mudan1.end.rout"
+        }
+      ]
+    },
+    {
+      "id": "m1_taken_history",
+      "when": {
+        "type": "all_of",
+        "conditions": [
+          {
+            "type": "all_of",
+            "conditions": [
+              {
+                "type": "area_entered",
+                "region": "beyond_gorge",
+                "owner": "faction_japan",
+                "pop": 6
+              },
+              {
+                "type": "not",
+                "condition": {
+                  "type": "area_entered",
+                  "region": "shimen_n",
+                  "owner": "faction_paiwan",
+                  "pop": 3
+                }
+              },
+              {
+                "type": "not",
+                "condition": {
+                  "type": "area_entered",
+                  "region": "shimen_s",
+                  "owner": "faction_paiwan",
+                  "pop": 3
+                }
+              }
+            ]
+          },
+          {
+            "type": "flag",
+            "name": "aruqu_dead"
+          }
+        ]
+      },
+      "do": [
+        {
+          "type": "complete_objective",
+          "id": "take",
+          "faction": "faction_japan"
+        },
+        {
+          "type": "complete_objective",
+          "id": "hold",
+          "faction": "faction_paiwan",
+          "failed": true
+        },
+        {
+          "type": "win_mission",
+          "faction": "faction_japan",
+          "rating": "victory",
+          "reasonKey": "mudan1.end.history"
+        }
+      ]
+    },
+    {
+      "id": "m1_taken_chief_safe",
+      "when": {
+        "type": "all_of",
+        "conditions": [
+          {
+            "type": "all_of",
+            "conditions": [
+              {
+                "type": "area_entered",
+                "region": "beyond_gorge",
+                "owner": "faction_japan",
+                "pop": 6
+              },
+              {
+                "type": "not",
+                "condition": {
+                  "type": "area_entered",
+                  "region": "shimen_n",
+                  "owner": "faction_paiwan",
+                  "pop": 3
+                }
+              },
+              {
+                "type": "not",
+                "condition": {
+                  "type": "area_entered",
+                  "region": "shimen_s",
+                  "owner": "faction_paiwan",
+                  "pop": 3
+                }
+              }
+            ]
+          },
+          {
+            "type": "not",
+            "condition": {
+              "type": "flag",
+              "name": "aruqu_dead"
+            }
+          }
+        ]
+      },
+      "do": [
+        {
+          "type": "complete_objective",
+          "id": "take",
+          "faction": "faction_japan"
+        },
+        {
+          "type": "complete_objective",
+          "id": "hold",
+          "faction": "faction_paiwan",
+          "failed": true
+        },
+        {
+          "type": "win_mission",
+          "faction": "faction_japan",
+          "rating": "victory",
+          "reasonKey": "mudan1.end.chief_safe"
+        }
+      ]
+    },
+    {
+      "id": "m1_repulsed",
+      "when": {
+        "type": "all_of",
+        "conditions": [
+          {
+            "type": "time_elapsed",
+            "seconds": 60
+          },
+          {
+            "type": "army_pop_below",
+            "owner": "faction_japan",
+            "pop": 6
+          }
+        ]
+      },
+      "do": [
+        {
+          "type": "complete_objective",
+          "id": "hold",
+          "faction": "faction_paiwan"
+        },
+        {
+          "type": "complete_objective",
+          "id": "take",
+          "faction": "faction_japan",
+          "failed": true
+        },
+        {
+          "type": "win_mission",
+          "faction": "faction_paiwan",
+          "rating": "victory",
+          "reasonKey": "mudan1.end.repulsed"
+        }
+      ]
+    },
+    {
+      "id": "m1_held",
+      "when": {
+        "type": "time_elapsed",
+        "seconds": 480
+      },
+      "do": [
+        {
+          "type": "complete_objective",
+          "id": "hold",
+          "faction": "faction_paiwan"
+        },
+        {
+          "type": "complete_objective",
+          "id": "take",
+          "faction": "faction_japan",
+          "failed": true
+        },
+        {
+          "type": "win_mission",
+          "faction": "faction_paiwan",
+          "rating": "victory",
+          "reasonKey": "mudan1.end.held"
+        }
+      ]
+    }
+  ]
+}

@@ -106,6 +106,10 @@ export interface Entity {
   attackTarget?: number;
   /** Movement was issued by combat to chase a target; arrival must not end the order. */
   chasing?: boolean;
+  /** Hold-position stance: fire at whatever comes into range but never chase (spec: 固守). */
+  hold?: boolean;
+  /** Tick until which a forest-hidden shooter stays visible (matchlock smoke). */
+  revealedUntil?: number;
   chaseAt?: number;
   lastHit?: number;
   lastAttacker?: number;

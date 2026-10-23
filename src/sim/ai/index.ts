@@ -19,6 +19,7 @@ export function enableAi(world: World, owner: Owner, spec: AiSpec, difficulty: D
     target: spec.target,
     defensive: spec.defensive,
     siege: spec.siege,
+    scripted: spec.scripted,
     state: 'ECONOMY',
     prevState: 'ECONOMY',
     planIdx: 0,

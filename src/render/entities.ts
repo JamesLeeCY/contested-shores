@@ -2,7 +2,7 @@
 import { Container, Graphics, Text } from 'pixi.js';
 import type { Entity, SimData } from '../sim/types';
 import type { World } from '../sim/world';
-import { t } from '../ui/i18n';
+import { hasKey, t } from '../ui/i18n';
 import { colorOf, ownerColors } from './colors';
 import { TILE_H, toScreen } from './iso';
 import { crenellate, drawFigure, drawGun, drawShipArt } from './art';
@@ -51,8 +51,10 @@ export class EntityRenderer {
   private marker(owner: string): Graphics {
     const g = new Graphics();
     g.moveTo(0, -26).lineTo(0, -38).stroke({ color: 0x222222, width: 1.5 });
-    if (owner === 'faction_zheng') g.poly([0, -38, 12, -34, 0, -30]).fill(0xffffff).stroke({ color: 0x000000, width: 1 });
-    else if (owner === 'faction_voc') g.rect(0, -38, 11, 7).fill(0xffffff).stroke({ color: 0x000000, width: 1 }).rect(0, -35.5, 11, 2).fill(0x000000);
+    // First side of the scenario: pennant; second side: banded square flag.
+    const side = this.playable.indexOf(owner);
+    if (side === 0) g.poly([0, -38, 12, -34, 0, -30]).fill(0xffffff).stroke({ color: 0x000000, width: 1 });
+    else if (side === 1) g.rect(0, -38, 11, 7).fill(0xffffff).stroke({ color: 0x000000, width: 1 }).rect(0, -35.5, 11, 2).fill(0x000000);
     else if (owner.startsWith('village_')) g.circle(5, -34, 4).fill(0xffffff).stroke({ color: 0x000000, width: 1 });
     else g.poly([5, -39, 10, -34, 5, -29, 0, -34]).fill(0xffffff).stroke({ color: 0x000000, width: 1 });
     return g;
@@ -63,7 +65,11 @@ export class EntityRenderer {
     this.colors = ownerColors(data);
   }
 
+  /** Playable factions of the current world (for colour-blind flag shapes). */
+  private playable: string[] = [];
+
   sync(world: World, alpha: number, selected: Set<number>) {
+    this.playable = world.playable;
     const seen = new Set<number>();
     for (const e of world.all()) {
       if (e.insideOf) continue;
@@ -176,7 +182,9 @@ export class EntityRenderer {
     if (e.type === 'battery' || e.type === 'trench') g.poly(top).fill({ color: 0x6b5a3a, alpha: 0.6 });
     v.ring.poly([nx, ny, ex, ey, sx, sy, wx, wy]).stroke({ color: 0x7CFC00, width: 2 });
     if (w >= 3) {
-      const label = new Text({ text: t(this.data.buildings.get(e.type)?.nameKey ?? e.type), style: { fontSize: 12, fill: 0xffffff, stroke: { color: 0x000000, width: 3 } } });
+      // Named places (牡丹社, 射寮…) show their own name.
+      const name = e.tag && hasKey(`place.${e.tag}`) ? t(`place.${e.tag}`) : t(this.data.buildings.get(e.type)?.nameKey ?? e.type);
+      const label = new Text({ text: name, style: { fontSize: 12, fill: 0xffffff, stroke: { color: 0x000000, width: 3 } } });
       label.anchor.set(0.5);
       label.position.set(0, -H - TILE_H / 2);
       v.root.addChild(label);

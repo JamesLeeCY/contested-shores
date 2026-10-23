@@ -6,7 +6,7 @@ import { capacityOf, cargoPop } from '../sim/systems/transport';
 import type { Entity, SimEvent } from '../sim/types';
 import type { World } from '../sim/world';
 import { el, setText } from './dom';
-import { t } from './i18n';
+import { hasKey, t } from './i18n';
 
 const RES: ResourceId[] = ['grain', 'wood', 'powder', 'deerskin'];
 const RES_ICON: Record<ResourceId, string> = { grain: '🌾', wood: '🪵', powder: '💥', deerskin: '🦌' };
@@ -78,6 +78,7 @@ export function displayName(world: World, e: Entity): string {
   if (e.kind === 'unit') return t(world.data.units.get(e.type)!.nameKey);
   if (e.kind === 'building') {
     if (e.type === 'village_center' && e.village) return t(`village.${e.village}.name`);
+    if (e.tag && hasKey(`place.${e.tag}`)) return t(`place.${e.tag}`);
     return t(world.data.buildings.get(e.type)!.nameKey);
   }
   return t('resource.deerskin');

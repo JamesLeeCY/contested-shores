@@ -56,5 +56,15 @@
       "cut.ch4_treaty.2",
       "cut.ch4_treaty.3"
     ]
+  },
+  "mudan1_intro": {
+    "titleKey": "cut.mudan1_intro.title",
+    "art": "mountain",
+    "lines": [
+      "cut.mudan1_intro.1",
+      "cut.mudan1_intro.2",
+      "cut.mudan1_intro.3",
+      "cut.mudan1_intro.4"
+    ]
   }
 }

@@ -120,9 +120,16 @@ export function isVisibleTo(world: World, owner: Owner, e: Entity): boolean {
   if (e.insideOf) return false;
   const i = Math.floor(e.y) * W + Math.floor(e.x);
   if (!fog.visible[i]) return false;
-  if (world.map.terrain[i] === T.forest && world.data.units.get(e.type)?.traits.includes('forest_stealth')) {
-    const r = world.rules.combat.traits.forest_stealth.revealDistance;
-    return world.unitsNear(e.x, e.y, r + 0.5).some((o) => o.owner === owner);
+  const tr = world.map.terrain[i];
+  const traits = world.data.units.get(e.type)?.traits ?? [];
+  // 森林隱匿; 排灣族 also vanish into hills and mountain slopes they know.
+  if ((tr === T.forest && traits.includes('forest_stealth')) || ((tr === T.forest || tr === T.hill || tr === T.mountain) && traits.includes('mountain_stealth'))) {
+    const cfg = (world.rules.combat.traits as unknown as Record<string, { revealDistance: number; smokeSpotDistance?: number }>)[
+      traits.includes('mountain_stealth') ? 'mountain_stealth' : 'forest_stealth'
+    ];
+    // Gun smoke betrays the shooter, but only to someone close enough to make out where it rose.
+    const spot = (e.revealedUntil ?? -1) > world.tick ? Math.max(cfg.revealDistance, cfg.smokeSpotDistance ?? Infinity) : cfg.revealDistance;
+    return world.unitsNear(e.x, e.y, spot + 0.5).some((o) => o.owner === owner);
   }
   return true;
 }

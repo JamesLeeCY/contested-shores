@@ -38,6 +38,12 @@ export function spawnFleet(world: World, fleet: FleetSpec, at?: [number, number]
 export function applyScenario(world: World, sc: Scenario, campaign: CampaignState = {}) {
   world.chapter = sc.chapter;
   world.scenario = sc;
+  for (const [path, value] of Object.entries(sc.rules ?? {})) {
+    const keys = path.split('.');
+    let o = world.rules as unknown as Record<string, unknown>;
+    for (const k of keys.slice(0, -1)) o = (o[k] ??= {}) as Record<string, unknown>;
+    o[keys[keys.length - 1]] = value;
+  }
   world.ext.flags.scenario = sc.id;
   for (const [owner, stage] of Object.entries(sc.stage)) {
     const f = world.faction(owner);

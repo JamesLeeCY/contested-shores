@@ -13,6 +13,8 @@ export const SNAPSHOT_EVERY = 1200;
 
 export interface SaveMeta {
   kind: 'chapter' | 'sandbox';
+  /** Scenario id (saves before 1874 have only `chapter`). */
+  scenario?: string;
   chapter?: number;
   sandboxMode?: string;
   player: string;
@@ -64,14 +66,16 @@ export function buildSave(world: World, keeper: SnapshotKeeper, meta: Omit<SaveM
 }
 
 /** Rebuilds the world exactly as it was when saved. */
-export function loadSave(save: SaveFile, data: SimData, map: GameMap, scenarios: (id: string) => Scenario): World {
+export function loadSave(save: SaveFile, data: SimData, maps: GameMap | ((id: string) => GameMap), scenarios: (id: string) => Scenario): World {
   if (save.format !== 'tayouan1661-save') throw new Error('not a save file');
+  const map = typeof maps === 'function' ? maps(save.map ?? 'taijiang') : maps;
   const w = restoreWorld(data, map, save.snapshot, scenarios);
   // Replay everything after the snapshot from the command log (pending at snapshot time are in it).
   w.pending = [];
   const byTick = new Map<number, Command[]>();
   for (const { tick, cmd } of save.commandLog) {
-    if (tick < w.tick) continue;
+    // AI commands are not replayed: the deterministic AI issues them again itself.
+    if (tick < w.tick || cmd.ai) continue;
     const list = byTick.get(tick) ?? [];
     list.push(cmd);
     byTick.set(tick, list);

@@ -7,7 +7,8 @@ import { dailyHooks } from './economy';
 /** Today's illness chance for a faction's exposed units. */
 export function diseaseChance(world: World, owner: Owner): number {
   const d = world.rules.disease;
-  let p = owner === 'faction_zheng' ? d.chanceZheng : owner === 'faction_voc' ? d.chanceVoc : 0;
+  const byFaction = (d as { chance?: Record<string, number> }).chance ?? {};
+  let p = byFaction[owner] ?? (owner === 'faction_zheng' ? d.chanceZheng : owner === 'faction_voc' ? d.chanceVoc : 0);
   if (world.chapter >= d.lateChapterFrom) p *= d.lateChapterMul;
   p *= (d.playerMul as Record<string, number>)[owner] ?? 1;
   return p;

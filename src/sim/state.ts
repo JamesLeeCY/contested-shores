@@ -42,6 +42,7 @@ export interface AiState {
   home: [number, number];
   target?: string;
   defensive?: boolean;
+  scripted?: boolean;
   siege?: boolean;
   state: AiStateName;
   prevState: AiStateName;

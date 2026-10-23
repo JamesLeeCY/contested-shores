@@ -22,6 +22,8 @@ export interface WorldOptions {
   /** Player-controlled faction (difficulty modifiers apply to it). */
   player?: Owner;
   chapter?: number;
+  /** Playable factions present in this world (default: the 1661 pair). */
+  factions?: Owner[];
 }
 
 export class World {
@@ -36,6 +38,8 @@ export class World {
   private sortedDirty = false;
   nextId = 1;
   readonly factions = new Map<Owner, FactionState>();
+  /** Factions that fight each other (and get fog, AI, outcomes); the rest are neutral parties. */
+  readonly playable: Owner[];
   /** Index into rules.tide.phases and ticks elapsed within it. */
   tidePhase = 0;
   tideTick = 0;
@@ -76,7 +80,9 @@ export class World {
     this.chapter = opts.chapter ?? 1;
     this.nav = new NavGrids(this.map, this.rules.terrain);
     this.paths = new PathService(this.nav);
+    this.playable = opts.factions ?? PLAYABLE;
     for (const f of data.factions.playable) {
+      if (!this.playable.includes(f.id)) continue;
       this.factions.set(f.id, {
         id: f.id,
         resources: { ...f.startResources, ...(opts.resources?.[f.id] ?? {}) },
@@ -332,7 +338,12 @@ export class World {
   }
 
   isPlayable(owner: Owner) {
-    return PLAYABLE.includes(owner);
+    return this.playable.includes(owner);
+  }
+
+  /** The opposing playable faction (scenarios are two-sided). */
+  enemyOf(owner: Owner): Owner {
+    return this.playable.find((f) => f !== owner) ?? owner;
   }
 
   // --- spatial hash -------------------------------------------------------------------------

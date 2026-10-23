@@ -115,7 +115,7 @@ export class Session implements ControlHost {
     life.signal = this.abort.signal;
     const { data, map } = opts;
     this.player = opts.player;
-    this.world = opts.restored ?? new World(data, map, { seed: opts.seed, sandbox: opts.sandbox, player: opts.player });
+    this.world = opts.restored ?? new World(data, map, { seed: opts.seed, sandbox: opts.sandbox, player: opts.player, factions: opts.scenario?.factions });
     if (!opts.restored) opts.setup?.(this.world);
     if (opts.scenario && !opts.restored) {
       const w = this.world;
@@ -228,7 +228,7 @@ export class Session implements ControlHost {
             y: e.y,
             color: colorFor(e.owner),
             size: e.kind === 'building' ? 4 : this.colorblind ? 3 : 2,
-            shape: !this.colorblind || e.kind === 'building' ? ('square' as const) : e.owner === 'faction_zheng' ? ('triangle' as const) : e.owner === 'faction_voc' ? ('square' as const) : ('circle' as const),
+            shape: !this.colorblind || e.kind === 'building' ? ('square' as const) : (['triangle', 'square'] as const)[this.world.playable.indexOf(e.owner)] ?? ('circle' as const),
           })),
         this.fogForMinimap?.(),
       );

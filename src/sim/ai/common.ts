@@ -20,7 +20,7 @@ export interface AiCtx {
 export type OwnerlessCommand = Command extends infer C ? (C extends Command ? Omit<C, 'owner'> : never) : never;
 
 export function issue(ctx: AiCtx, cmd: OwnerlessCommand) {
-  ctx.world.enqueue({ ...cmd, owner: ctx.owner } as Command);
+  ctx.world.enqueue({ ...cmd, owner: ctx.owner, ai: true } as Command);
 }
 
 export function difficultyOf(world: World, ai: AiState) {
@@ -28,6 +28,7 @@ export function difficultyOf(world: World, ai: AiState) {
 }
 
 const isWorkerType = (world: World, type: string) => world.data.units.get(type)!.traits.includes('gatherer');
+const isCivilian = (world: World, type: string) => world.data.units.get(type)!.traits.includes('civilian');
 
 export function units(world: World, owner: Owner, pred: (e: Entity) => boolean = () => true): Entity[] {
   const out: Entity[] = [];
@@ -41,7 +42,7 @@ export function workers(world: World, owner: Owner) {
 
 /** Foot soldiers, guns and heroes (not workers, not ships). */
 export function army(world: World, owner: Owner, includeInside = false) {
-  return units(world, owner, (e) => e.moveClass === 'foot' && !isWorkerType(world, e.type) && (includeInside || !e.insideOf));
+  return units(world, owner, (e) => e.moveClass === 'foot' && !isWorkerType(world, e.type) && !isCivilian(world, e.type) && (includeInside || !e.insideOf));
 }
 
 export function ships(world: World, owner: Owner) {
@@ -78,7 +79,7 @@ export function inRegion(world: World, id: string, e: Entity) {
 export function visibleEnemies(world: World, owner: Owner, pred: (e: Entity) => boolean = () => true): Entity[] {
   const out: Entity[] = [];
   for (const e of world.all())
-    if (e.kind === 'unit' && !e.insideOf && isEnemy(world, owner, e.owner) && world.isPlayable(e.owner) && isVisibleTo(world, owner, e) && pred(e))
+    if (e.kind === 'unit' && !e.insideOf && isEnemy(world, owner, e.owner) && world.isPlayable(e.owner) && isVisibleTo(world, owner, e) && !world.data.units.get(e.type)!.traits.includes('civilian') && pred(e))
       out.push(e);
   return out;
 }

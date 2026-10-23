@@ -7,7 +7,9 @@ import { outcomeOf, type Trigger } from '../src/sim/scenario/triggers';
 import { killEntity } from '../src/sim/systems/combat';
 import { captureBuilding } from '../src/sim/systems/siege';
 import type { World } from '../src/sim/world';
-import { makeWorld, run } from './helpers';
+import { loadMap } from '../src/data/map';
+import { DATA, makeWorld, run } from './helpers';
+import { World as WorldClass } from '../src/sim/world';
 
 const Z = 'faction_zheng';
 const V = 'faction_voc';
@@ -24,7 +26,7 @@ function chapter(ch: number) {
 
 function collect(w: World) {
   for (const k of Object.keys(w.ext.flags)) if (k.startsWith('fired:')) fired.add(`${w.scenario!.id}:${k.slice(6)}`);
-  for (const f of [Z, V]) {
+  for (const f of w.playable) {
     const r = outcomeOf(w, f);
     if (!r) continue;
     (r === 'defeat' ? lost : won).add(`${w.scenario!.id}:${f}`);
@@ -349,6 +351,88 @@ describe('chapter 4: 烏特勒支堡', () => {
   });
 });
 
+describe('1874 石門之役', () => {
+  const P = 'faction_paiwan';
+  const J = 'faction_japan';
+  const shimen = (seed = 1) => {
+    const sc = scenarioById('mudan1');
+    const w = new WorldClass(DATA, loadMap('hengchun'), { seed, factions: sc.factions });
+    applyScenario(w, sc);
+    w.ext.flags.player = '';
+    return w;
+  };
+  /** Clears the heights of defenders and puts 6 Japanese beyond the gorge. */
+  const takeShimen = (w: World) => {
+    w.rebuildSpatial();
+    for (const e of [...w.all()]) if (e.owner === P && e.kind === 'unit' && e.type !== 'paiwan_family' && e.y > 30 && e.y < 54 && e.x > 50 && e.x < 64) killEntity(w, e);
+    spawnIn(w, J, 'japan_infantry', 6, 68, 38);
+    run(w, 5);
+  };
+
+  it('reinforcements arrive on both sides; the families head for the refuge', () => {
+    const w = shimen();
+    at(w, 1);
+    expect(tagged(w, 'families').every((e) => e.order?.type === 'move')).toBe(true);
+    at(w, 150);
+    expect(tagged(w, 'kuskus_men')).toHaveLength(9);
+    at(w, 180);
+    expect(tagged(w, 'second_wave')).toHaveLength(12);
+    at(w, 300);
+    expect(tagged(w, 'nunai_men')).toHaveLength(7);
+    expect(tagged(w, 'main_body')).toHaveLength(12);
+    collect(w);
+  });
+
+  it('Shimen falls and 阿祿古 dies: Japan wins, the defenders get the historical result', () => {
+    const w = shimen();
+    at(w, 1);
+    killTag(w, 'aruqu');
+    spawnIn(w, P, 'paiwan_warrior', 6, 112, 4);
+    takeShimen(w);
+    collect(w);
+    expect(outcomeOf(w, J)).toBe('victory');
+    expect(outcomeOf(w, P)).toBe('historical');
+    expect(w.ext.flags[`outcomeReason:${P}`]).toBe('mudan1.end.history');
+  });
+
+  it('Shimen falls but the chief withdraws safely', () => {
+    const w = shimen();
+    at(w, 1);
+    spawnIn(w, P, 'paiwan_warrior', 6, 112, 4);
+    const chief = tagged(w, 'aruqu')[0];
+    chief.x = chief.px = 114;
+    chief.y = chief.py = 4;
+    takeShimen(w);
+    collect(w);
+    expect(outcomeOf(w, P)).toBe('historical');
+    expect(w.ext.flags[`outcomeReason:${P}`]).toBe('mudan1.end.chief_safe');
+  });
+
+  it('defenders wiped out: worse than history', () => {
+    const w = shimen();
+    at(w, 1);
+    takeShimen(w);
+    collect(w);
+    expect(outcomeOf(w, P)).toBe('defeat');
+    expect(outcomeOf(w, J)).toBe('victory');
+  });
+
+  it('the heights hold for 8 minutes, or the expedition breaks: the defenders win', () => {
+    const a = shimen();
+    at(a, 480);
+    collect(a);
+    expect(outcomeOf(a, P)).toBe('victory');
+    expect(outcomeOf(a, J)).toBe('defeat');
+    const b = shimen();
+    at(b, 61);
+    b.rebuildSpatial();
+    for (const e of [...b.all()].filter((u) => u.owner === J && u.kind === 'unit').slice(0, 30)) killEntity(b, e);
+    run(b, 5);
+    collect(b);
+    expect(b.ext.flags[`outcomeReason:${P}`]).toBe('mudan1.end.repulsed');
+  });
+});
+
 afterAll(() => {
   // Every trigger of every chapter, and every global rule, fired somewhere above.
   const all: string[] = [];
@@ -359,7 +443,7 @@ afterAll(() => {
   expect(missing).toEqual([]);
   expect(missingGlobal).toEqual([]);
   for (const sc of SCENARIOS)
-    for (const f of [Z, V]) {
+    for (const f of sc.factions ?? [Z, V]) {
       expect(won, `${sc.id} ${f} can win`).toContain(`${sc.id}:${f}`);
       expect(lost, `${sc.id} ${f} can lose`).toContain(`${sc.id}:${f}`);
     }

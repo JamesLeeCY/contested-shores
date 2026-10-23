@@ -56,13 +56,16 @@ async function main() {
     };
   });
 
-  const player = params.get('faction') === 'voc' ? 'faction_voc' : 'faction_zheng';
+  // ?faction=voc|paiwan|japan picks the side (default: the scenario's first side).
+  const player = params.has('faction') ? `faction_${params.get('faction')}` : 'faction_zheng';
   const mode = params.get('mode');
   const chapter = Number(params.get('chapter') ?? 0);
+  const scenario = params.get('scenario') ?? undefined;
   if (mode === 'tutorial') game.startTutorial();
   else if (mode === 'sandbox' || mode === 'economy') game.startSandbox(mode === 'economy' ? 'economy' : 'armies', player);
-  else if (chapter >= 1 && chapter <= 4)
+  else if ((chapter >= 1 && chapter <= 4) || scenario)
     void game.startChapter({
+      scenario,
       chapter,
       player,
       difficulty: (params.get('difficulty') as Difficulty) ?? 'normal',

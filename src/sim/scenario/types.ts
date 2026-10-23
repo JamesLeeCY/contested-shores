@@ -39,10 +39,24 @@ export interface AiSpec {
   target?: string;
   defensive?: boolean;
   siege?: boolean;
+  /** Battle scenarios: no economy or free-play state machine, only plans, production and tactics. */
+  scripted?: boolean;
 }
 
 export interface Scenario {
   id: string;
+  /** Campaign the scenario belongs to (default `koxinga`, the 1661 siege). */
+  campaign?: string;
+  /** Map id (default `taijiang`). */
+  map?: string;
+  /** Playable factions on this map (default 鄭氏 and VOC). */
+  factions?: Owner[];
+  /** Result-screen history card (default history.chN). */
+  historyKey?: string;
+  /** Rule overrides for this scenario, as dotted paths into rules.json (e.g. "combat.uphillUnitDamageMul"). */
+  rules?: Record<string, number>;
+  /** Live counts shown under the objectives (both sides see them): text params n0, n1… */
+  status?: { textKey: string; counts: [region: string, owner: Owner][] }[];
   chapter: number;
   nameKey: string;
   dateKey: string;

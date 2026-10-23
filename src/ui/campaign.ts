@@ -1,10 +1,11 @@
 // Campaign progress (spec §7: favour, settlers, castle morale and ratings carry over), stored in
 // localStorage, plus the six campaign endings (§7.6).
 import type { Rating } from '../sim/scenario/triggers';
-import type { CampaignState } from '../sim/scenario/types';
+import type { CampaignState, Scenario } from '../sim/scenario/types';
 import type { World } from '../sim/world';
 
-const KEY = 'tayouan1661.campaign';
+// The 1661 campaign keeps its original storage key; others get their own.
+const keyOf = (campaign: string) => (campaign === 'koxinga' ? 'tayouan1661.campaign' : `tayouan1661.campaign.${campaign}`);
 
 export interface StoredCampaign extends CampaignState {
   player?: string;
@@ -13,29 +14,30 @@ export interface StoredCampaign extends CampaignState {
   reasons?: Record<string, Record<string, string>>;
 }
 
-export function loadCampaign(): StoredCampaign {
+export function loadCampaign(campaign = 'koxinga'): StoredCampaign {
   try {
-    const raw = localStorage.getItem(KEY);
+    const raw = localStorage.getItem(keyOf(campaign));
     return raw ? (JSON.parse(raw) as StoredCampaign) : {};
   } catch {
     return {};
   }
 }
 
-export function saveCampaign(c: StoredCampaign) {
+export function saveCampaign(campaign: string, c: StoredCampaign) {
   try {
-    localStorage.setItem(KEY, JSON.stringify(c));
+    localStorage.setItem(keyOf(campaign), JSON.stringify(c));
   } catch {
     // Storage unavailable (private mode): progress lasts for this page only.
   }
 }
 
 /** Folds a finished chapter into the campaign state. */
-export function recordChapter(c: StoredCampaign, chapterId: string, w: World): StoredCampaign {
+export function recordChapter(c: StoredCampaign, sc: Scenario, w: World): StoredCampaign {
+  const chapterId = sc.id;
   const out: StoredCampaign = { ...c, ratings: { ...(c.ratings ?? {}) }, reasons: { ...(c.reasons ?? {}) } };
   const r: Record<string, Rating> = {};
   const why: Record<string, string> = {};
-  for (const f of ['faction_zheng', 'faction_voc']) {
+  for (const f of sc.factions ?? ['faction_zheng', 'faction_voc']) {
     const v = w.ext.flags[`outcome:${f}`] as Rating | undefined;
     if (v) r[f] = v;
     const k = w.ext.flags[`outcomeReason:${f}`];
@@ -43,8 +45,10 @@ export function recordChapter(c: StoredCampaign, chapterId: string, w: World): S
   }
   out.ratings![chapterId] = r as Record<string, 'victory' | 'historical' | 'defeat'>;
   out.reasons![chapterId] = why;
-  out.castleMorale = w.faction('faction_voc')?.castleMorale;
-  out.favor = Object.fromEntries(Object.entries(w.ext.parties).map(([id, p]) => [id, { ...p.favor }]));
+  // Castle morale and village favour only exist in the 1661 campaign.
+  const voc = w.faction('faction_voc');
+  if (voc) out.castleMorale = voc.castleMorale;
+  if (Object.keys(w.ext.parties).length) out.favor = Object.fromEntries(Object.entries(w.ext.parties).map(([id, p]) => [id, { ...p.favor }]));
   return out;
 }
 

@@ -107,3 +107,95 @@ export function checkMap(map: GameMap, rules: RulesLike, buildings: BuildingLike
   });
   return results;
 }
+
+/** Fastest foot travel time (tile / speed units) between two tiles, or Infinity. */
+function travelCost(nav: NavGrids, from: [number, number], to: [number, number], allow: (x: number, y: number) => boolean = () => true): number {
+  const { width, height } = nav;
+  const dist = new Float64Array(width * height).fill(Infinity);
+  const done = new Uint8Array(width * height);
+  const start = from[1] * width + from[0];
+  const goal = to[1] * width + to[0];
+  dist[start] = 0;
+  // Simple bucketed Dijkstra (maps are small; this only runs in checks).
+  const open = new Set<number>([start]);
+  while (open.size) {
+    let i = -1;
+    let best = Infinity;
+    for (const j of open)
+      if (dist[j] < best) {
+        best = dist[j];
+        i = j;
+      }
+    open.delete(i);
+    if (i === goal) return best;
+    done[i] = 1;
+    const x = i % width;
+    const y = (i - x) / width;
+    for (let dy = -1; dy <= 1; dy++)
+      for (let dx = -1; dx <= 1; dx++) {
+        const nx = x + dx;
+        const ny = y + dy;
+        if ((!dx && !dy) || nx < 0 || ny < 0 || nx >= width || ny >= height) continue;
+        const j = ny * width + nx;
+        const s = nav.speedAt('foot', nx, ny, true);
+        if (done[j] || s <= 0 || !allow(nx, ny)) continue;
+        const d = best + Math.hypot(dx, dy) / s;
+        if (d < dist[j]) {
+          dist[j] = d;
+          open.add(j);
+        }
+      }
+  }
+  return Infinity;
+}
+
+/** Acceptance checks for the 1874 map (恆春半島): the valley route, the gorge and the refuge. */
+export function checkHengchun(map: GameMap, rules: RulesLike, hunterRange: number): CheckResult[] {
+  const nav = new NavGrids(map, rules.terrain);
+  for (const o of map.objects) nav.setBlocked(o.x, o.y, o.w, o.h, true);
+  const centre = (id: string): [number, number] => {
+    const r = findRegion(map, id);
+    for (let d = 0; d < 6; d++)
+      for (let y = r.y; y < r.y + r.h; y++)
+        for (let x = r.x; x < r.x + r.w; x++)
+          if (Math.abs(x - (r.x + (r.w >> 1))) + Math.abs(y - (r.y + (r.h >> 1))) <= d && nav.passable('foot', x, y, true)) return [x, y];
+    throw new Error(`region ${id} has no passable tile`);
+  };
+  const results: CheckResult[] = [];
+  const camp = centre('sialiao');
+  const mudan = findRegion(map, 'mudan');
+  results.push({ name: '日軍可從射寮沿四重溪走到牡丹社', ok: reachable(nav, 'foot', true, camp, (x, y) => regionContains(mudan, x, y)) });
+
+  const refuge = findRegion(map, 'refuge');
+  const cut = ['mudan', 'nunai', 'kuskus'].filter((id) => !reachable(nav, 'foot', true, centre(id), (x, y) => regionContains(refuge, x, y)));
+  results.push({ name: '三社族人都能走到深山避難處', ok: cut.length === 0, detail: cut.join(', ') });
+
+  // The gorge floor is narrow: at most 5 open tiles between the cliffs.
+  const gorge = findRegion(map, 'gorge');
+  let widest = 0;
+  for (let x = gorge.x; x < gorge.x + gorge.w; x++) {
+    let open = 0;
+    for (let y = gorge.y - 2; y <= gorge.y + gorge.h + 1; y++) if (map.terrain[y * map.width + x] !== T.mountain) open++;
+    widest = Math.max(widest, open);
+  }
+  results.push({ name: '石門峽谷底寬不超過 5 格', ok: widest <= 5, detail: `最寬 ${widest}` });
+
+  // Both heights overlook the stream within a hunter's range (+ elevation).
+  const reach = hunterRange + rules.combat.elevatedRangeBonus;
+  const covers = (id: string) => {
+    const r = findRegion(map, id);
+    for (let y = r.y; y < r.y + r.h; y++)
+      for (let x = r.x; x < r.x + r.w; x++)
+        if (map.terrain[y * map.width + x] === T.hill && Math.abs(y - (gorge.y + (gorge.h >> 1))) <= reach) return true;
+    return false;
+  };
+  results.push({ name: '石門兩側高地居高臨下、射程涵蓋溪谷', ok: covers('shimen_n') && covers('shimen_s') });
+
+  // Climbing round the gorge is possible but much slower than forcing it.
+  const a = centre('gorge_mouth');
+  const b = centre('beyond_gorge');
+  const through = travelCost(nav, a, b);
+  const around = travelCost(nav, a, b, (x, y) => !regionContains(gorge, x, y));
+  results.push({ name: '繞過石門翻山的路程至少是穿越峽谷的 2 倍', ok: Number.isFinite(around) && around >= 2 * through, detail: `穿越 ${through.toFixed(0)}、繞山 ${around.toFixed(0)}` });
+  return results;
+}

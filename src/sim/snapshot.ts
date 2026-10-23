@@ -12,6 +12,7 @@ export interface Snapshot {
   version: number;
   opts: WorldOptions;
   scenarioId: string | null;
+  mapId?: string;
   tick: number;
   rng: number;
   nextId: number;
@@ -72,6 +73,7 @@ export function snapshotWorld(world: World): Snapshot {
     version: SNAPSHOT_VERSION,
     opts: clone(world.opts),
     scenarioId: world.scenario?.id ?? null,
+    mapId: world.map.id,
     tick: world.tick,
     rng: world.rng.state,
     nextId: world.nextId,
@@ -92,7 +94,8 @@ export function snapshotWorld(world: World): Snapshot {
   };
 }
 
-export function restoreWorld(data: SimData, map: GameMap, snap: Snapshot, scenarios: (id: string) => Scenario): World {
+export function restoreWorld(data: SimData, mapOrResolver: GameMap | ((id: string) => GameMap), snap: Snapshot, scenarios: (id: string) => Scenario): World {
+  const map = typeof mapOrResolver === 'function' ? mapOrResolver(snap.mapId ?? 'taijiang') : mapOrResolver;
   if (snap.version !== SNAPSHOT_VERSION) throw new Error(`unsupported save version ${snap.version}`);
   const terrain = b64ToBytes(snap.terrain).slice(0, map.width * map.height);
   const w = new World(data, { ...map, terrain }, { ...snap.opts, emptyMap: true });

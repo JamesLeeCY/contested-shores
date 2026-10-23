@@ -585,5 +585,88 @@
     "attack": null,
     "walkable": true,
     "hiddenFromEnemy": true
+  },
+  {
+    "id": "paiwan_village",
+    "faction": "faction_paiwan",
+    "nameKey": "building.paiwan_village.name",
+    "hp": 1000,
+    "armor": 2,
+    "armorType": "building",
+    "preset": true,
+    "cost": {
+      "grain": 0,
+      "wood": 0,
+      "powder": 0,
+      "deerskin": 0
+    },
+    "buildTime": 0,
+    "popCap": 30,
+    "size": 3,
+    "sight": 8,
+    "dropoff": false,
+    "produces": [
+      "paiwan_hunter",
+      "paiwan_warrior"
+    ],
+    "researches": [],
+    "garrison": 0,
+    "diseaseShelter": false,
+    "attack": null,
+    "capturable": false
+  },
+  {
+    "id": "japan_camp",
+    "faction": "faction_japan",
+    "nameKey": "building.japan_camp.name",
+    "hp": 1800,
+    "armor": 3,
+    "armorType": "building",
+    "preset": true,
+    "cost": {
+      "grain": 0,
+      "wood": 0,
+      "powder": 0,
+      "deerskin": 0
+    },
+    "buildTime": 0,
+    "popCap": 80,
+    "size": 4,
+    "sight": 8,
+    "dropoff": false,
+    "produces": [
+      "japan_infantry"
+    ],
+    "researches": [],
+    "garrison": 0,
+    "diseaseShelter": false,
+    "attack": null,
+    "capturable": false
+  },
+  {
+    "id": "han_village",
+    "faction": "faction_neutral",
+    "nameKey": "building.han_village.name",
+    "hp": 1200,
+    "armor": 2,
+    "armorType": "building",
+    "preset": true,
+    "cost": {
+      "grain": 0,
+      "wood": 0,
+      "powder": 0,
+      "deerskin": 0
+    },
+    "buildTime": 0,
+    "popCap": 0,
+    "size": 3,
+    "sight": 8,
+    "dropoff": false,
+    "produces": [],
+    "researches": [],
+    "garrison": 0,
+    "diseaseShelter": false,
+    "attack": null,
+    "capturable": false
   }
 ]

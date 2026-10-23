@@ -11,11 +11,13 @@ import { applyScenario } from '../../src/sim/scenario/setup';
 import { World } from '../../src/sim/world';
 
 const [chArg, nArg, ...overrides] = process.argv.slice(2);
-const chapter = Number(chArg);
+// First argument: a 1661 chapter number or a scenario id (e.g. mudan1).
+const scId = /^\d+$/.test(chArg) ? `ch${chArg}` : chArg;
+const chapter = /^\d+$/.test(chArg) ? Number(chArg) : 0;
 const N = Number(nArg ?? 8);
 const data = loadGameData();
-const map = loadMap();
-const sc = JSON.parse(JSON.stringify(scenarioById(`ch${chapter}`)));
+const sc = JSON.parse(JSON.stringify(scenarioById(scId)));
+const map = loadMap(sc.map ?? 'taijiang');
 
 function set(path: string, value: unknown) {
   const [root, id, ...rest] = path.split('.');
@@ -38,7 +40,7 @@ for (const o of overrides) {
 let wins = 0;
 const lines: string[] = [];
 for (let seed = 101; seed < 101 + N; seed++) {
-  const w = new World(data, map, { seed });
+  const w = new World(data, map, { seed, factions: sc.factions });
   applyScenario(w, sc);
   for (const [o, s] of Object.entries(sc.ai ?? {})) enableAi(w, o, s as never);
   const limit = sc.timerMinutes * 60 * 20 + 10;
@@ -55,13 +57,14 @@ for (let seed = 101; seed < 101 + N; seed++) {
       if (w.tick > 600 * 20) break;
     }
     if (w.ext.flags.missionOver) {
-      const z = String(w.ext.flags['outcome:faction_zheng']);
-      const v = String(w.ext.flags['outcome:faction_voc']);
-      won = z !== 'defeat' && v !== 'victory';
+      // Success of the scenario's first side (鄭氏 / 排灣族諸社): it did not lose and the other did not win.
+      const [a, b] = sc.factions ?? ['faction_zheng', 'faction_voc'];
+      won = String(w.ext.flags[`outcome:${a}`]) !== 'defeat' && String(w.ext.flags[`outcome:${b}`]) !== 'victory';
       break;
     }
   }
   if (won) wins++;
-  lines.push(`${won ? 'Z' : 'V'}@${Math.round(w.tick / 20)}s(z${armyPop(w, 'faction_zheng')},v${armyPop(w, 'faction_voc')})${process.env.REASON ? '[' + w.ext.flags['outcomeReason:faction_zheng'] + ']' : ''}`);
+  const [a, b] = sc.factions ?? ['faction_zheng', 'faction_voc'];
+  lines.push(`${won ? 'A' : 'B'}@${Math.round(w.tick / 20)}s(${armyPop(w, a)},${armyPop(w, b)})${process.env.REASON ? '[' + w.ext.flags[`outcomeReason:${a}`] + ']' : ''}`);
 }
-console.log(`ch${chapter} ${overrides.join(' ') || '(baseline)'}: Zheng ${wins}/${N}  ${lines.join(' ')}`);
+console.log(`${scId} ${overrides.join(' ') || '(baseline)'}: first side ${wins}/${N}  ${lines.join(' ')}`);

@@ -36,6 +36,42 @@
         "powder": 600,
         "deerskin": 0
       }
+    },
+    {
+      "id": "faction_paiwan",
+      "nameKey": "faction.faction_paiwan.name",
+      "basePopCap": 10,
+      "colors": {
+        "primary": "#b8860b",
+        "secondary": "#1b1b1b"
+      },
+      "heroes": [
+        "aruqu"
+      ],
+      "startResources": {
+        "grain": 0,
+        "wood": 0,
+        "powder": 0,
+        "deerskin": 0
+      }
+    },
+    {
+      "id": "faction_japan",
+      "nameKey": "faction.faction_japan.name",
+      "basePopCap": 10,
+      "colors": {
+        "primary": "#2c4a8c",
+        "secondary": "#d8d8d8"
+      },
+      "heroes": [
+        "sakuma"
+      ],
+      "startResources": {
+        "grain": 0,
+        "wood": 0,
+        "powder": 0,
+        "deerskin": 0
+      }
     }
   ],
   "villages": [

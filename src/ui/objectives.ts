@@ -1,6 +1,6 @@
 // Objective panel (top left, collapsible, spec §9.1) with scenario choices (談判投降, 議和).
 import { availableChoices } from '../sim/scenario/runtime';
-import { objectives } from '../sim/scenario/triggers';
+import { objectives, regionPop } from '../sim/scenario/triggers';
 import { el } from './dom';
 import { t } from './i18n';
 import type { Session } from './session';
@@ -9,6 +9,7 @@ export class ObjectivePanel {
   readonly root: HTMLDivElement;
   private list: HTMLDivElement;
   private choices: HTMLDivElement;
+  private status: HTMLDivElement;
   private sig = '';
   private collapsed = false;
 
@@ -20,6 +21,7 @@ export class ObjectivePanel {
       this.root.classList.toggle('collapsed', this.collapsed);
     };
     this.list = el('div', 'obj-list', this.root);
+    this.status = el('div', 'obj-status', this.root);
     this.choices = el('div', 'obj-choices', this.root);
   }
 
@@ -27,7 +29,11 @@ export class ObjectivePanel {
     const w = this.s.world;
     const mine = objectives(w).filter((o) => o.faction === this.s.player);
     const choices = availableChoices(w, this.s.player);
-    const sig = JSON.stringify([mine, choices.map((c) => c.id)]);
+    // Live counts (e.g. defenders left on the heights) shown to both sides.
+    const status = (w.scenario?.status ?? []).map((st) =>
+      t(st.textKey, Object.fromEntries(st.counts.map(([region, owner], i) => [`n${i}`, regionPop(w, region, owner)]))),
+    );
+    const sig = JSON.stringify([mine, choices.map((c) => c.id), status]);
     this.root.style.display = mine.length || choices.length ? 'block' : 'none';
     if (sig === this.sig) return;
     this.sig = sig;
@@ -37,6 +43,8 @@ export class ObjectivePanel {
       el('span', 'obj-mark', row, o.status === 'done' ? '✔' : o.status === 'failed' ? '✘' : '◆');
       el('span', 'obj-text', row, t(o.textKey));
     }
+    this.status.replaceChildren();
+    for (const line of status) el('div', '', this.status, line);
     this.choices.replaceChildren();
     for (const c of choices) {
       const b = el('button', 'obj-choice', this.choices, t(c.labelKey));
