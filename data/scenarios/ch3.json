@@ -136,7 +136,7 @@
     {
       "type": "light_cannon",
       "owner": "faction_zheng",
-      "count": 2,
+      "count": 4,
       "at": [
         37.5,
         40.5
@@ -147,7 +147,7 @@
     {
       "type": "light_cannon",
       "owner": "faction_zheng",
-      "count": 2,
+      "count": 4,
       "at": [
         55.5,
         40.5

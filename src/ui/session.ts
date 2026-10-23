@@ -1,5 +1,6 @@
 // A running game in the browser: owns the World, the fixed-step clock, rendering and input.
-import { Application, Container } from 'pixi.js';
+import { Application, Container, Graphics } from 'pixi.js';
+import { toScreen } from '../render/iso';
 import type { Command } from '../sim/commands';
 import { FixedStepper, step } from '../sim/loop';
 import type { GameMap } from '../sim/map';
@@ -76,6 +77,22 @@ export class Session implements ControlHost {
   contextOrder?: ControlHost['contextOrder'];
   onSelectionChange?: () => void;
   timerSeconds: number | null = null;
+  /** Tutorial: shows (or clears, with null) a flag at a map point. */
+  tutorialMarker(p: [number, number] | null) {
+    this.marker?.destroy();
+    this.marker = null;
+    if (!p) return;
+    const g = new Graphics();
+    const s = toScreen(p[0], p[1]);
+    g.ellipse(0, 0, 22, 11).stroke({ color: 0xffd700, width: 3 });
+    g.moveTo(0, 0).lineTo(0, -40).stroke({ color: 0x3b2a1a, width: 2 });
+    g.poly([0, -40, 18, -34, 0, -28]).fill(0xffd700);
+    g.position.set(s.x, s.y);
+    this.overlayLayer.addChild(g);
+    this.marker = g;
+  }
+  private marker: Graphics | null = null;
+
   /** Seconds until the scenario's relief fleet (VOC HUD), set by the scenario layer. */
   reliefSeconds?: () => number | null;
   private speedIdx = 1;

@@ -5,6 +5,7 @@ import { distToEntity, distToRect } from '../geometry';
 import { onBattery } from '../systems/combat';
 import { checkPlacement } from '../systems/build';
 import { detectedMines, isVisibleTo } from '../systems/fog';
+import { mineOrigin } from '../systems/siege';
 import { capacityOf, cargoPop } from '../systems/transport';
 import { buildingAttack } from '../stats';
 import type { Entity } from '../types';
@@ -258,7 +259,8 @@ const hide: Handler = (ctx) => {
   if (!fs.length) return 'done';
   const m = mem(ctx);
   if (!m.issued) {
-    issue(ctx, { type: 'move', ids: ids(fs), x: 66.5, y: 41 });
+    const [hx, hy] = ctx.world.rules.ai.fireShipHide;
+    issue(ctx, { type: 'move', ids: ids(fs), x: hx, y: hy });
     m.issued = true;
   }
   return fs.every((f) => !isMoving(f)) || elapsed(ctx) > 60 ? 'done' : 'running';
@@ -269,10 +271,17 @@ const strike_when: Handler = (ctx) => {
   const targets = visibleEnemies(ctx.world, ctx.owner, (e) => e.moveClass !== 'foot');
   for (const f of fs) {
     if (f.order?.type === 'attack') continue;
-    const stranded = targets.filter((t) => t.stranded && Math.hypot(t.x - f.x, t.y - f.y) < 18);
-    const close = targets.filter((t) => Math.hypot(t.x - f.x, t.y - f.y) < 8);
+    const r = ctx.world.rules.ai.fireShipStrikeRadius;
+    const stranded = targets.filter((t) => t.stranded && Math.hypot(t.x - f.x, t.y - f.y) < r * 2);
+    const close = targets.filter((t) => Math.hypot(t.x - f.x, t.y - f.y) < r);
     const t = nearest(stranded.length ? stranded : close, f.x, f.y);
     if (t) issue(ctx, { type: 'attack', ids: [f.id], target: t.id });
+    else if (!isMoving(f)) {
+      // The plan knows the fleet is out there: close in until it comes into view.
+      const known = units(ctx.world, ctx.owner === 'faction_zheng' ? 'faction_voc' : 'faction_zheng', (e) => e.moveClass !== 'foot');
+      const k = nearest(known.filter((e) => Math.hypot(e.x - f.x, e.y - f.y) < r), f.x, f.y);
+      if (k) issue(ctx, { type: 'move', ids: [f.id], x: k.x, y: k.y });
+    }
   }
   return 'persist';
 };
@@ -432,7 +441,7 @@ const bombard: Handler = (ctx, arg) => {
   if (!t || t.owner === ctx.owner) return 'done';
   const guns = gunsOf(ctx);
   for (const g of guns) if (g.order?.type !== 'attack' && !isMoving(g)) issue(ctx, { type: 'attack', ids: [g.id], target: t.id });
-  const limit = arg ? Number(arg) : 600;
+  const limit = arg && Number.isFinite(Number(arg)) ? Number(arg) : 600;
   const breach = t.hp <= t.maxHp * w.rules.capture.ejectBelowHpFraction;
   return elapsed(ctx) >= limit || breach || !guns.length ? 'done' : 'running';
 };
@@ -443,6 +452,9 @@ const assault: Handler = (ctx, arg) => {
   const t = targetBuilding(w, ctx.ai);
   if (!t || t.owner === ctx.owner) return 'done';
   const inf = army(w, ctx.owner).filter((u) => !isGun(w, u) && !isHero(w, u));
+  for (const g of gunsOf(ctx)) if (g.order?.type !== 'attack') issue(ctx, { type: 'attack', ids: [g.id], target: t.id });
+  // An unbreached fort cannot be taken: keep the infantry out of its guns until it is.
+  if (t.hp > t.maxHp * w.rules.capture.maxHpFraction) return 'running';
   const idle = inf.filter((u) => !isMoving(u) && (u.attackTarget === undefined || u.attackTarget === t.id));
   // Clear defenders who block the capture (within reach of the walls), then hold the near side
   // of the fort until it falls. Do not chase troops back towards the main castle.
@@ -451,7 +463,9 @@ const assault: Handler = (ctx, arg) => {
   const d = nearest(defenders, t.x, t.y);
   const [hx, hy] = ctx.ai.home;
   const len = Math.hypot(hx - t.x, hy - t.y) || 1;
-  const gate: [number, number] = [t.x + ((hx - t.x) / len) * (t.w! / 2 + 1), t.y + ((hy - t.y) / len) * (t.h! / 2 + 1)];
+  // Stand as far out as still counts for the capture (attackers within capture.attackerRadius).
+  const out = t.w! / 2 + Math.max(1, w.rules.capture.attackerRadius - 0.7);
+  const gate: [number, number] = [t.x + ((hx - t.x) / len) * out, t.y + ((hy - t.y) / len) * out];
   if (idle.length) issue(ctx, { type: 'attack_move', ids: ids(idle), x: d ? d.x : gate[0], y: d ? d.y : gate[1] });
   for (const g of gunsOf(ctx)) if (g.order?.type !== 'attack') issue(ctx, { type: 'attack', ids: [g.id], target: t.id });
   return 'running';
@@ -563,8 +577,26 @@ const strike: Handler = (ctx, region) => {
   return 'persist';
 };
 
+/** Mines the target if guns have not breached it (stage 4 sieges). */
+const mine: Handler = (ctx, arg) => {
+  const w = ctx.world;
+  if (arg && w.data.buildings.has(arg)) ctx.ai.target = arg;
+  const t = targetBuilding(w, ctx.ai);
+  if (!t || t.owner === ctx.owner || t.hp <= t.maxHp * w.rules.capture.maxHpFraction || elapsed(ctx) > 420) return 'done';
+  const digging = units(w, ctx.owner, (u) => u.order?.type === 'dig_mine');
+  if (digging.length) return 'running';
+  const origin = mineOrigin(w, ctx.owner, t);
+  if (typeof origin === 'string') {
+    // No trench close enough: extend the trench line first.
+    return trench_approach(ctx, '');
+  }
+  issue(ctx, { type: 'dig_mine', ids: ids(builders(ctx, 4, [origin.x, origin.y])), target: t.id });
+  return 'running';
+};
+
 export const STEP_HANDLERS: Record<string, Handler> = {
   strike,
+  mine,
   wait_tide_high: (ctx) => (ctx.world.tidePhaseId === 'rising' ? 'done' : 'running'),
   move_fleet,
   unload,

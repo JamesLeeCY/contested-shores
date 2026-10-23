@@ -14,6 +14,15 @@ import { playCutscene } from './cutscene';
 import { el } from './dom';
 import { t } from './i18n';
 import { ObjectivePanel } from './objectives';
+import { runTutorial, setupTutorial } from './tutorial';
+
+function tutorialDone() {
+  try {
+    return localStorage.getItem('tayouan1661.tutorialDone') === '1';
+  } catch {
+    return false;
+  }
+}
 import { Session } from './session';
 
 export interface StartOptions {
@@ -55,6 +64,10 @@ export class GameApp {
     const card = el('div', 'menu-card', m);
     el('h1', 'menu-title', card, t('game.title'));
     el('div', 'menu-sub', card, t('menu.subtitle'));
+    const tutRow = el('div', 'menu-row menu-tutorial', card);
+    const tut = el('button', 'menu-btn' + (tutorialDone() ? '' : ' primary pulse'), tutRow, t('menu.tutorial'));
+    tut.onclick = () => this.startTutorial();
+    if (!tutorialDone()) el('span', 'menu-hint', tutRow, t('menu.tutorial_hint'));
     const chapters = el('div', 'menu-chapters', card);
     let player = this.campaign.player ?? 'faction_zheng';
     let diff: Difficulty = (this.campaign.difficulty as Difficulty) ?? 'normal';
@@ -131,6 +144,28 @@ export class GameApp {
   /** Extra menu entries (codex, settings, load) added by later modules. */
   readonly menuHooks: ((card: HTMLElement, app: GameApp) => void)[] = [];
 
+  /** New-player tutorial (guided session on the real map). */
+  startTutorial() {
+    this.clear();
+    const s = (this.session = new Session(this.app, this.ui, {
+      data: this.data,
+      map: this.map,
+      player: 'faction_zheng',
+      seed: 1661,
+      setup: setupTutorial,
+    }));
+    s.camera.centerOn(121, 42);
+    this.addGameMenu({ kind: 'sandbox', sandboxMode: 'tutorial', player: 'faction_zheng', difficulty: 'normal' });
+    runTutorial(s, () => {
+      try {
+        localStorage.setItem('tayouan1661.tutorialDone', '1');
+      } catch {
+        // fine: the menu just keeps suggesting the tutorial
+      }
+      this.showMenu();
+    });
+  }
+
   startSandbox(mode: SandboxMode, player: string, restored?: World) {
     this.clear();
     this.session = new Session(this.app, this.ui, {
@@ -179,6 +214,7 @@ export class GameApp {
     }
     const m = file.meta;
     if (m.kind === 'chapter') void this.startChapter({ chapter: m.chapter!, player: m.player, difficulty: m.difficulty as Difficulty, skipCutscenes: true }, w);
+    else if (m.sandboxMode === 'tutorial') this.startTutorial();
     else this.startSandbox((m.sandboxMode as SandboxMode) ?? 'armies', m.player, w);
   }
 

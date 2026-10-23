@@ -1,7 +1,7 @@
 // Unit morale and rout; VOC castle morale (spec §4.6). Hero auras (spec §3).
 import type { Entity } from '../types';
 import type { World } from '../world';
-import { deathHooks } from './combat';
+import { deathHooks, hitHooks } from './combat';
 import { distToEntity } from '../geometry';
 import { clearMove, moveUnitTo } from './movement';
 
@@ -32,6 +32,12 @@ export function changeCastleMorale(world: World, owner: string, delta: number, r
   f.castleMorale = Math.max(0, Math.min(100, f.castleMorale + d));
   world.emit({ type: 'castle_morale', owner, delta: d, value: f.castleMorale, reason });
 }
+
+// Bombardment of the main castle wears down the garrison's will to hold (see DECISIONS.md).
+hitHooks.push((world, attacker, target, atkType) => {
+  if (target.type === 'zeelandia_castle' && atkType === 'cannon' && world.isPlayable(attacker.owner) && attacker.owner !== target.owner)
+    changeCastleMorale(world, target.owner, world.rules.morale.castle.bombardHit, 'bombardment');
+});
 
 deathHooks.push((world, dead, killer) => {
   if (dead.kind !== 'unit') return;

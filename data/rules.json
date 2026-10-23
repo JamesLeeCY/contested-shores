@@ -154,7 +154,8 @@
     "repathTicks": 10,
     "autoAcquireWorkers": false,
     "garrisonRangeBonus": 1,
-    "buildingTargetPriority": "nearest"
+    "buildingTargetPriority": "nearest",
+    "counterAttackTicks": 40
   },
   "morale": {
     "unitStart": 70,
@@ -198,7 +199,8 @@
       "reliefFailed": -30,
       "outpostLost": -20,
       "supplyArrived": 10,
-      "assaultRepelled": 15
+      "assaultRepelled": 15,
+      "bombardHit": -0.5
     },
     "regen": {
       "perSecond": 0.1,
@@ -636,6 +638,18 @@
     "heroFollowDistance": 4,
     "batteryStandoff": 0.5,
     "trenchSpacing": 1,
-    "baseRadius": 24
+    "baseRadius": 24,
+    "fireShipStrikeRadius": 8,
+    "fireShipHide": [
+      66.5,
+      43.5
+    ],
+    "defendIgnore": [
+      "trench",
+      "mine",
+      "lower_town_wall",
+      "farm"
+    ],
+    "leashRadius": 12
   }
 }

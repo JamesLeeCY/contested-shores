@@ -1,6 +1,8 @@
 // Strategic layer (spec §8.1): economy upkeep, production by composition, the ECONOMY / BUILDUP /
 // ATTACK / DEFEND / REGROUP / SIEGE state machine, and the scenario plan runner.
 import { distToEntity } from '../geometry';
+import { buildingAttack } from '../stats';
+import { isElevated } from '../systems/combat';
 import type { AiStateName } from '../state';
 import { canAfford } from '../stats';
 import type { Entity } from '../types';
@@ -169,7 +171,7 @@ function threats(ctx: AiCtx): Entity[] {
   const [hx, hy] = ctx.ai.home;
   const mine = w
     .buildingsOf(ctx.owner)
-    .filter((b) => !['trench', 'mine', 'lower_town_wall', 'farm'].includes(b.type) && Math.hypot(b.x - hx, b.y - hy) <= w.rules.ai.baseRadius);
+    .filter((b) => !w.rules.ai.defendIgnore.includes(b.type) && Math.hypot(b.x - hx, b.y - hy) <= w.rules.ai.baseRadius);
   return visibleEnemies(w, ctx.owner, (e) => e.moveClass === 'foot').filter((e) => mine.some((b) => distToEntity(e.x, e.y, b) <= r));
 }
 
@@ -185,6 +187,34 @@ function defend(ctx: AiCtx, enemies: Entity[]) {
     for (const s of shooters) idle.splice(idle.indexOf(s), 1);
   }
   if (idle.length) issue(ctx, { type: 'attack_move', ids: idle.map((u) => u.id), x: ex, y: ey });
+}
+
+/**
+ * Siege armies hold their lines: units that wandered off chasing (beyond the base while calm, or
+ * far beyond the fight while defending) walk back, and heroes stay home. Plan-led assault troops
+ * are exempt while the assault step is running.
+ */
+function leash(ctx: AiCtx, defending: boolean) {
+  const w = ctx.world;
+  const [hx, hy] = ctx.ai.home;
+  const plan = w.data.aiPlans?.get(ctx.ai.plans[ctx.ai.planIdx] ?? '');
+  const step = plan?.steps[ctx.ai.stepIdx] ?? '';
+  if (step.startsWith('assault')) return;
+  const limit = w.rules.ai.leashRadius + (defending ? w.rules.ai.defendRadius : 0);
+  // Enemy forts' gun reach (+1): no lingering there outside an assault.
+  const forts = w.buildings().flatMap((b) => {
+    const a = b.owner !== ctx.owner && w.isPlayable(b.owner) ? buildingAttack(w, b) : null;
+    return a ? [{ b, r: a.range + (isElevated(w, b) ? w.rules.combat.elevatedRangeBonus : 0) + 1 }] : [];
+  });
+  const underGuns = (u: Entity) => forts.some(({ b, r }) => distToEntity(u.x, u.y, b) <= r);
+  const strays = army(w, ctx.owner).filter(
+    (u) =>
+      !isGun(w, u) &&
+      u.order?.type !== 'tuntian' &&
+      u.order?.type !== 'garrison' &&
+      (isHero(w, u) ? Math.hypot(u.x - hx, u.y - hy) > 6 : Math.hypot(u.x - hx, u.y - hy) > limit || underGuns(u)),
+  );
+  if (strays.length) issue(ctx, { type: 'move', ids: strays.map((u) => u.id), x: hx, y: hy });
 }
 
 // --- plan runner -------------------------------------------------------------------------------------
@@ -208,6 +238,8 @@ function runPlans(ctx: AiCtx): boolean {
     }
     const step = plan.steps[ai.stepIdx];
     const [verb, arg = ''] = step.split(':');
+    // Siege steps name their target building (e.g. trench_approach:zeelandia_castle).
+    if (arg && ['trench_approach', 'surround', 'bombard', 'assault'].includes(verb) && w.data.buildings.has(arg)) ai.target = arg;
     const handler = STEP_HANDLERS[verb];
     const r = handler ? handler(ctx, arg) : 'done';
     if (r === 'running') return true;
@@ -246,6 +278,7 @@ export function strategic(ctx: AiCtx) {
 
   let planActive = false;
   timed('plans', () => (planActive = runPlans(ctx)));
+  if (ai.siege) leash(ctx, ai.state === 'DEFEND');
   timed('produce', () => produce(ctx));
   if (planActive || ai.state === 'DEFEND') return;
 

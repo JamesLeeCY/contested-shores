@@ -4,6 +4,7 @@ import { loadMap } from './data/map';
 import type { Difficulty } from './sim/state';
 import { GameApp } from './ui/app';
 import { hashWorld } from './sim/hash';
+import { step } from './sim/loop';
 import { openCodex } from './ui/codex';
 import { openSettings } from './ui/settings';
 import { installAudio } from './ui/audio';
@@ -25,7 +26,8 @@ async function main() {
   // Debug/e2e handles.
   const w = window as unknown as { __app: GameApp; __game: Session | null };
   w.__app = game;
-  (window as unknown as { __hash: typeof hashWorld }).__hash = hashWorld;
+  (window as unknown as { __hash: typeof hashWorld; __step: typeof step }).__hash = hashWorld;
+  (window as unknown as { __step: typeof step }).__step = step;
   Object.defineProperty(window, '__game', { get: () => game.session });
 
   // Codex in the main menu and in the in-game menu (pauses the game while open).
@@ -57,7 +59,8 @@ async function main() {
   const player = params.get('faction') === 'voc' ? 'faction_voc' : 'faction_zheng';
   const mode = params.get('mode');
   const chapter = Number(params.get('chapter') ?? 0);
-  if (mode === 'sandbox' || mode === 'economy') game.startSandbox(mode === 'economy' ? 'economy' : 'armies', player);
+  if (mode === 'tutorial') game.startTutorial();
+  else if (mode === 'sandbox' || mode === 'economy') game.startSandbox(mode === 'economy' ? 'economy' : 'armies', player);
   else if (chapter >= 1 && chapter <= 4)
     void game.startChapter({
       chapter,

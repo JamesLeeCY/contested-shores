@@ -166,6 +166,9 @@ export function applyDamage(world: World, target: Entity, amount: number, attack
   return before - target.hp;
 }
 
+/** Hooks run when a shot lands (castle morale under bombardment). */
+export const hitHooks: ((world: World, attacker: Entity, target: Entity, atkType: string) => void)[] = [];
+
 /** Hooks run when anything dies (morale, scenario triggers). */
 export const deathHooks: ((world: World, e: Entity, killer?: Entity) => void)[] = [];
 
@@ -291,6 +294,7 @@ function fire(world: World, a: Entity, t: Entity, prof: { atk: number; atkType: 
   if (!hits) return;
   const dmg = computeDamage(ctx, prof.atk) * takenMul(ctx);
   const dealt = applyDamage(world, t, dmg, a);
+  for (const h of hitHooks) h(world, a, t, prof.atkType);
   const traits = a.kind === 'unit' ? world.data.units.get(a.type)!.traits : (world.faction(a.owner)?.buildingMods[a.type]?.traits ?? []);
   for (const tr of traitsOf(traits.filter((n) => n !== 'suicide'))) tr.afterHit?.(ctx, dealt);
 }
@@ -340,7 +344,10 @@ function unitCombat(world: World, u: Entity) {
     // Keep the current auto target while it stays valid and close; otherwise look again.
     const cur = u.attackTarget !== undefined ? world.get(u.attackTarget) : undefined;
     const leash = garrisoned ? prof.range : Math.max(sight, prof.range) + 2;
+    // Unit layer (spec §8.1): fight back against whoever just hit us, even from beyond our sight.
+    const attacker = u.lastAttacker !== undefined && world.tick - (u.lastHit ?? -1e9) <= world.rules.combat.counterAttackTicks ? world.get(u.lastAttacker) : undefined;
     if (cur && canTarget(world, u, cur, melee) && entityDistance(firingPlatform(world, u), cur) <= leash) target = cur;
+    else if (attacker && !isWorker && canTarget(world, u, attacker, melee) && entityDistance(firingPlatform(world, u), attacker) <= leash + 4) target = attacker;
     else if ((world.tick + u.id) % 4 === 0 || cur) target = acquireTarget(world, garrisoned ? firingPlatform(world, u) : u, garrisoned ? prof.range : Math.max(sight, prof.range), melee);
   }
   u.attackTarget = target?.id;

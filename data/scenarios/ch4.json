@@ -344,6 +344,13 @@
           "type": "show_message",
           "textKey": "ch4.utrecht_taken",
           "kind": "warn"
+        },
+        {
+          "type": "set_ai_plan",
+          "faction": "faction_zheng",
+          "plans": [
+            "besiege_castle"
+          ]
         }
       ]
     },

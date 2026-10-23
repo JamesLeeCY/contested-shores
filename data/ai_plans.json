@@ -84,6 +84,7 @@
       "trench_approach:utrecht_redoubt",
       "build:battery",
       "bombard",
+      "mine:utrecht_redoubt",
       "assault"
     ]
   },
@@ -117,6 +118,20 @@
     ],
     "steps": [
       "strike:baxemboy"
+    ]
+  },
+  {
+    "id": "besiege_castle",
+    "faction": "faction_zheng",
+    "chapters": [
+      4
+    ],
+    "steps": [
+      "trench_approach:zeelandia_castle",
+      "build:battery",
+      "bombard:zeelandia_castle",
+      "mine:zeelandia_castle",
+      "assault:zeelandia_castle"
     ]
   }
 ]

@@ -190,3 +190,17 @@ html, body { margin: 0; height: 100%; overflow: hidden; background: var(--bg); c
 .codex-sources { margin: 0; padding-left: 18px; color: var(--muted); font-size: 12px; }
 @media (max-width: 700px) { .codex-body { grid-template-columns: 1fr; } .codex-list { max-height: 160px; } }
 .menu-label.wide { width: 120px; } .settings-val { width: 3ch; color: var(--muted); } .settings input[type=range] { flex: 1; }
+
+/* --- tutorial --- */
+.tutorial { position: absolute; left: 50%; top: 44px; transform: translateX(-50%); width: min(460px, calc(100vw - 32px)); padding: 10px 14px;
+  border-color: #e0a84a; box-shadow: 0 0 0 1px rgba(224,168,74,.4), 0 6px 20px rgba(0,0,0,.6); z-index: 3; }
+.tut-count { color: var(--muted); font-size: 11px; }
+.tut-title { color: var(--accent); font-weight: bold; font-size: 16px; margin: 2px 0 4px; }
+.tut-text { line-height: 1.6; font-size: 14px; }
+.tut-bar { display: flex; justify-content: flex-end; gap: 6px; margin-top: 8px; }
+.tut-highlight { outline: 3px solid #ffd700 !important; outline-offset: 2px; animation: tutpulse 1s ease-in-out infinite alternate; }
+@keyframes tutpulse { from { outline-color: #ffd700; } to { outline-color: rgba(255,215,0,.25); } }
+.menu-tutorial { justify-content: center; margin-bottom: 12px; }
+.menu-hint { color: var(--muted); font-size: 13px; }
+.menu-btn.pulse { animation: tutpulse-bg 1.2s ease-in-out infinite alternate; }
+@keyframes tutpulse-bg { from { filter: brightness(1); } to { filter: brightness(1.35); } }

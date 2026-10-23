@@ -67,7 +67,8 @@ function runOne(seed: number): RunResult {
       outcome = `Z:${w.ext.flags['outcome:faction_zheng']} V:${w.ext.flags['outcome:faction_voc']}`;
       break;
     }
-    if (stopAtMilestone && milestone !== null) break;
+    // Chapter 2 is balanced on the Provintia contest (see docs/DECISIONS.md): stop once it falls.
+    if ((stopAtMilestone || chapter === 2) && milestone !== null) break;
   }
   return {
     seed,
@@ -80,6 +81,12 @@ function runOne(seed: number): RunResult {
     zhengLossAtMilestone,
     outcome,
   };
+}
+
+/** Balance metric: ch2 = Provintia taken within 10 minutes; others = Zheng's rating is not a defeat and VOC's is not a victory. */
+function zhengWon(r: RunResult) {
+  if (chapter === 2) return r.milestone !== null && r.milestone <= 600;
+  return /Z:(victory|historical)/.test(r.outcome) && !/V:victory/.test(r.outcome);
 }
 
 const median = (xs: number[]) => {
@@ -96,7 +103,7 @@ for (let i = 1; i <= runs; i++) {
   if (i === 2) warmSamples = aiTiming.samples.length;
   const r = runOne(i);
   results.push(r);
-  if (!json) console.log(`run ${String(i).padStart(2)}: ${r.outcome.padEnd(16)} t=${r.seconds}s milestone=${r.milestone ?? '-'} zheng ${r.zhengStart}→${r.zhengEnd} voc ${r.vocStart}→${r.vocEnd}${r.zhengLossAtMilestone !== null ? ` loss@milestone=${(r.zhengLossAtMilestone * 100).toFixed(0)}%` : ''}`);
+  if (!json) console.log(`run ${String(i).padStart(2)}: ${zhengWon(r) ? "Z" : "V"} ${r.outcome.padEnd(16)} t=${r.seconds}s milestone=${r.milestone ?? '-'} zheng ${r.zhengStart}→${r.zhengEnd} voc ${r.vocStart}→${r.vocEnd}${r.zhengLossAtMilestone !== null ? ` loss@milestone=${(r.zhengLossAtMilestone * 100).toFixed(0)}%` : ''}`);
 }
 const ms = results.map((r) => r.milestone ?? Infinity);
 const summary = {
@@ -112,6 +119,6 @@ const summary = {
   aiDecisionMsP99: aiTiming.samples.length ? [...aiTiming.samples].sort((a, b) => a - b)[Math.floor(aiTiming.samples.length * 0.99)] : 0,
   wallSeconds: (performance.now() - t0) / 1000,
   outcomes: results.reduce<Record<string, number>>((m, r) => ((m[r.outcome] = (m[r.outcome] ?? 0) + 1), m), {}),
-  zhengWinRate: results.filter((r) => /Z:(victory|historical)/.test(r.outcome) && !/V:victory/.test(r.outcome)).length / runs,
+  zhengWinRate: results.filter(zhengWon).length / runs,
 };
 console.log(json ? JSON.stringify({ summary, results }) : summary);
