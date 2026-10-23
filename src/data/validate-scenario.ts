@@ -4,7 +4,7 @@ const CONDITIONS = new Set([
   'time_elapsed', 'game_day', 'unit_hp_below', 'unit_dead', 'building_captured', 'area_entered', 'favor_reached',
   'tide_state', 'resource_below', 'all_of', 'any_of', 'not', 'castle_morale_below', 'army_pop_below', 'losses_since',
   'units_lost', 'building_hp_below', 'flag', 'timer_expired', 'stranded_in_range', 'outcome', 'is_ai', 'building_dead',
-  'building_built',
+  'building_built', 'held_for',
 ]);
 const ACTIONS = new Set([
   'show_message', 'show_cutscene', 'spawn_units', 'kill_unit', 'set_objective', 'complete_objective', 'fail_mission',

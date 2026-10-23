@@ -433,6 +433,93 @@ describe('1874 石門之役', () => {
   });
 });
 
+describe('1874 三路進剿', () => {
+  const P = 'faction_paiwan';
+  const J = 'faction_japan';
+  const VILLAGES = { mudan: [101, 17], nunai: [87, 15], kuskus: [106, 64] } as const;
+  const routes = (campaign = {}) => {
+    const sc = scenarioById('mudan2');
+    const w = new WorldClass(DATA, loadMap('hengchun'), { seed: 3, factions: sc.factions });
+    applyScenario(w, sc, campaign);
+    w.ext.flags.player = '';
+    at(w, 1);
+    return w;
+  };
+  const place = (w: World, tag: string, x: number, y: number) => {
+    for (const e of tagged(w, tag)) {
+      e.x = e.px = x;
+      e.y = e.py = y;
+      e.order = { type: 'idle' };
+      e.path = null;
+    }
+  };
+  /** Japanese in every village, no defenders there; held 46 s. */
+  const occupyAll = (w: World) => {
+    w.rebuildSpatial();
+    for (const e of [...w.all()]) if (e.owner === P && e.kind === 'unit' && e.type !== 'paiwan_family' && e.x > 78 && e.y < 26) killEntity(w, e);
+    for (const [, [x, y]] of Object.entries(VILLAGES)) spawnIn(w, J, 'japan_infantry', 8, x - 2, y + 2);
+    run(w, 47 * 20);
+  };
+
+  it('三社 occupied after the families left: Japan wins, the defenders get the historical result', () => {
+    const w = routes();
+    for (const v of Object.keys(VILLAGES)) place(w, `fam_${v}`, 120, 4);
+    occupyAll(w);
+    collect(w);
+    expect(outcomeOf(w, J)).toBe('victory');
+    expect(outcomeOf(w, P)).toBe('historical');
+    expect(w.ext.flags[`outcomeReason:${P}`]).toBe('mudan2.end.history');
+  });
+
+  it('families still in the villages when the Japanese arrive: worse than history', () => {
+    const w = routes();
+    occupyAll(w);
+    collect(w);
+    expect(w.ext.flags.trapped).toBe(true);
+    expect(outcomeOf(w, P)).toBe('defeat');
+    expect(w.ext.flags[`outcomeReason:${P}`]).toBe('mudan2.end.trapped');
+  });
+
+  it('every fighter lost: worse than history', () => {
+    const w = routes();
+    for (const v of Object.keys(VILLAGES)) place(w, `fam_${v}`, 120, 4);
+    w.rebuildSpatial();
+    for (const e of [...w.all()]) if (e.owner === P && e.kind === 'unit' && e.type !== 'paiwan_family') killEntity(w, e);
+    occupyAll(w);
+    collect(w);
+    expect(w.ext.flags[`outcomeReason:${P}`]).toBe('mudan2.end.rout');
+    expect(outcomeOf(w, P)).toBe('defeat');
+  });
+
+  it('a defender in the village stops the occupation clock', () => {
+    const w = routes();
+    for (const v of Object.keys(VILLAGES)) place(w, `fam_${v}`, 120, 4);
+    // A defender who cannot be dislodged in this test.
+    const d = w.spawnUnit('paiwan_warrior', P, 104, 62);
+    d.hp = d.maxHp = 1e9;
+    occupyAll(w);
+    expect(w.ext.flags.occ_kuskus).toBeUndefined();
+    expect(w.ext.flags.occ_mudan).toBe(true);
+  });
+
+  it('時間到 or the expedition worn down: the defenders win; 阿祿古 returns only if he survived 石門', () => {
+    const a = routes();
+    at(a, 600);
+    collect(a);
+    expect(outcomeOf(a, P)).toBe('victory');
+    expect(outcomeOf(a, J)).toBe('defeat');
+    const b = routes({ reasons: { mudan1: { [P]: 'mudan1.end.chief_safe' } } });
+    expect(tagged(b, 'aruqu')).toHaveLength(1);
+    expect(tagged(routes(), 'aruqu')).toHaveLength(0);
+    killTag(b, 'aruqu');
+    b.rebuildSpatial();
+    for (const e of [...b.all()].filter((u) => u.owner === J && u.kind === 'unit').slice(0, 45)) killEntity(b, e);
+    at(b, 61);
+    collect(b);
+    expect(b.ext.flags[`outcomeReason:${P}`]).toBe('mudan2.end.repulsed');
+  });
+});
+
 afterAll(() => {
   // Every trigger of every chapter, and every global rule, fired somewhere above.
   const all: string[] = [];

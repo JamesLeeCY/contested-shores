@@ -1,9 +1,10 @@
 // Mountain-war plan steps for the 1874 scenarios. Step arguments use '/' between parameters
 // (the plan runner splits verb and argument at the first ':').
-//   Expedition: push:<region>  flank:<region>/<n>  hold_region:<region>
-//   Defenders:  ambush:<region>/<n>/<facing region>  guard:<region>/<n>  fallback:<region>/<enemy region>/<pop>
+//   Expedition: push:<region>  flank:<region>/<n>  hold_region:<region>  column:<tag>/<region>
+//   Both:       evacuate:<tag>/<region>
+//   Defenders:  ambush:<region>/<n>/<facing region>  skirmish:<region>/<n>/<facing region>  harass:<region>/<n>  guard:<region>/<n>  fallback:<region>/<enemy region>/<pop>
 // Units belong to at most one named group (kept in ai.mem); everyone else is the main body.
-import { TERRAIN_IDS } from '../map';
+import { T, TERRAIN_IDS } from '../map';
 import { isMoving } from '../systems/movement';
 import type { Entity } from '../types';
 import { army, inRegion, isHero, issue, regionCenter, visibleEnemies, type AiCtx } from './common';
@@ -114,34 +115,63 @@ const flank: Handler = (ctx, arg) => {
 const hold_region: Handler = (ctx, region) => {
   const w = ctx.world;
   const taken = grouped(ctx);
+  const columns = (ctx.ai.mem.columns ?? []) as string[];
   const [x, y] = regionCenter(w, region);
-  const idle = army(w, ctx.owner).filter((u) => !taken.has(u.id) && !isMoving(u) && u.attackTarget === undefined && !inRegion(w, region, u));
+  const idle = army(w, ctx.owner).filter(
+    (u) => !taken.has(u.id) && !columns.includes(u.tag ?? '') && !isMoving(u) && u.attackTarget === undefined && !inRegion(w, region, u),
+  );
   if (idle.length) issue(ctx, { type: 'attack_move', ids: ids(idle), x, y });
+  return 'persist';
+};
+
+/** A tagged column marches on its own objective, fighting on the way, and stays there. */
+const column: Handler = (ctx, arg) => {
+  const w = ctx.world;
+  const [tag, region] = arg.split('/');
+  const cols = (ctx.ai.mem.columns ??= []) as string[];
+  if (!cols.includes(tag)) cols.push(tag);
+  const taken = grouped(ctx);
+  const [x, y] = regionCenter(w, region);
+  const idle = army(w, ctx.owner).filter((u) => u.tag === tag && !taken.has(u.id) && !isMoving(u) && u.attackTarget === undefined && !inRegion(w, region, u));
+  if (idle.length) issue(ctx, { type: 'attack_move', ids: ids(idle), x, y });
+  return 'persist';
+};
+
+/** Tagged people (族人) walk to a refuge; whoever stops short is sent on again. */
+const evacuate: Handler = (ctx, arg) => {
+  const w = ctx.world;
+  const [tag, region] = arg.split('/');
+  const [x, y] = regionCenter(w, region);
+  const left = [...w.all()].filter((u) => u.kind === 'unit' && u.owner === ctx.owner && u.tag === tag && !isMoving(u) && !inRegion(w, region, u));
+  if (left.length) issue(ctx, { type: 'move', ids: ids(left), x, y });
   return 'persist';
 };
 
 // --- defenders ---------------------------------------------------------------------------------------
 
 /**
- * Marksmen take the wooded spots of a height nearest the facing region, one each, and hold
- * there (fire at whatever comes into range, never chase). Losses are refilled from free units.
+ * Marksmen take the spots of a height nearest the facing region, one each, and hold there (fire at
+ * whatever comes into range, never chase). Losses are refilled from free units. With `skirmish`,
+ * anyone (fighters and the chief too) holds the height but slips away into the mountains when the
+ * enemy climbs within reach, and comes back once they have moved on.
  */
-const ambush: Handler = (ctx, arg) => {
+function post(ctx: AiCtx, arg: string, skirmish: boolean, ring = false): Result {
   const w = ctx.world;
   const [region, nArg, facing] = arg.split('/');
-  const key = `ambush_${region}`;
+  const key = `${ring ? 'harass' : skirmish ? 'skirmish' : 'ambush'}_${region}`;
   const face = regionCenter(w, facing ?? region);
   const before = new Set(ids(members(ctx, key)));
-  const g = recruit(ctx, key, Number(nArg ?? 8), (u) => !isHero(w, u) && isRanged(ctx, u), regionCenter(w, region));
+  const g = recruit(ctx, key, Number(nArg ?? 8), (u) => (skirmish ? true : !isHero(w, u) && isRanged(ctx, u)), regionCenter(w, region));
   const fresh = g.filter((u) => !before.has(u.id));
   if (fresh.length) issue(ctx, { type: 'stance', ids: ids(fresh), hold: true });
   const s = slots(ctx);
+  const away = (ctx.ai.mem.away ??= {}) as Record<string, number>;
   const used = new Set(g.map((u) => s[u.id]?.join(',')).filter(Boolean));
   // Only the summit: the slopes below are exposed, and woods would blind the marksman.
-  const tiles = regionTiles(ctx, region)
-    .filter(([x, y]) => heightAt(ctx, x, y) >= 2)
+  const tiles = (ring ? ringTiles(ctx, region) : regionTiles(ctx, region).filter(([x, y]) => heightAt(ctx, x, y) >= 2))
     .map(([x, y]) => ({ x, y, score: Math.hypot(x - face[0], y - face[1]) }))
     .sort((a, b) => a.score - b.score || a.y - b.y || a.x - b.x);
+  const reach = (w.rules.ai as { skirmishRetreatDistance?: number }).skirmishRetreatDistance ?? 4;
   for (const u of g) {
     if (!s[u.id]) {
       const t = tiles.find((p) => !used.has(`${p.x},${p.y}`));
@@ -149,11 +179,59 @@ const ambush: Handler = (ctx, arg) => {
       s[u.id] = [t.x, t.y];
       used.add(`${t.x},${t.y}`);
     }
+    if (skirmish) {
+      if ((away[u.id] ?? -1) > w.tick) continue;
+      // Within reach of the enemy, or already hurt: slip away before the riflemen find the range.
+      const close = visibleEnemies(w, ctx.owner, (e) => dist(e, [u.x, u.y]) < (u.hp < u.maxHp * 0.6 ? reach + 3 : reach));
+      if (close.length) {
+        // Slip away uphill, directly away from the nearest climber.
+        const e = close.reduce((a, b) => (dist(a, [u.x, u.y]) <= dist(b, [u.x, u.y]) ? a : b));
+        const d = Math.max(0.1, dist(e, [u.x, u.y]));
+        const to = escapeTile(ctx, u.x + ((u.x - e.x) / d) * 8, u.y + ((u.y - e.y) / d) * 8);
+        if (to) issue(ctx, { type: 'move', ids: [u.id], x: to[0] + 0.5, y: to[1] + 0.5 });
+        away[u.id] = w.tick + 25 * w.ticksPerSecond;
+        continue;
+      }
+    }
     const [tx, ty] = s[u.id];
     if (!isMoving(u) && u.attackTarget === undefined && Math.hypot(u.x - tx - 0.5, u.y - ty - 0.5) > 0.8) issue(ctx, { type: 'move', ids: [u.id], x: tx + 0.5, y: ty + 0.5 });
   }
   return 'persist';
-};
+}
+
+/** Nearest passable tile to a point (searching outwards a few tiles). */
+function escapeTile(ctx: AiCtx, x: number, y: number): [number, number] | null {
+  const w = ctx.world;
+  const cx = Math.max(0, Math.min(w.map.width - 1, Math.floor(x)));
+  const cy = Math.max(0, Math.min(w.map.height - 1, Math.floor(y)));
+  for (let r = 0; r < 5; r++)
+    for (let dy = -r; dy <= r; dy++)
+      for (let dx = -r; dx <= r; dx++) {
+        const tx = cx + dx;
+        const ty = cy + dy;
+        if (tx >= 0 && ty >= 0 && tx < w.map.width && ty < w.map.height && w.nav.passable('foot', tx, ty)) return [tx, ty];
+      }
+  return null;
+}
+
+/** Cover just outside a region (wooded or mountain tiles 1–4 tiles beyond its edge), for harassing it. */
+function ringTiles(ctx: AiCtx, region: string): [number, number][] {
+  const w = ctx.world;
+  const r = w.map.regions.find((x) => x.id === region)!;
+  const out: [number, number][] = [];
+  for (let y = Math.max(0, r.y - 4); y < Math.min(w.map.height, r.y + r.h + 4); y++)
+    for (let x = Math.max(0, r.x - 4); x < Math.min(w.map.width, r.x + r.w + 4); x++) {
+      const inside = x >= r.x && y >= r.y && x < r.x + r.w && y < r.y + r.h;
+      const t = w.map.terrain[y * w.map.width + x];
+      if (!inside && (t === T.forest || heightAt(ctx, x, y) >= 1) && w.nav.passable('foot', x, y)) out.push([x, y]);
+    }
+  return out;
+}
+
+const ambush: Handler = (ctx, arg) => post(ctx, arg, false);
+const skirmish: Handler = (ctx, arg) => post(ctx, arg, true);
+/** Skirmishers in the cover round a place (a village the enemy is occupying): shoot, slip away, return. */
+const harass: Handler = (ctx, arg) => post(ctx, `${arg}/${arg.split('/')[0]}`, true, true);
 
 /**
  * Close-combat fighters (and the chief, if free) wait on a height and rush whoever reaches it;
@@ -204,4 +282,4 @@ const fallback: Handler = (ctx, arg) => {
   return 'done';
 };
 
-export const MOUNTAIN_STEPS: Record<string, Handler> = { push, flank, hold_region, ambush, guard, fallback };
+export const MOUNTAIN_STEPS: Record<string, Handler> = { push, flank, hold_region, column, evacuate, ambush, skirmish, harass, guard, fallback };

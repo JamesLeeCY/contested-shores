@@ -57,6 +57,8 @@ export interface Scenario {
   rules?: Record<string, number>;
   /** Live counts shown under the objectives (both sides see them): text params n0, n1… */
   status?: { textKey: string; counts: [region: string, owner: Owner][] }[];
+  /** Units that appear only if an earlier scenario ended a certain way (e.g. 阿祿古 survived). */
+  carry?: { if: { scenario: string; faction: Owner; reasons: string[] }; units: UnitSpec[] }[];
   chapter: number;
   nameKey: string;
   dateKey: string;
@@ -85,4 +87,6 @@ export interface CampaignState {
   castleMorale?: number;
   favor?: Record<string, Record<Owner, number>>;
   ratings?: Record<string, Record<Owner, 'victory' | 'historical' | 'defeat'>>;
+  /** Outcome reason keys per finished scenario and side (for carried-over heroes). */
+  reasons?: Record<string, Record<Owner, string>>;
 }

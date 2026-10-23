@@ -66,5 +66,14 @@
       "cut.mudan1_intro.3",
       "cut.mudan1_intro.4"
     ]
+  },
+  "mudan2_intro": {
+    "titleKey": "cut.mudan2_intro.title",
+    "art": "mountain",
+    "lines": [
+      "cut.mudan2_intro.1",
+      "cut.mudan2_intro.2",
+      "cut.mudan2_intro.3"
+    ]
   }
 }

@@ -72,6 +72,8 @@ export function applyScenario(world: World, sc: Scenario, campaign: CampaignStat
     } else if (b.at) world.spawnBuilding(b.type, b.owner, b.at[0], b.at[1], b.built ?? 1, b.tag);
   }
   for (const u of sc.units ?? []) spawnGroup(world, u);
+  for (const c of sc.carry ?? [])
+    if (c.if.reasons.includes(campaign.reasons?.[c.if.scenario]?.[c.if.faction] ?? '')) for (const u of c.units) spawnGroup(world, u);
   for (const f of sc.fleets ?? []) spawnFleet(world, f);
   for (const g of sc.garrisons ?? []) {
     const host = world.buildings().find((b) => b.type === g.in);

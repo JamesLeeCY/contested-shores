@@ -1,0 +1,797 @@
+{
+  "id": "mudan2",
+  "campaign": "mudan",
+  "map": "hengchun",
+  "factions": [
+    "faction_paiwan",
+    "faction_japan"
+  ],
+  "historyKey": "history.mudan2",
+  "chapter": 2,
+  "nameKey": "scenario.mudan2.name",
+  "dateKey": "scenario.mudan2.date",
+  "timerMinutes": 10,
+  "stage": {
+    "faction_paiwan": 1,
+    "faction_japan": 1
+  },
+  "resources": {
+    "faction_paiwan": {
+      "grain": 200
+    },
+    "faction_japan": {
+      "grain": 300
+    }
+  },
+  "castleMorale": 0,
+  "rules": {
+    "combat.uphillUnitDamageMul": 0.5,
+    "disease.chance.faction_japan": 0.02
+  },
+  "units": [
+    {
+      "type": "sakuma",
+      "owner": "faction_japan",
+      "count": 1,
+      "at": [
+        70,
+        38
+      ],
+      "tag": "col_mid"
+    },
+    {
+      "type": "japan_infantry",
+      "owner": "faction_japan",
+      "count": 18,
+      "at": [
+        67,
+        39
+      ],
+      "tag": "col_mid"
+    },
+    {
+      "type": "japan_volunteer",
+      "owner": "faction_japan",
+      "count": 4,
+      "at": [
+        70,
+        41
+      ],
+      "tag": "col_mid"
+    },
+    {
+      "type": "japan_infantry",
+      "owner": "faction_japan",
+      "count": 14,
+      "at": [
+        29,
+        12
+      ],
+      "tag": "col_north"
+    },
+    {
+      "type": "japan_volunteer",
+      "owner": "faction_japan",
+      "count": 4,
+      "at": [
+        32,
+        12
+      ],
+      "tag": "col_north"
+    },
+    {
+      "type": "japan_infantry",
+      "owner": "faction_japan",
+      "count": 14,
+      "at": [
+        29,
+        76
+      ],
+      "tag": "col_south"
+    },
+    {
+      "type": "japan_volunteer",
+      "owner": "faction_japan",
+      "count": 4,
+      "at": [
+        32,
+        76
+      ],
+      "tag": "col_south"
+    },
+    {
+      "type": "paiwan_hunter",
+      "owner": "faction_paiwan",
+      "count": 8,
+      "at": [
+        75,
+        30
+      ]
+    },
+    {
+      "type": "paiwan_warrior",
+      "owner": "faction_paiwan",
+      "count": 4,
+      "at": [
+        77,
+        29
+      ]
+    },
+    {
+      "type": "paiwan_hunter",
+      "owner": "faction_paiwan",
+      "count": 6,
+      "at": [
+        57,
+        6
+      ]
+    },
+    {
+      "type": "paiwan_warrior",
+      "owner": "faction_paiwan",
+      "count": 3,
+      "at": [
+        59,
+        5
+      ]
+    },
+    {
+      "type": "paiwan_hunter",
+      "owner": "faction_paiwan",
+      "count": 6,
+      "at": [
+        61,
+        77
+      ]
+    },
+    {
+      "type": "paiwan_warrior",
+      "owner": "faction_paiwan",
+      "count": 3,
+      "at": [
+        63,
+        78
+      ]
+    },
+    {
+      "type": "paiwan_warrior",
+      "owner": "faction_paiwan",
+      "count": 4,
+      "at": [
+        101,
+        21
+      ]
+    },
+    {
+      "type": "paiwan_family",
+      "owner": "faction_paiwan",
+      "count": 8,
+      "at": [
+        101,
+        19
+      ],
+      "tag": "fam_mudan"
+    },
+    {
+      "type": "paiwan_family",
+      "owner": "faction_paiwan",
+      "count": 6,
+      "at": [
+        87,
+        17
+      ],
+      "tag": "fam_nunai"
+    },
+    {
+      "type": "paiwan_family",
+      "owner": "faction_paiwan",
+      "count": 6,
+      "at": [
+        106,
+        66
+      ],
+      "tag": "fam_kuskus"
+    }
+  ],
+  "carry": [
+    {
+      "if": {
+        "scenario": "mudan1",
+        "faction": "faction_paiwan",
+        "reasons": [
+          "mudan1.end.chief_safe",
+          "mudan1.end.held",
+          "mudan1.end.repulsed"
+        ]
+      },
+      "units": [
+        {
+          "type": "aruqu",
+          "owner": "faction_paiwan",
+          "count": 1,
+          "at": [
+            76,
+            30
+          ]
+        }
+      ]
+    }
+  ],
+  "ai": {
+    "faction_japan": {
+      "plans": [
+        "three_routes"
+      ],
+      "composition": {
+        "japan_infantry": 1
+      },
+      "targetArmy": 60,
+      "home": [
+        18,
+        60
+      ],
+      "scripted": true
+    },
+    "faction_paiwan": {
+      "plans": [
+        "three_routes_defense"
+      ],
+      "composition": {
+        "paiwan_hunter": 0.5,
+        "paiwan_warrior": 0.5
+      },
+      "targetArmy": 40,
+      "home": [
+        101,
+        17
+      ],
+      "scripted": true
+    }
+  },
+  "historicalLoser": "faction_paiwan",
+  "objectives": {
+    "faction_japan": [
+      "mudan2.obj.occupy"
+    ],
+    "faction_paiwan": [
+      "mudan2.obj.delay",
+      "mudan2.obj.families"
+    ]
+  },
+  "status": [
+    {
+      "textKey": "mudan2.status.villages",
+      "counts": [
+        [
+          "mudan",
+          "faction_japan"
+        ],
+        [
+          "nunai",
+          "faction_japan"
+        ],
+        [
+          "kuskus",
+          "faction_japan"
+        ]
+      ]
+    }
+  ],
+  "triggers": [
+    {
+      "id": "m2_start",
+      "when": {
+        "type": "time_elapsed",
+        "seconds": 0
+      },
+      "do": [
+        {
+          "type": "show_cutscene",
+          "id": "mudan2_intro"
+        },
+        {
+          "type": "set_objective",
+          "id": "occupy",
+          "faction": "faction_japan",
+          "textKey": "mudan2.obj.occupy",
+          "primary": true
+        },
+        {
+          "type": "set_objective",
+          "id": "delay",
+          "faction": "faction_paiwan",
+          "textKey": "mudan2.obj.delay",
+          "primary": true
+        },
+        {
+          "type": "set_objective",
+          "id": "families",
+          "faction": "faction_paiwan",
+          "textKey": "mudan2.obj.families",
+          "primary": false
+        },
+        {
+          "type": "show_message",
+          "textKey": "mudan2.msg.families",
+          "kind": "warn",
+          "to": "faction_paiwan"
+        }
+      ]
+    },
+    {
+      "id": "m2_aruqu",
+      "when": {
+        "type": "unit_dead",
+        "unitTag": "aruqu"
+      },
+      "do": [
+        {
+          "type": "show_message",
+          "textKey": "mudan1.msg.aruqu",
+          "kind": "warn"
+        }
+      ]
+    },
+    {
+      "id": "m2_occupied_mudan",
+      "when": {
+        "type": "held_for",
+        "id": "occ_mudan",
+        "seconds": 45,
+        "condition": {
+          "type": "all_of",
+          "conditions": [
+            {
+              "type": "area_entered",
+              "region": "mudan",
+              "owner": "faction_japan",
+              "pop": 5
+            },
+            {
+              "type": "not",
+              "condition": {
+                "type": "area_entered",
+                "region": "mudan",
+                "owner": "faction_paiwan",
+                "pop": 1
+              }
+            }
+          ]
+        }
+      },
+      "do": [
+        {
+          "type": "set_flag",
+          "name": "occ_mudan",
+          "value": true
+        },
+        {
+          "type": "show_message",
+          "textKey": "mudan2.msg.occupied_mudan",
+          "kind": "warn"
+        }
+      ]
+    },
+    {
+      "id": "m2_trapped_mudan",
+      "when": {
+        "type": "all_of",
+        "conditions": [
+          {
+            "type": "flag",
+            "name": "occ_mudan"
+          },
+          {
+            "type": "area_entered",
+            "region": "mudan",
+            "owner": "faction_paiwan",
+            "pop": 1,
+            "unitTag": "fam_mudan"
+          }
+        ]
+      },
+      "do": [
+        {
+          "type": "set_flag",
+          "name": "trapped",
+          "value": true
+        },
+        {
+          "type": "complete_objective",
+          "id": "families",
+          "faction": "faction_paiwan",
+          "failed": true
+        },
+        {
+          "type": "show_message",
+          "textKey": "mudan2.msg.trapped",
+          "kind": "warn"
+        },
+        {
+          "type": "move_units",
+          "unitTag": "fam_mudan",
+          "region": "refuge"
+        }
+      ]
+    },
+    {
+      "id": "m2_occupied_nunai",
+      "when": {
+        "type": "held_for",
+        "id": "occ_nunai",
+        "seconds": 45,
+        "condition": {
+          "type": "all_of",
+          "conditions": [
+            {
+              "type": "area_entered",
+              "region": "nunai",
+              "owner": "faction_japan",
+              "pop": 5
+            },
+            {
+              "type": "not",
+              "condition": {
+                "type": "area_entered",
+                "region": "nunai",
+                "owner": "faction_paiwan",
+                "pop": 1
+              }
+            }
+          ]
+        }
+      },
+      "do": [
+        {
+          "type": "set_flag",
+          "name": "occ_nunai",
+          "value": true
+        },
+        {
+          "type": "show_message",
+          "textKey": "mudan2.msg.occupied_nunai",
+          "kind": "warn"
+        }
+      ]
+    },
+    {
+      "id": "m2_trapped_nunai",
+      "when": {
+        "type": "all_of",
+        "conditions": [
+          {
+            "type": "flag",
+            "name": "occ_nunai"
+          },
+          {
+            "type": "area_entered",
+            "region": "nunai",
+            "owner": "faction_paiwan",
+            "pop": 1,
+            "unitTag": "fam_nunai"
+          }
+        ]
+      },
+      "do": [
+        {
+          "type": "set_flag",
+          "name": "trapped",
+          "value": true
+        },
+        {
+          "type": "complete_objective",
+          "id": "families",
+          "faction": "faction_paiwan",
+          "failed": true
+        },
+        {
+          "type": "show_message",
+          "textKey": "mudan2.msg.trapped",
+          "kind": "warn"
+        },
+        {
+          "type": "move_units",
+          "unitTag": "fam_nunai",
+          "region": "refuge"
+        }
+      ]
+    },
+    {
+      "id": "m2_occupied_kuskus",
+      "when": {
+        "type": "held_for",
+        "id": "occ_kuskus",
+        "seconds": 45,
+        "condition": {
+          "type": "all_of",
+          "conditions": [
+            {
+              "type": "area_entered",
+              "region": "kuskus",
+              "owner": "faction_japan",
+              "pop": 5
+            },
+            {
+              "type": "not",
+              "condition": {
+                "type": "area_entered",
+                "region": "kuskus",
+                "owner": "faction_paiwan",
+                "pop": 1
+              }
+            }
+          ]
+        }
+      },
+      "do": [
+        {
+          "type": "set_flag",
+          "name": "occ_kuskus",
+          "value": true
+        },
+        {
+          "type": "show_message",
+          "textKey": "mudan2.msg.occupied_kuskus",
+          "kind": "warn"
+        }
+      ]
+    },
+    {
+      "id": "m2_trapped_kuskus",
+      "when": {
+        "type": "all_of",
+        "conditions": [
+          {
+            "type": "flag",
+            "name": "occ_kuskus"
+          },
+          {
+            "type": "area_entered",
+            "region": "kuskus",
+            "owner": "faction_paiwan",
+            "pop": 1,
+            "unitTag": "fam_kuskus"
+          }
+        ]
+      },
+      "do": [
+        {
+          "type": "set_flag",
+          "name": "trapped",
+          "value": true
+        },
+        {
+          "type": "complete_objective",
+          "id": "families",
+          "faction": "faction_paiwan",
+          "failed": true
+        },
+        {
+          "type": "show_message",
+          "textKey": "mudan2.msg.trapped",
+          "kind": "warn"
+        },
+        {
+          "type": "move_units",
+          "unitTag": "fam_kuskus",
+          "region": "refuge"
+        }
+      ]
+    },
+    {
+      "id": "m2_trapped_end",
+      "when": {
+        "type": "all_of",
+        "conditions": [
+          {
+            "type": "all_of",
+            "conditions": [
+              {
+                "type": "flag",
+                "name": "occ_mudan"
+              },
+              {
+                "type": "flag",
+                "name": "occ_nunai"
+              },
+              {
+                "type": "flag",
+                "name": "occ_kuskus"
+              }
+            ]
+          },
+          {
+            "type": "flag",
+            "name": "trapped"
+          }
+        ]
+      },
+      "do": [
+        {
+          "type": "complete_objective",
+          "id": "occupy",
+          "faction": "faction_japan"
+        },
+        {
+          "type": "complete_objective",
+          "id": "delay",
+          "faction": "faction_paiwan",
+          "failed": true
+        },
+        {
+          "type": "fail_mission",
+          "faction": "faction_paiwan",
+          "reasonKey": "mudan2.end.trapped",
+          "keepOpen": true
+        },
+        {
+          "type": "win_mission",
+          "faction": "faction_japan",
+          "rating": "victory",
+          "reasonKey": "mudan2.end.trapped"
+        }
+      ]
+    },
+    {
+      "id": "m2_rout",
+      "when": {
+        "type": "all_of",
+        "conditions": [
+          {
+            "type": "all_of",
+            "conditions": [
+              {
+                "type": "flag",
+                "name": "occ_mudan"
+              },
+              {
+                "type": "flag",
+                "name": "occ_nunai"
+              },
+              {
+                "type": "flag",
+                "name": "occ_kuskus"
+              }
+            ]
+          },
+          {
+            "type": "army_pop_below",
+            "owner": "faction_paiwan",
+            "pop": 4
+          }
+        ]
+      },
+      "do": [
+        {
+          "type": "complete_objective",
+          "id": "occupy",
+          "faction": "faction_japan"
+        },
+        {
+          "type": "complete_objective",
+          "id": "delay",
+          "faction": "faction_paiwan",
+          "failed": true
+        },
+        {
+          "type": "fail_mission",
+          "faction": "faction_paiwan",
+          "reasonKey": "mudan2.end.rout",
+          "keepOpen": true
+        },
+        {
+          "type": "win_mission",
+          "faction": "faction_japan",
+          "rating": "victory",
+          "reasonKey": "mudan2.end.rout"
+        }
+      ]
+    },
+    {
+      "id": "m2_history",
+      "when": {
+        "type": "all_of",
+        "conditions": [
+          {
+            "type": "flag",
+            "name": "occ_mudan"
+          },
+          {
+            "type": "flag",
+            "name": "occ_nunai"
+          },
+          {
+            "type": "flag",
+            "name": "occ_kuskus"
+          }
+        ]
+      },
+      "do": [
+        {
+          "type": "complete_objective",
+          "id": "occupy",
+          "faction": "faction_japan"
+        },
+        {
+          "type": "complete_objective",
+          "id": "delay",
+          "faction": "faction_paiwan",
+          "failed": true
+        },
+        {
+          "type": "complete_objective",
+          "id": "families",
+          "faction": "faction_paiwan"
+        },
+        {
+          "type": "win_mission",
+          "faction": "faction_japan",
+          "rating": "victory",
+          "reasonKey": "mudan2.end.history"
+        }
+      ]
+    },
+    {
+      "id": "m2_repulsed",
+      "when": {
+        "type": "all_of",
+        "conditions": [
+          {
+            "type": "time_elapsed",
+            "seconds": 60
+          },
+          {
+            "type": "army_pop_below",
+            "owner": "faction_japan",
+            "pop": 20
+          }
+        ]
+      },
+      "do": [
+        {
+          "type": "complete_objective",
+          "id": "delay",
+          "faction": "faction_paiwan"
+        },
+        {
+          "type": "complete_objective",
+          "id": "occupy",
+          "faction": "faction_japan",
+          "failed": true
+        },
+        {
+          "type": "win_mission",
+          "faction": "faction_paiwan",
+          "rating": "victory",
+          "reasonKey": "mudan2.end.repulsed"
+        }
+      ]
+    },
+    {
+      "id": "m2_held",
+      "when": {
+        "type": "time_elapsed",
+        "seconds": 600
+      },
+      "do": [
+        {
+          "type": "complete_objective",
+          "id": "delay",
+          "faction": "faction_paiwan"
+        },
+        {
+          "type": "complete_objective",
+          "id": "occupy",
+          "faction": "faction_japan",
+          "failed": true
+        },
+        {
+          "type": "win_mission",
+          "faction": "faction_paiwan",
+          "rating": "victory",
+          "reasonKey": "mudan2.end.held"
+        }
+      ]
+    }
+  ]
+}

@@ -39,7 +39,8 @@ export type Condition =
   | { type: 'outcome'; faction: Owner; rating?: Rating }
   | { type: 'is_ai'; faction: Owner }
   | { type: 'building_dead'; building: string }
-  | { type: 'building_built'; building: string; owner: Owner; region?: string };
+  | { type: 'building_built'; building: string; owner: Owner; region?: string }
+  | { type: 'held_for'; id: string; seconds: number; condition: Condition };
 
 export type Action =
   | { type: 'show_message'; textKey: string; kind?: 'info' | 'warn' | 'good'; to?: Owner; params?: Record<string, string | number> }
@@ -126,13 +127,20 @@ function lostCount(world: World, owner: Owner, type: string): number {
   return Number(world.ext.flags[`lost:${owner}:${type}`] ?? 0);
 }
 
-/** Population of an owner's units standing in a region (each unit counts at least 1). */
+/**
+ * Population of an owner's units standing in a region (each unit counts at least 1). Civilians
+ * (族人) only count when asked for by tag.
+ */
 export function regionPop(world: World, region: string, owner: Owner, unitTag?: string): number {
   const r = findRegion(world.map, region);
   let pop = 0;
-  for (const e of world.all())
-    if (e.kind === 'unit' && e.owner === owner && !e.insideOf && (!unitTag || e.tag === unitTag) && regionContains(r, Math.floor(e.x), Math.floor(e.y)))
-      pop += Math.max(1, world.data.units.get(e.type)!.pop);
+  for (const e of world.all()) {
+    if (e.kind !== 'unit' || e.owner !== owner || e.insideOf || (unitTag && e.tag !== unitTag)) continue;
+    if (!regionContains(r, Math.floor(e.x), Math.floor(e.y))) continue;
+    const def = world.data.units.get(e.type)!;
+    if (!unitTag && def.traits.includes('civilian')) continue;
+    pop += Math.max(1, def.pop);
+  }
   return pop;
 }
 
@@ -199,6 +207,16 @@ export function evaluate(world: World, c: Condition): boolean {
         return false;
       }
       if (flags(world)[key] === undefined) flags(world)[key] = world.tick;
+      return world.tick - (flags(world)[key] as number) >= c.seconds * world.ticksPerSecond;
+    }
+    case 'held_for': {
+      // True once the inner condition has held without a break for `seconds`.
+      const key = `heldSince:${c.id}`;
+      if (!evaluate(world, c.condition)) {
+        delete flags(world)[key];
+        return false;
+      }
+      if (typeof flags(world)[key] !== 'number') flags(world)[key] = world.tick;
       return world.tick - (flags(world)[key] as number) >= c.seconds * world.ticksPerSecond;
     }
     case 'outcome':

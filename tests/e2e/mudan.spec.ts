@@ -30,6 +30,12 @@ test('1874: menu → 石門之役 as the expedition → cutscene → played to a
   await expect(page.locator('.result')).toBeVisible({ timeout: 30_000 });
   await expect(page.locator('.result-history')).toContainText('北京專約');
   await expect(page.locator('.result-bar .menu-btn', { hasText: '重玩本章' })).toBeVisible();
+  // On to chapter 2 (三路進剿) on the same side.
+  await page.locator('.result-bar .primary').click();
+  await expect(page.locator('.cut-title')).toHaveText('三路・1874 年 6 月');
+  for (let i = 0; i < 3; i++) await page.locator('.cut-next').click();
+  await expect(page.locator('.objectives')).toContainText('佔領牡丹社');
+  expect(await page.evaluate(() => (window as any).__game.world.scenario.id)).toBe('mudan2');
   expect(errors).toEqual([]);
 });
 
@@ -54,4 +60,19 @@ test('1874: save and load on the 恆春 map restores the same state', async ({ p
   const after = await page.evaluate(() => ({ hash: (window as any).__hash((window as any).__game.world), map: (window as any).__game.world.map.id }));
   expect(after.map).toBe('hengchun');
   expect(after.hash).toBe(hashBefore);
+});
+
+test('1874: the opening (families set off for the refuge) does not stall the simulation', async ({ page }) => {
+  for (const scenario of ['mudan1', 'mudan2']) {
+    await page.goto(`./?scenario=${scenario}&skipCutscenes=1`);
+    await page.waitForFunction(() => (window as any).__game?.world);
+    const ms = await page.evaluate(() => {
+      const g = (window as any).__game;
+      g.stepper.paused = true;
+      const t = performance.now();
+      for (let i = 0; i < 100; i++) (window as any).__step(g.world);
+      return performance.now() - t;
+    });
+    expect(ms, scenario).toBeLessThan(1500);
+  }
 });

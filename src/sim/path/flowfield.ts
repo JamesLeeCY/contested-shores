@@ -46,7 +46,9 @@ export class FlowField {
         const ny = cy + dy;
         if (!nav.passable(cls, nx, ny) || cutsCorner(nav, cls, cx, cy, dx, dy)) continue;
         const ni = ny * W + nx;
-        const nc = c + step / sp;
+        // Compare at the stored (float32) precision: a float64 value a hair below its own rounded
+        // copy would otherwise re-queue the tile again and again on maps with varied terrain speeds.
+        const nc = Math.fround(c + step / sp);
         if (nc < this.cost[ni]) {
           this.cost[ni] = nc;
           heap.push(ni, nc);

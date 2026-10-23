@@ -175,5 +175,39 @@
       "ambush:shimen_n/16/gorge",
       "guard:shimen_n/10"
     ]
+  },
+  {
+    "id": "three_routes",
+    "faction": "faction_japan",
+    "chapters": [
+      2
+    ],
+    "steps": [
+      "column:col_mid/mudan",
+      "column:col_north/nunai",
+      "column:col_south/kuskus",
+      "flank:mid_ambush/5",
+      "flank:north_ambush/4",
+      "flank:south_ambush/4",
+      "hold_region:mudan"
+    ]
+  },
+  {
+    "id": "three_routes_defense",
+    "faction": "faction_paiwan",
+    "chapters": [
+      2
+    ],
+    "steps": [
+      "evacuate:fam_mudan/refuge",
+      "evacuate:fam_nunai/refuge",
+      "evacuate:fam_kuskus/refuge",
+      "skirmish:mid_ambush/8/beyond_gorge",
+      "skirmish:north_ambush/6/north_path",
+      "skirmish:south_ambush/6/south_path",
+      "harass:mudan/6",
+      "harass:nunai/4",
+      "harass:kuskus/4"
+    ]
   }
 ]

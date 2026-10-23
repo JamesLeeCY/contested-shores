@@ -529,5 +529,22 @@
       "src.eskildsen",
       "src.mudan_wiki"
     ]
+  },
+  {
+    "id": "m_routes",
+    "category": "disputes",
+    "dispute": true,
+    "sources": [
+      "src.house",
+      "src.mudan_wiki"
+    ]
+  },
+  {
+    "id": "m_nunai",
+    "category": "places",
+    "dispute": false,
+    "sources": [
+      "src.mudan_wiki"
+    ]
   }
 ]

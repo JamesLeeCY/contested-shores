@@ -712,6 +712,7 @@
         95.5,
         30.5
       ]
-    }
+    },
+    "skirmishRetreatDistance": 5
   }
 }
