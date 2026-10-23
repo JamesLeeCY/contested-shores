@@ -20,6 +20,7 @@ import { Messages, ResourceBar, SelectionPanel, eventMessage } from './panels';
 import { Placement } from './placement';
 import { installCampaignUi } from './campaign-ui';
 import { Controls, SPEEDS, type ControlHost } from './controls';
+import { installTouchpadHint } from './touchpad-hint';
 import { ClockHud } from './hud';
 import { Minimap } from './minimap';
 import { life } from './lifecycle';
@@ -153,6 +154,7 @@ export class Session implements ControlHost {
     if (own) this.camera.centerOn(own.x, own.y);
     this.cameraInput = new CameraInput(this.camera, app.canvas);
     this.controls = new Controls(this, app.canvas, ui);
+    installTouchpadHint(app.canvas, ui);
     this.clocks = new ClockHud(ui, this.world);
     this.minimap = new Minimap(map, colors, this.camera);
     ui.appendChild(this.minimap.el);

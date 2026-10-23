@@ -205,3 +205,7 @@ html, body { margin: 0; height: 100%; overflow: hidden; background: var(--bg); c
 .menu-hint { color: var(--muted); font-size: 13px; }
 .menu-btn.pulse { animation: tutpulse-bg 1.2s ease-in-out infinite alternate; }
 @keyframes tutpulse-bg { from { filter: brightness(1); } to { filter: brightness(1.35); } }
+.touchpad-hint { position: absolute; top: 64px; left: 50%; transform: translateX(-50%); max-width: min(460px, calc(100vw - 32px));
+  padding: 10px 14px; z-index: 30; font-size: 14px; line-height: 1.5; }
+.touchpad-hint-row { display: flex; gap: 8px; justify-content: flex-end; margin-top: 8px; }
+.touchpad-hint-row .menu-btn { margin: 0; width: auto; padding: 4px 12px; }

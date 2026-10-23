@@ -59,3 +59,19 @@ test('touchpad mode: left click orders, Escape deselects', async ({ page }) => {
   await page.keyboard.press('Escape');
   expect(await page.evaluate(() => (window as any).__game.selected.size)).toBe(0);
 });
+
+test('touchpad-like scrolling offers touchpad mode', async ({ page }) => {
+  await setup(page);
+  // A mouse wheel notch does not trigger the offer.
+  await page.mouse.move(640, 360);
+  await page.mouse.wheel(0, 100);
+  await page.waitForTimeout(200);
+  await expect(page.locator('.touchpad-hint')).toHaveCount(0);
+  // Two-finger scrolling: a burst of small pixel deltas.
+  for (let i = 0; i < 12; i++) await page.mouse.wheel(0, 5);
+  await expect(page.locator('.touchpad-hint')).toBeVisible();
+  await page.screenshot({ path: 'test-results/touchpad-hint.png' });
+  await page.locator('.touchpad-hint .primary').click();
+  await expect(page.locator('.touchpad-hint')).toHaveCount(0);
+  expect(await page.evaluate(() => JSON.parse(localStorage.getItem('tayouan1661.settings')!).touchpad)).toBe(true);
+});
