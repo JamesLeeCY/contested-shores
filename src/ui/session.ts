@@ -242,6 +242,8 @@ export class Session implements ControlHost {
     this.unsubscribe = onSettings((st) => {
       this.cameraInput.scrollSpeed = st.scrollSpeed;
       this.cameraInput.edgeScroll = st.edgeScroll;
+      this.cameraInput.touchpad = st.touchpad;
+      this.controls.smartClick = st.touchpad;
       this.colorblind = st.colorblind;
       this.entities.setColorblind(st.colorblind);
     });

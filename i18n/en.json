@@ -623,6 +623,8 @@
   "settings.gameSpeed": "",
   "settings.edgeScroll": "",
   "settings.colorblind": "",
+  "settings.touchpad": "",
+  "settings.touchpad_note": "",
   "menu.tutorial": "",
   "menu.tutorial_hint": "",
   "tutorial.skip_step": "",

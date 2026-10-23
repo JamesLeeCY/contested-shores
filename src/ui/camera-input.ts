@@ -11,6 +11,8 @@ export class CameraInput {
   private drag: { x: number; y: number } | null = null;
   scrollSpeed = 1;
   edgeScroll = true;
+  /** Touchpad mode: two-finger scroll pans, pinch (reported as Ctrl + wheel) zooms. */
+  touchpad = false;
 
   constructor(
     private readonly camera: Camera,
@@ -43,7 +45,9 @@ export class CameraInput {
       'wheel',
       (e) => {
         e.preventDefault();
-        camera.zoomAt(e.deltaY < 0 ? 1.1 : 1 / 1.1, e.clientX, e.clientY);
+        if (!this.touchpad) camera.zoomAt(e.deltaY < 0 ? 1.1 : 1 / 1.1, e.clientX, e.clientY);
+        else if (e.ctrlKey) camera.zoomAt(Math.exp(-e.deltaY * 0.01), e.clientX, e.clientY);
+        else camera.panScreen(e.deltaX * this.scrollSpeed, e.deltaY * this.scrollSpeed);
       },
       { passive: false },
     );

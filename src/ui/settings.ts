@@ -12,9 +12,10 @@ export interface Settings {
   gameSpeed: number;
   edgeScroll: boolean;
   colorblind: boolean;
+  touchpad: boolean;
 }
 
-const DEFAULTS: Settings = { master: 0.7, music: 0.5, sfx: 0.8, scrollSpeed: 1, gameSpeed: 1, edgeScroll: true, colorblind: false };
+const DEFAULTS: Settings = { master: 0.7, music: 0.5, sfx: 0.8, scrollSpeed: 1, gameSpeed: 1, edgeScroll: true, colorblind: false, touchpad: false };
 
 export const settings: Settings = { ...DEFAULTS, ...read() };
 const listeners: ((s: Settings) => void)[] = [];
@@ -75,7 +76,7 @@ export function openSettings(parent: HTMLElement, onClose?: () => void) {
       for (const x of speedRow.querySelectorAll('button')) x.classList.toggle('on', x === b);
     };
   }
-  const toggle = (key: 'edgeScroll' | 'colorblind') => {
+  const toggle = (key: 'edgeScroll' | 'colorblind' | 'touchpad') => {
     const row = el('label', 'menu-row', card);
     const input = el('input', '', row);
     input.type = 'checkbox';
@@ -83,6 +84,8 @@ export function openSettings(parent: HTMLElement, onClose?: () => void) {
     el('span', '', row, t(`settings.${key}`));
     input.onchange = () => updateSettings({ [key]: input.checked } as Partial<Settings>);
   };
+  toggle('touchpad');
+  el('div', 'settings-note', card, t('settings.touchpad_note'));
   toggle('edgeScroll');
   toggle('colorblind');
   const close = el('button', 'menu-btn primary', card, t('codex.close'));

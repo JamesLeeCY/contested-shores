@@ -64,8 +64,13 @@ export class CommandPanel {
     on(window, 'keydown', (e) => {
       if (e.ctrlKey || e.metaKey || e.altKey || (e.target as HTMLElement)?.tagName === 'INPUT') return;
       if (e.key === 'Escape') {
-        if (this.session.pendingClick) this.session.cancelPending();
-        else this.mode = 'root';
+        if (this.session.pendingClick) {
+          this.session.cancelPending();
+          e.preventDefault();
+        } else if (this.mode !== 'root') {
+          this.mode = 'root';
+          e.preventDefault();
+        }
         this.sig = '';
         return;
       }

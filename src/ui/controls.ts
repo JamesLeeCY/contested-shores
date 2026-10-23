@@ -1,5 +1,6 @@
 // Mouse/keyboard unit control (spec §9.2): click/box select, right-click orders, control groups,
-// pause and game speed.
+// pause and game speed. Laptop alternatives to the right button: Alt/Ctrl + left click or a long
+// press always give an order, and touchpad mode turns a plain left click into a contextual order.
 import { on } from './lifecycle';
 import type { Camera } from '../render/camera';
 import type { Entity } from '../sim/types';
@@ -9,6 +10,8 @@ import type { Command } from '../sim/commands';
 export const SPEEDS = [0.5, 1, 1.5, 2];
 const CLICK_RADIUS = 16;
 const DOUBLE_TAP_MS = 350;
+const LONG_PRESS_MS = 450;
+const DRAG_PX = 5;
 
 export interface ControlHost {
   world: World;
@@ -31,7 +34,10 @@ export class Controls {
   private dragNow: { x: number; y: number } | null = null;
   private groups = new Map<number, number[]>();
   private lastTap = { key: -1, at: 0 };
+  private longPress: ReturnType<typeof setTimeout> | null = null;
   readonly box: HTMLDivElement;
+  /** Touchpad mode: a left click that is not on one of your units orders the selection there. */
+  smartClick = false;
 
   constructor(
     private readonly host: ControlHost,
@@ -50,15 +56,30 @@ export class Controls {
           if (host.pendingClick(t.x, t.y, this.pick(e.clientX, e.clientY))) host.pendingClick = null;
           return;
         }
+        if (e.altKey || e.ctrlKey || e.metaKey) {
+          this.order(e.clientX, e.clientY, e);
+          return;
+        }
         this.dragStart = { x: e.clientX, y: e.clientY };
         this.dragNow = { ...this.dragStart };
         canvas.setPointerCapture(e.pointerId);
+        if (this.ownSelected().length) {
+          const at = { x: e.clientX, y: e.clientY };
+          this.longPress = setTimeout(() => {
+            this.longPress = null;
+            const n = this.dragNow;
+            if (!this.dragStart || !n || Math.hypot(n.x - at.x, n.y - at.y) >= DRAG_PX) return;
+            this.dragStart = null;
+            this.box.style.display = 'none';
+            this.order(at.x, at.y, e);
+          }, LONG_PRESS_MS);
+        }
       } else if (e.button === 2) {
         if (host.pendingClick) {
           host.cancelPending?.();
           return;
         }
-        this.rightClick(e);
+        this.order(e.clientX, e.clientY, e);
       }
     });
     canvas.addEventListener('pointermove', (e) => {
@@ -68,12 +89,19 @@ export class Controls {
       }
     });
     canvas.addEventListener('pointerup', (e) => {
-      if (e.button !== 0 || !this.dragStart) return;
+      if (e.button !== 0) return;
+      this.cancelLongPress();
+      if (!this.dragStart) return;
       const s = this.dragStart;
       this.dragStart = null;
       this.box.style.display = 'none';
-      if (Math.hypot(e.clientX - s.x, e.clientY - s.y) < 5) this.clickSelect(e.clientX, e.clientY, e.shiftKey);
-      else this.boxSelect(s.x, s.y, e.clientX, e.clientY, e.shiftKey);
+      if (Math.hypot(e.clientX - s.x, e.clientY - s.y) >= DRAG_PX) this.boxSelect(s.x, s.y, e.clientX, e.clientY, e.shiftKey);
+      else if (!this.smartClick || e.shiftKey || !this.smartOrder(e.clientX, e.clientY, e)) this.clickSelect(e.clientX, e.clientY, e.shiftKey);
+    });
+    canvas.addEventListener('pointercancel', () => {
+      this.cancelLongPress();
+      this.dragStart = null;
+      this.box.style.display = 'none';
     });
     on(window, 'keydown', (e) => this.key(e));
   }
@@ -152,17 +180,33 @@ export class Controls {
     });
   }
 
-  private rightClick(e: MouseEvent) {
+  private cancelLongPress() {
+    if (this.longPress) clearTimeout(this.longPress);
+    this.longPress = null;
+  }
+
+  /** The right-click order: contextual (attack, gather, garrison, rally…) or a plain move. */
+  private order(sx: number, sy: number, e: MouseEvent, moveFallback = true): boolean {
     const ids = this.ownSelected().filter((id) => this.host.world.get(id)?.kind === 'unit');
-    const t = this.host.camera.screenToTile(e.clientX, e.clientY);
-    const target = this.pick(e.clientX, e.clientY);
-    if (this.host.contextOrder?.(target, t.x, t.y, this.ownSelected(), e)) return;
-    if (!ids.length) {
-      // Rally point for selected own buildings.
-      return;
+    const t = this.host.camera.screenToTile(sx, sy);
+    const target = this.pick(sx, sy);
+    if (this.host.contextOrder?.(target, t.x, t.y, this.ownSelected(), e)) {
+      this.flash(sx, sy);
+      return true;
     }
+    if (!ids.length || !moveFallback) return false;
     this.host.issue({ type: 'move', owner: this.host.player, ids, x: t.x, y: t.y });
-    this.flash(e.clientX, e.clientY);
+    this.flash(sx, sy);
+    return true;
+  }
+
+  /** Touchpad mode left click: clicking your own units still selects; anything else is an order. */
+  private smartOrder(sx: number, sy: number, e: MouseEvent): boolean {
+    if (!this.ownSelected().length) return false;
+    const target = this.pick(sx, sy);
+    if (target?.owner === this.host.player && target.kind === 'unit') return false;
+    // Own buildings: an order only if the selection can use it (garrison, repair…), else select it.
+    return this.order(sx, sy, e, !(target?.owner === this.host.player && target.kind === 'building'));
   }
 
   flash(x: number, y: number) {
@@ -176,6 +220,11 @@ export class Controls {
 
   private key(e: KeyboardEvent) {
     if ((e.target as HTMLElement)?.tagName === 'INPUT') return;
+    // Escape first cancels a pending targeted command (command panel), then clears the selection.
+    if (e.key === 'Escape') {
+      if (!this.host.pendingClick && !e.defaultPrevented && this.host.selected.size) this.setSelection([], false);
+      return;
+    }
     if (e.code === 'Space') {
       this.host.togglePause();
       e.preventDefault();
