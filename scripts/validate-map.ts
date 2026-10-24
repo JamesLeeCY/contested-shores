@@ -1,7 +1,7 @@
 // Spec §6.4: path-finding checks on data/maps/taijiang.json, plus the 1874 map's checks.
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
-import { checkHengchun, checkMap } from '../src/sim/mapcheck';
+import { checkHengchun, checkMap, checkPenghu } from '../src/sim/mapcheck';
 import { mapFromTiled } from '../src/sim/map';
 
 const root = join(import.meta.dirname, '..');
@@ -12,6 +12,7 @@ const hunter = read('data/units.json').find((u: { id: string }) => u.id === 'pai
 const results = [
   ...checkMap(map, rules, read('data/buildings.json')),
   ...checkHengchun(mapFromTiled('hengchun', read('data/maps/hengchun.json')), rules, hunter.range),
+  ...checkPenghu(mapFromTiled('penghu', read('data/maps/penghu.json')), rules, read('data/buildings.json')),
 ];
 
 let failed = 0;

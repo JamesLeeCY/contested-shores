@@ -3,14 +3,14 @@ import { z } from 'zod';
 export const RESOURCES = ['grain', 'wood', 'powder', 'deerskin'] as const;
 export const ATK_TYPES = ['melee', 'arrow', 'musket', 'cannon', 'fire'] as const;
 export const ARMOR_TYPES = ['none', 'scale', 'cuirass', 'building', 'ship'] as const;
-export const FACTIONS = ['faction_zheng', 'faction_voc', 'faction_neutral', 'faction_settlers', 'faction_village', 'faction_paiwan', 'faction_japan'] as const;
+export const FACTIONS = ['faction_zheng', 'faction_voc', 'faction_neutral', 'faction_settlers', 'faction_village', 'faction_paiwan', 'faction_japan', 'faction_qing', 'faction_tungning'] as const;
 
 // Every trait used by data must have a handler in src/sim/traits/ (spec §5.1).
 export const KNOWN_TRAITS = [
   'gatherer', 'builder', 'block_arrow_30', 'cleave_2', 'uses_powder', 'must_deploy', 'battery_only',
   'naval', 'small_craft', 'transport_10', 'transport_6', 'suicide', 'hero', 'aura_koxinga', 'aura_coyett',
   'aura_pedel', 'diplomat', 'volley', 'anti_charge', 'splash_1', 'broadside', 'forest_stealth',
-  'fast_terrain', 'non_combat', 'aura_sakuma', 'aura_aruqu', 'civilian', 'mountain_stealth',
+  'fast_terrain', 'non_combat', 'aura_sakuma', 'aura_aruqu', 'civilian', 'mountain_stealth', 'aura_admiral', 'aura_captain',
 ] as const;
 
 export const CostSchema = z.object({

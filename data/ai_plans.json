@@ -209,5 +209,76 @@
       "harass:nunai/4",
       "harass:kuskus/4"
     ]
+  },
+  {
+    "id": "penghu1_qing",
+    "faction": "faction_qing",
+    "chapters": [
+      1
+    ],
+    "steps": [
+      "flagship:shi_lang/bazhao",
+      "sail:vanguard+lan_li+shi_lang/bay_mouth",
+      "encircle:vanguard+lan_li+shi_lang/4",
+      "fire_attack:main",
+      "wait:30",
+      "sail:main/bay_mouth",
+      "encircle:main/5",
+      "wait:125",
+      "sail:second/bay_mouth",
+      "encircle:second/5"
+    ]
+  },
+  {
+    "id": "penghu1_tungning",
+    "faction": "faction_tungning",
+    "chapters": [
+      1
+    ],
+    "steps": [
+      "flagship:liu_guoxuan/inner_harbor",
+      "harbor:harbor+liu_guoxuan/inner_harbor",
+      "fire_attack:east_wing+qiu_hui",
+      "harbor:west_wing+lin_sheng/tn_line",
+      "harbor:east_wing+qiu_hui/tn_line"
+    ]
+  },
+  {
+    "id": "penghu2_qing",
+    "faction": "faction_qing",
+    "chapters": [
+      2
+    ],
+    "steps": [
+      "flagship:shi_lang/bazhao",
+      "fire_attack:center+shi_lang+lan_li",
+      "sail:left/niuxin",
+      "encircle:left/4",
+      "sail:right/east_islets",
+      "encircle:right/4",
+      "sail:center+shi_lang+lan_li/outer_sea",
+      "encircle:center+shi_lang+lan_li/5",
+      "wait:240",
+      "drop:sail/center",
+      "sail:center+shi_lang+lan_li/inner_harbor",
+      "wait:305",
+      "sail:reserve/inner_harbor",
+      "encircle:reserve/5"
+    ]
+  },
+  {
+    "id": "penghu2_tungning",
+    "faction": "faction_tungning",
+    "chapters": [
+      2
+    ],
+    "steps": [
+      "flagship:liu_guoxuan/north_exit/harbor_threatened",
+      "fire_attack:main+liu_guoxuan",
+      "sortie_wind:main+liu_guoxuan/bay_mouth/bay/315",
+      "encircle:main+liu_guoxuan/4",
+      "harbor:qiu+qiu_hui/bay_mouth",
+      "encircle:qiu+qiu_hui/4"
+    ]
   }
 ]

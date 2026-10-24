@@ -75,5 +75,24 @@
       "cut.mudan2_intro.2",
       "cut.mudan2_intro.3"
     ]
+  },
+  "penghu1_intro": {
+    "titleKey": "cut.penghu1_intro.title",
+    "art": "sea",
+    "lines": [
+      "cut.penghu1_intro.1",
+      "cut.penghu1_intro.2",
+      "cut.penghu1_intro.3",
+      "cut.penghu1_intro.4"
+    ]
+  },
+  "penghu2_intro": {
+    "titleKey": "cut.penghu2_intro.title",
+    "art": "sea",
+    "lines": [
+      "cut.penghu2_intro.1",
+      "cut.penghu2_intro.2",
+      "cut.penghu2_intro.3"
+    ]
   }
 }

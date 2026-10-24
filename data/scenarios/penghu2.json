@@ -1,0 +1,616 @@
+{
+  "id": "penghu2",
+  "campaign": "penghu",
+  "map": "penghu",
+  "factions": [
+    "faction_tungning",
+    "faction_qing"
+  ],
+  "historyKey": "history.penghu2",
+  "chapter": 2,
+  "nameKey": "scenario.penghu2.name",
+  "dateKey": "scenario.penghu2.date",
+  "timerMinutes": 12,
+  "stage": {
+    "faction_qing": 1,
+    "faction_tungning": 1
+  },
+  "resources": {
+    "faction_qing": {
+      "powder": 3000
+    },
+    "faction_tungning": {
+      "powder": 3000
+    }
+  },
+  "castleMorale": 0,
+  "rules": {
+    "combat.encircle.minShips": 5,
+    "combat.encircle.radius": 7,
+    "combat.encircle.bonus": 0.3
+  },
+  "wind": {
+    "from": 315,
+    "strength": 0.35,
+    "shifts": [
+      {
+        "atSeconds": 240,
+        "from": 180,
+        "strength": 0.4
+      }
+    ]
+  },
+  "units": [
+    {
+      "type": "shi_lang",
+      "owner": "faction_qing",
+      "count": 1,
+      "at": [
+        62,
+        92
+      ]
+    },
+    {
+      "type": "lan_li",
+      "owner": "faction_qing",
+      "count": 1,
+      "at": [
+        58,
+        90
+      ]
+    },
+    {
+      "type": "qing_niaochuan",
+      "owner": "faction_qing",
+      "count": 8,
+      "at": [
+        60,
+        94
+      ],
+      "tag": "center"
+    },
+    {
+      "type": "qing_ganzeng",
+      "owner": "faction_qing",
+      "count": 10,
+      "at": [
+        68,
+        92
+      ],
+      "tag": "center"
+    },
+    {
+      "type": "qing_shuangfan",
+      "owner": "faction_qing",
+      "count": 6,
+      "at": [
+        64,
+        89
+      ],
+      "tag": "center"
+    },
+    {
+      "type": "qing_fire_ship",
+      "owner": "faction_qing",
+      "count": 4,
+      "at": [
+        56,
+        94
+      ],
+      "tag": "center"
+    },
+    {
+      "type": "qing_ganzeng",
+      "owner": "faction_qing",
+      "count": 4,
+      "at": [
+        44,
+        88
+      ],
+      "tag": "left"
+    },
+    {
+      "type": "qing_shuangfan",
+      "owner": "faction_qing",
+      "count": 6,
+      "at": [
+        40,
+        90
+      ],
+      "tag": "left"
+    },
+    {
+      "type": "qing_ganzeng",
+      "owner": "faction_qing",
+      "count": 4,
+      "at": [
+        88,
+        90
+      ],
+      "tag": "right"
+    },
+    {
+      "type": "qing_shuangfan",
+      "owner": "faction_qing",
+      "count": 6,
+      "at": [
+        92,
+        88
+      ],
+      "tag": "right"
+    },
+    {
+      "type": "liu_guoxuan",
+      "owner": "faction_tungning",
+      "count": 1,
+      "at": [
+        52,
+        52
+      ]
+    },
+    {
+      "type": "tn_paochuan",
+      "owner": "faction_tungning",
+      "count": 6,
+      "at": [
+        50,
+        50
+      ],
+      "tag": "main"
+    },
+    {
+      "type": "tn_warjunk",
+      "owner": "faction_tungning",
+      "count": 8,
+      "at": [
+        54,
+        56
+      ],
+      "tag": "main"
+    },
+    {
+      "type": "tn_shuangfan",
+      "owner": "faction_tungning",
+      "count": 6,
+      "at": [
+        48,
+        58
+      ],
+      "tag": "main"
+    },
+    {
+      "type": "qiu_hui",
+      "owner": "faction_tungning",
+      "count": 1,
+      "at": [
+        50,
+        68
+      ]
+    },
+    {
+      "type": "tn_warjunk",
+      "owner": "faction_tungning",
+      "count": 4,
+      "at": [
+        46,
+        70
+      ],
+      "tag": "qiu"
+    },
+    {
+      "type": "tn_shuangfan",
+      "owner": "faction_tungning",
+      "count": 4,
+      "at": [
+        54,
+        72
+      ],
+      "tag": "qiu"
+    },
+    {
+      "type": "tn_fire_ship",
+      "owner": "faction_tungning",
+      "count": 4,
+      "at": [
+        52,
+        62
+      ],
+      "tag": "main"
+    }
+  ],
+  "ai": {
+    "faction_qing": {
+      "plans": [
+        "penghu2_qing"
+      ],
+      "composition": {},
+      "targetArmy": 0,
+      "home": [
+        50,
+        104
+      ],
+      "scripted": true
+    },
+    "faction_tungning": {
+      "plans": [
+        "penghu2_tungning"
+      ],
+      "composition": {},
+      "targetArmy": 0,
+      "home": [
+        56,
+        52
+      ],
+      "scripted": true
+    }
+  },
+  "historicalLoser": "faction_tungning",
+  "objectives": {
+    "faction_qing": [
+      "penghu2.obj.take"
+    ],
+    "faction_tungning": [
+      "penghu2.obj.hold",
+      "penghu2.obj.liu"
+    ]
+  },
+  "status": [
+    {
+      "textKey": "penghu2.status",
+      "counts": [
+        [
+          "inner_harbor",
+          "faction_qing",
+          "units"
+        ]
+      ]
+    }
+  ],
+  "triggers": [
+    {
+      "id": "p2_start",
+      "when": {
+        "type": "time_elapsed",
+        "seconds": 0
+      },
+      "do": [
+        {
+          "type": "show_cutscene",
+          "id": "penghu2_intro"
+        },
+        {
+          "type": "set_objective",
+          "id": "take",
+          "faction": "faction_qing",
+          "textKey": "penghu2.obj.take",
+          "primary": true
+        },
+        {
+          "type": "set_objective",
+          "id": "hold",
+          "faction": "faction_tungning",
+          "textKey": "penghu2.obj.hold",
+          "primary": true
+        },
+        {
+          "type": "set_objective",
+          "id": "liu",
+          "faction": "faction_tungning",
+          "textKey": "penghu2.obj.liu",
+          "primary": false
+        },
+        {
+          "type": "show_message",
+          "textKey": "penghu2.msg.wind_nw",
+          "kind": "info"
+        }
+      ]
+    },
+    {
+      "id": "p2_wind_south",
+      "when": {
+        "type": "time_elapsed",
+        "seconds": 240
+      },
+      "do": [
+        {
+          "type": "show_message",
+          "textKey": "penghu2.msg.wind_s",
+          "kind": "warn"
+        }
+      ]
+    },
+    {
+      "id": "p2_reserve",
+      "when": {
+        "type": "time_elapsed",
+        "seconds": 300
+      },
+      "do": [
+        {
+          "type": "spawn_units",
+          "units": [
+            {
+              "type": "qing_niaochuan",
+              "owner": "faction_qing",
+              "count": 3,
+              "at": [
+                62,
+                100
+              ],
+              "tag": "reserve"
+            },
+            {
+              "type": "qing_ganzeng",
+              "owner": "faction_qing",
+              "count": 5,
+              "at": [
+                70,
+                100
+              ],
+              "tag": "reserve"
+            }
+          ]
+        },
+        {
+          "type": "show_message",
+          "textKey": "penghu2.msg.reserve",
+          "kind": "good",
+          "to": "faction_qing"
+        }
+      ]
+    },
+    {
+      "id": "p2_harbor_threatened",
+      "when": {
+        "type": "area_entered",
+        "region": "inner_harbor",
+        "owner": "faction_qing",
+        "pop": 6,
+        "countUnits": true
+      },
+      "do": [
+        {
+          "type": "set_flag",
+          "name": "harbor_threatened",
+          "value": true
+        }
+      ]
+    },
+    {
+      "id": "p2_harbor_lost",
+      "when": {
+        "type": "building_dead",
+        "building": "niangmagong"
+      },
+      "do": [
+        {
+          "type": "set_flag",
+          "name": "harbor_lost",
+          "value": true
+        },
+        {
+          "type": "show_message",
+          "textKey": "penghu2.msg.harbor_lost",
+          "kind": "warn"
+        }
+      ]
+    },
+    {
+      "id": "p2_liu_sunk",
+      "when": {
+        "type": "unit_dead",
+        "unitTag": "liu_guoxuan"
+      },
+      "do": [
+        {
+          "type": "set_flag",
+          "name": "liu_sunk",
+          "value": true
+        },
+        {
+          "type": "complete_objective",
+          "id": "liu",
+          "faction": "faction_tungning",
+          "failed": true
+        },
+        {
+          "type": "show_message",
+          "textKey": "penghu2.msg.liu_sunk",
+          "kind": "warn"
+        }
+      ]
+    },
+    {
+      "id": "p2_liu_escaped",
+      "when": {
+        "type": "area_entered",
+        "region": "north_exit",
+        "owner": "faction_tungning",
+        "unitTag": "liu_guoxuan"
+      },
+      "do": [
+        {
+          "type": "set_flag",
+          "name": "liu_escaped",
+          "value": true
+        },
+        {
+          "type": "complete_objective",
+          "id": "liu",
+          "faction": "faction_tungning"
+        },
+        {
+          "type": "show_message",
+          "textKey": "penghu2.msg.liu_escaped",
+          "kind": "info"
+        }
+      ]
+    },
+    {
+      "id": "p2_shi_sunk",
+      "when": {
+        "type": "unit_dead",
+        "unitTag": "shi_lang"
+      },
+      "do": [
+        {
+          "type": "complete_objective",
+          "id": "take",
+          "faction": "faction_qing",
+          "failed": true
+        },
+        {
+          "type": "complete_objective",
+          "id": "hold",
+          "faction": "faction_tungning"
+        },
+        {
+          "type": "win_mission",
+          "faction": "faction_tungning",
+          "rating": "victory",
+          "reasonKey": "penghu2.end.shi_sunk"
+        }
+      ]
+    },
+    {
+      "id": "p2_taken_liu_sunk",
+      "when": {
+        "type": "all_of",
+        "conditions": [
+          {
+            "type": "flag",
+            "name": "harbor_lost"
+          },
+          {
+            "type": "area_entered",
+            "region": "inner_harbor",
+            "owner": "faction_qing",
+            "pop": 12,
+            "countUnits": true
+          },
+          {
+            "type": "flag",
+            "name": "liu_sunk"
+          }
+        ]
+      },
+      "do": [
+        {
+          "type": "complete_objective",
+          "id": "take",
+          "faction": "faction_qing"
+        },
+        {
+          "type": "complete_objective",
+          "id": "hold",
+          "faction": "faction_tungning",
+          "failed": true
+        },
+        {
+          "type": "fail_mission",
+          "faction": "faction_tungning",
+          "reasonKey": "penghu2.end.liu_sunk",
+          "keepOpen": true
+        },
+        {
+          "type": "win_mission",
+          "faction": "faction_qing",
+          "rating": "victory",
+          "reasonKey": "penghu2.end.liu_sunk"
+        }
+      ]
+    },
+    {
+      "id": "p2_taken",
+      "when": {
+        "type": "all_of",
+        "conditions": [
+          {
+            "type": "flag",
+            "name": "harbor_lost"
+          },
+          {
+            "type": "area_entered",
+            "region": "inner_harbor",
+            "owner": "faction_qing",
+            "pop": 12,
+            "countUnits": true
+          }
+        ]
+      },
+      "do": [
+        {
+          "type": "complete_objective",
+          "id": "take",
+          "faction": "faction_qing"
+        },
+        {
+          "type": "complete_objective",
+          "id": "hold",
+          "faction": "faction_tungning",
+          "failed": true
+        },
+        {
+          "type": "win_mission",
+          "faction": "faction_qing",
+          "rating": "victory",
+          "reasonKey": "penghu2.end.history"
+        }
+      ]
+    },
+    {
+      "id": "p2_repulsed",
+      "when": {
+        "type": "ships_lost",
+        "owner": "faction_qing",
+        "count": 26
+      },
+      "do": [
+        {
+          "type": "complete_objective",
+          "id": "take",
+          "faction": "faction_qing",
+          "failed": true
+        },
+        {
+          "type": "complete_objective",
+          "id": "hold",
+          "faction": "faction_tungning"
+        },
+        {
+          "type": "win_mission",
+          "faction": "faction_tungning",
+          "rating": "victory",
+          "reasonKey": "penghu2.end.repulsed"
+        }
+      ]
+    },
+    {
+      "id": "p2_held",
+      "when": {
+        "type": "time_elapsed",
+        "seconds": 720
+      },
+      "do": [
+        {
+          "type": "complete_objective",
+          "id": "take",
+          "faction": "faction_qing",
+          "failed": true
+        },
+        {
+          "type": "complete_objective",
+          "id": "hold",
+          "faction": "faction_tungning"
+        },
+        {
+          "type": "win_mission",
+          "faction": "faction_tungning",
+          "rating": "victory",
+          "reasonKey": "penghu2.end.held"
+        }
+      ]
+    }
+  ]
+}

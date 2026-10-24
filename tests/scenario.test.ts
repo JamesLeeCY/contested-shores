@@ -520,6 +520,110 @@ describe('1874 三路進剿', () => {
   });
 });
 
+describe('1683 澎湖海戰', () => {
+  const Q = 'faction_qing';
+  const N = 'faction_tungning';
+  const sea = (id: string) => {
+    const sc = scenarioById(id);
+    const w = new WorldClass(DATA, loadMap('penghu'), { seed: 5, factions: sc.factions });
+    applyScenario(w, sc);
+    w.ext.flags.player = '';
+    at(w, 1);
+    return w;
+  };
+  const sink = (w: World, owner: string, n: number, keep: string[] = []) => {
+    w.rebuildSpatial();
+    const ships = [...w.all()].filter((e) => e.owner === owner && e.kind === 'unit' && e.moveClass !== 'foot' && !keep.includes(e.tag ?? '') && !e.type.endsWith('fire_ship') && !['shi_lang', 'liu_guoxuan'].includes(e.type));
+    for (const e of ships.slice(0, n)) killEntity(w, e);
+    run(w, 5);
+  };
+  const wound = (w: World, tag: string, f: number) => {
+    const e = tagged(w, tag)[0] ?? [...w.all()].find((x) => x.type === tag)!;
+    e.hp = e.maxHp * f;
+    run(w, 5);
+  };
+
+  it('八罩: the second wave arrives; 施琅 wounded → the Qing fall back (historical)', () => {
+    const w = sea('penghu1');
+    expect(w.ext.wind?.from).toBe(0);
+    at(w, 120);
+    expect(tagged(w, 'second')).toHaveLength(14);
+    wound(w, 'lin_sheng', 0.4);
+    wound(w, 'shi_lang', 0.4);
+    collect(w);
+    expect(outcomeOf(w, N)).toBe('victory');
+    expect(outcomeOf(w, Q)).toBe('historical');
+  });
+
+  it('八罩: the Zheng line broken, the Qing repulsed, or time runs out', () => {
+    const a = sea('penghu1');
+    sink(a, N, 20);
+    collect(a);
+    expect(outcomeOf(a, Q)).toBe('victory');
+    expect(outcomeOf(a, N)).toBe('defeat');
+    const b = sea('penghu1');
+    sink(b, Q, 14);
+    collect(b);
+    expect(b.ext.flags[`outcomeReason:${N}`]).toBe('penghu1.end.repulsed');
+    const c = sea('penghu1');
+    at(c, 600);
+    collect(c);
+    expect(outcomeOf(c, N)).toBe('victory');
+  });
+
+  it('八罩: losing 施琅 and his flagship is worse than history for the Qing', () => {
+    const w = sea('penghu1');
+    killTag(w, 'shi_lang');
+    run(w, 5);
+    collect(w);
+    expect(outcomeOf(w, Q)).toBe('defeat');
+  });
+
+  it('娘媽宮: the wind turns south at noon; the harbour falls and 劉國軒 escapes (historical)', () => {
+    const w = sea('penghu2');
+    expect(w.ext.wind?.from).toBe(315);
+    at(w, 241);
+    expect(w.ext.wind?.from).toBe(180);
+    at(w, 301);
+    expect(tagged(w, 'reserve')).toHaveLength(8);
+    const liu = tagged(w, 'liu_guoxuan')[0];
+    liu.x = liu.px = 40;
+    liu.y = liu.py = 1.5;
+    w.rebuildSpatial();
+    killEntity(w, w.buildings().find((b) => b.tag === 'niangmagong')!);
+    spawnIn(w, Q, 'qing_ganzeng', 12, 58, 46);
+    run(w, 10);
+    collect(w);
+    expect(w.ext.flags.liu_escaped).toBe(true);
+    expect(outcomeOf(w, Q)).toBe('victory');
+    expect(outcomeOf(w, N)).toBe('historical');
+  });
+
+  it('娘媽宮: 劉國軒 sunk is worse than history; 施琅 sunk, heavy Qing losses or the deadline save the harbour', () => {
+    const a = sea('penghu2');
+    killTag(a, 'liu_guoxuan');
+    a.rebuildSpatial();
+    killEntity(a, a.buildings().find((b) => b.tag === 'niangmagong')!);
+    spawnIn(a, Q, 'qing_ganzeng', 12, 58, 46);
+    run(a, 10);
+    collect(a);
+    expect(outcomeOf(a, N)).toBe('defeat');
+    const b = sea('penghu2');
+    killTag(b, 'shi_lang');
+    run(b, 5);
+    collect(b);
+    expect(b.ext.flags[`outcomeReason:${N}`]).toBe('penghu2.end.shi_sunk');
+    const c = sea('penghu2');
+    sink(c, Q, 26);
+    collect(c);
+    expect(c.ext.flags[`outcomeReason:${N}`]).toBe('penghu2.end.repulsed');
+    const d = sea('penghu2');
+    at(d, 720);
+    collect(d);
+    expect(outcomeOf(d, Q)).toBe('defeat');
+  });
+});
+
 afterAll(() => {
   // Every trigger of every chapter, and every global rule, fired somewhere above.
   const all: string[] = [];

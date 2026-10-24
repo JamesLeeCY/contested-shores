@@ -135,6 +135,13 @@ export function computeDamage(ctx: AttackCtx, atkOverride?: number): number {
     const c = world.rules.combat.crossfire;
     if (crossfireCount(world, a.owner, t) >= c.minSources) bonus += c.bonus;
   }
+  // 五點梅花 (1683): ships ganging up on one enemy ship hit harder (off unless a scenario enables it).
+  const enc = (world.rules.combat as { encircle?: { minShips: number; radius: number; bonus: number } }).encircle;
+  if (enc && enc.minShips > 0 && a.kind === 'unit' && a.moveClass !== 'foot' && t.kind === 'unit' && t.moveClass !== 'foot') {
+    let n = 0;
+    for (const s of world.unitsNear(t.x, t.y, enc.radius)) if (s.owner === a.owner && s.moveClass !== 'foot' && s.attackTarget === t.id) n++;
+    if (n >= enc.minShips) bonus += enc.bonus;
+  }
   // 烏特勒支堡: once captured, the captor's cannons hit the main castle harder (§5.3).
   if (atkType === 'cannon' && t.type === 'zeelandia_castle') bonus += world.faction(a.owner)?.mainBaseCannonBonus ?? 0;
   return base * (1 + bonus) * moraleMod(world, a);

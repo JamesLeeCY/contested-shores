@@ -1,8 +1,9 @@
 import hengchun from '../../data/maps/hengchun.json';
+import penghu from '../../data/maps/penghu.json';
 import taijiang from '../../data/maps/taijiang.json';
 import { mapFromTiled, type GameMap, type TiledMap } from '../sim/map';
 
-const MAPS: Record<string, unknown> = { taijiang, hengchun };
+const MAPS: Record<string, unknown> = { taijiang, hengchun, penghu };
 const cache = new Map<string, GameMap>();
 
 export function loadMap(id = 'taijiang'): GameMap {

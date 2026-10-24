@@ -199,3 +199,35 @@ export function checkHengchun(map: GameMap, rules: RulesLike, hunterRange: numbe
   results.push({ name: '繞過石門翻山的路程至少是穿越峽谷的 2 倍', ok: Number.isFinite(around) && around >= 2 * through, detail: `穿越 ${through.toFixed(0)}、繞山 ${around.toFixed(0)}` });
   return results;
 }
+
+/** Acceptance checks for the 1683 map (澎湖): sea lanes, the escape through 吼門, the harbour guns. */
+export function checkPenghu(map: GameMap, rules: RulesLike, buildings: BuildingLike[]): CheckResult[] {
+  const nav = new NavGrids(map, rules.terrain);
+  for (const o of map.objects) nav.setBlocked(o.x, o.y, o.w, o.h, true);
+  const deepIn = (id: string): [number, number] => {
+    const r = findRegion(map, id);
+    for (let y = r.y; y < r.y + r.h; y++) for (let x = r.x; x < r.x + r.w; x++) if (nav.passable('ship', x, y, false)) return [x, y];
+    throw new Error(`region ${id} has no deep water`);
+  };
+  const results: CheckResult[] = [];
+  const inRegion = (id: string) => {
+    const r = findRegion(map, id);
+    return (x: number, y: number) => regionContains(r, x, y);
+  };
+  const lanes = [true, false].every((tide) => reachable(nav, 'ship', tide, deepIn('qing_start'), inRegion('inner_harbor')));
+  results.push({ name: '大船可從南方經港口入口駛入娘媽宮內港（任何潮位）', ok: lanes });
+  const escape = [true, false].every((tide) => reachable(nav, 'ship', tide, deepIn('inner_harbor'), inRegion('north_exit')));
+  results.push({ name: '大船可從內港經吼門駛出北方（劉國軒的退路）', ok: escape });
+  const anchorage = reachable(nav, 'ship', false, deepIn('qing_start'), inRegion('bazhao'));
+  results.push({ name: '八罩有大船可泊的海域', ok: anchorage });
+  // The forts at the harbour mouth and at 娘媽宮 reach the water they guard.
+  const covers = (fortName: string, region: string) => {
+    const o = map.objects.find((x) => x.name === fortName)!;
+    const range = buildings.find((b) => b.id === o.type)!.attack!.range;
+    const r = findRegion(map, region);
+    const [cx, cy] = [r.x + r.w / 2, r.y + r.h / 2];
+    return Math.hypot(o.x + o.w / 2 - cx, o.y + o.h / 2 - cy) <= range + 2;
+  };
+  results.push({ name: '風櫃尾砲城的射程涵蓋港口入口、娘媽宮砲城涵蓋內港', ok: covers('fenggui', 'bay_mouth') && covers('niangmagong', 'inner_harbor') });
+  return results;
+}

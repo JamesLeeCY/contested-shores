@@ -546,5 +546,114 @@
     "sources": [
       "src.mudan_wiki"
     ]
+  },
+  {
+    "id": "qing_niaochuan",
+    "category": "units",
+    "dispute": false,
+    "sources": [
+      "src.penghu_wiki",
+      "src.jinghai"
+    ]
+  },
+  {
+    "id": "qing_ganzeng",
+    "category": "units",
+    "dispute": false,
+    "sources": [
+      "src.penghu_wiki",
+      "src.jinghai"
+    ]
+  },
+  {
+    "id": "qing_shuangfan",
+    "category": "units",
+    "dispute": false,
+    "sources": [
+      "src.penghu_wiki",
+      "src.jinghai"
+    ]
+  },
+  {
+    "id": "tn_paochuan",
+    "category": "units",
+    "dispute": true,
+    "sources": [
+      "src.penghu_wiki"
+    ]
+  },
+  {
+    "id": "tn_fort",
+    "category": "buildings",
+    "dispute": false,
+    "sources": [
+      "src.penghu_wiki"
+    ]
+  },
+  {
+    "id": "shi_lang",
+    "category": "people",
+    "dispute": true,
+    "sources": [
+      "src.penghu_wiki",
+      "src.jinghai"
+    ]
+  },
+  {
+    "id": "liu_guoxuan",
+    "category": "people",
+    "dispute": false,
+    "sources": [
+      "src.penghu_wiki"
+    ]
+  },
+  {
+    "id": "lan_li",
+    "category": "people",
+    "dispute": false,
+    "sources": [
+      "src.penghu_wiki"
+    ]
+  },
+  {
+    "id": "lin_sheng",
+    "category": "people",
+    "dispute": false,
+    "sources": [
+      "src.penghu_wiki"
+    ]
+  },
+  {
+    "id": "p_penghu",
+    "category": "places",
+    "dispute": false,
+    "sources": [
+      "src.penghu_wiki"
+    ]
+  },
+  {
+    "id": "p_houmen",
+    "category": "places",
+    "dispute": false,
+    "sources": [
+      "src.penghu_wiki"
+    ]
+  },
+  {
+    "id": "p_numbers",
+    "category": "disputes",
+    "dispute": true,
+    "sources": [
+      "src.penghu_wiki",
+      "src.jinghai"
+    ]
+  },
+  {
+    "id": "p_wind",
+    "category": "disputes",
+    "dispute": true,
+    "sources": [
+      "src.penghu_wiki"
+    ]
   }
 ]

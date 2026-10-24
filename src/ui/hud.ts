@@ -1,5 +1,6 @@
 // Clock group (top right, spec §9.1): tide ring, game day, chapter timer, speed/pause.
 import { tideSecondsLeft } from '../sim/systems/tide';
+import { windVector } from '../sim/systems/wind';
 import type { World } from '../sim/world';
 import { t } from './i18n';
 
@@ -18,6 +19,7 @@ export class ClockHud {
   private needle: SVGLineElement;
   private tideText: HTMLDivElement;
   private dayText: HTMLDivElement;
+  private windText: HTMLDivElement;
   private timerText: HTMLDivElement;
   private speedText: HTMLDivElement;
   readonly extra: HTMLDivElement;
@@ -52,11 +54,12 @@ export class ClockHud {
     this.root.appendChild(this.ring);
     const info = el('div', 'clock-info', this.root);
     this.tideText = el('div', 'tide-text', info);
-    // Only the Taijiang lagoon has tides that matter; the 1874 mountain map hides the dial.
-    if (world.map.id !== 'taijiang') {
+    // Tides matter on the sea maps; the 1874 mountain map hides the dial.
+    if (world.map.id === 'hengchun') {
       this.ring.style.display = 'none';
       this.tideText.style.display = 'none';
     }
+    this.windText = el('div', 'wind-text', info);
     this.dayText = el('div', 'day-text', info);
     this.timerText = el('div', 'timer-text', info);
     this.speedText = el('div', 'speed-text', info);
@@ -72,11 +75,35 @@ export class ClockHud {
     this.needle.setAttribute('y2', String(22 * Math.sin(a)));
     this.tideText.textContent = `${t('tide.' + world.tidePhaseId)} ${Math.ceil(tideSecondsLeft(world))}s`;
     this.tideText.style.color = TIDE_COLORS[world.tidePhaseId];
+    const wind = world.ext.wind;
+    this.windText.style.display = wind ? '' : 'none';
+    if (wind) {
+      // Arrow points where the wind blows to, in screen space (map +x east, +y south; iso view).
+      const [vx, vy] = windVector(wind.from);
+      const deg = (Math.atan2((vx + vy) * 0.5, vx - vy) * 180) / Math.PI;
+      setWind(this.windText, t('ui.wind', { dir: t(`wind.${compassName(wind.from)}`) }), deg);
+    }
     this.dayText.textContent = t('ui.day', { n: world.day + 1 });
     this.timerText.textContent = timerSeconds === null ? '' : formatTime(timerSeconds);
     this.speedText.textContent = paused ? t('ui.paused') : t('ui.speed', { n: speed });
     this.speedText.classList.toggle('paused', paused);
   }
+}
+
+/** One of eight compass names (n, ne, …) for a bearing. */
+export function compassName(deg: number): string {
+  return ['n', 'ne', 'e', 'se', 's', 'sw', 'w', 'nw'][Math.round((((deg % 360) + 360) % 360) / 45) % 8];
+}
+
+function setWind(box: HTMLDivElement, label: string, deg: number) {
+  if (box.dataset.sig === `${label}|${Math.round(deg)}`) return;
+  box.dataset.sig = `${label}|${Math.round(deg)}`;
+  box.replaceChildren();
+  const arrow = document.createElement('span');
+  arrow.className = 'wind-arrow';
+  arrow.textContent = '➤';
+  arrow.style.transform = `rotate(${deg}deg)`;
+  box.append(arrow, document.createTextNode(' ' + label));
 }
 
 export function formatTime(s: number) {

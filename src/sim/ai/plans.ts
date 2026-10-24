@@ -12,6 +12,7 @@ import type { Entity } from '../types';
 import { isMoving } from '../systems/movement';
 import { isElevated } from '../systems/combat';
 import { MOUNTAIN_STEPS } from './mountain';
+import { NAVAL_STEPS } from './naval';
 import {
   army,
   centroid,
@@ -620,4 +621,5 @@ export const STEP_HANDLERS: Record<string, Handler> = {
   sortie,
   counter_mine,
   ...MOUNTAIN_STEPS,
+  ...NAVAL_STEPS,
 };

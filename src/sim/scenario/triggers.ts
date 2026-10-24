@@ -21,7 +21,7 @@ export type Condition =
   | { type: 'unit_hp_below'; unitTag: string; ratio: number }
   | { type: 'unit_dead'; unitTag: string; atLeast?: number }
   | { type: 'building_captured'; building: string; by?: Owner }
-  | { type: 'area_entered'; region: string; owner: Owner; pop?: number; unitTag?: string }
+  | { type: 'area_entered'; region: string; owner: Owner; pop?: number; unitTag?: string; countUnits?: boolean }
   | { type: 'favor_reached'; party: string; faction: Owner; value: number; below?: boolean }
   | { type: 'tide_state'; phase: string }
   | { type: 'resource_below'; owner: Owner; resource: string; value: number }
@@ -40,7 +40,9 @@ export type Condition =
   | { type: 'is_ai'; faction: Owner }
   | { type: 'building_dead'; building: string }
   | { type: 'building_built'; building: string; owner: Owner; region?: string }
-  | { type: 'held_for'; id: string; seconds: number; condition: Condition };
+  | { type: 'held_for'; id: string; seconds: number; condition: Condition }
+  | { type: 'ships_lost'; owner: Owner; count: number }
+  | { type: 'fleet_below'; owner: Owner; fraction: number };
 
 export type Action =
   | { type: 'show_message'; textKey: string; kind?: 'info' | 'warn' | 'good'; to?: Owner; params?: Record<string, string | number> }
@@ -131,7 +133,7 @@ function lostCount(world: World, owner: Owner, type: string): number {
  * Population of an owner's units standing in a region (each unit counts at least 1). Civilians
  * (族人) only count when asked for by tag.
  */
-export function regionPop(world: World, region: string, owner: Owner, unitTag?: string): number {
+export function regionPop(world: World, region: string, owner: Owner, unitTag?: string, countUnits = false): number {
   const r = findRegion(world.map, region);
   let pop = 0;
   for (const e of world.all()) {
@@ -139,7 +141,7 @@ export function regionPop(world: World, region: string, owner: Owner, unitTag?: 
     if (!regionContains(r, Math.floor(e.x), Math.floor(e.y))) continue;
     const def = world.data.units.get(e.type)!;
     if (!unitTag && def.traits.includes('civilian')) continue;
-    pop += Math.max(1, def.pop);
+    pop += countUnits ? 1 : Math.max(1, def.pop);
   }
   return pop;
 }
@@ -163,7 +165,7 @@ export function evaluate(world: World, c: Condition): boolean {
     case 'building_captured':
       return world.buildings().some((b) => (b.type === c.building || b.tag === c.building) && (c.by ? b.owner === c.by : b.owner !== world.ext.flags[`origOwner:${b.id}`]));
     case 'area_entered':
-      return regionPop(world, c.region, c.owner, c.unitTag) >= (c.pop ?? 1);
+      return regionPop(world, c.region, c.owner, c.unitTag, c.countUnits) >= (c.pop ?? 1);
     case 'favor_reached': {
       const v = ensureParties(world)[c.party]?.favor[c.faction] ?? 0;
       return c.below ? v < c.value : v >= c.value;
@@ -208,6 +210,25 @@ export function evaluate(world: World, c: Condition): boolean {
       }
       if (flags(world)[key] === undefined) flags(world)[key] = world.tick;
       return world.tick - (flags(world)[key] as number) >= c.seconds * world.ticksPerSecond;
+    }
+    case 'ships_lost': {
+      // Fighting ships (not transports or supply ships) sunk so far.
+      let n = 0;
+      for (const [id, def] of world.data.units) if (def.naval && def.atk > 0 && !def.traits.includes('suicide')) n += lostCount(world, c.owner, id);
+      return n >= c.count;
+    }
+    case 'fleet_below': {
+      // Fighting ships afloat (fire ships excluded) against the most the side has had (later arrivals count too).
+      let afloat = 0;
+      for (const e of world.all()) {
+        if (e.kind !== 'unit' || e.owner !== c.owner || e.moveClass === 'foot') continue;
+        const def = world.data.units.get(e.type)!;
+        if (def.atk > 0 && !def.traits.includes('suicide')) afloat++;
+      }
+      const key = `fleetPeak:${c.owner}`;
+      const peak = Math.max(Number(flags(world)[key] ?? 0), afloat);
+      flags(world)[key] = peak;
+      return peak > 0 && afloat < peak * c.fraction;
     }
     case 'held_for': {
       // True once the inner condition has held without a break for `seconds`.

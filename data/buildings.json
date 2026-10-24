@@ -668,5 +668,73 @@
     "diseaseShelter": false,
     "attack": null,
     "capturable": false
+  },
+  {
+    "id": "tn_fort",
+    "faction": "faction_tungning",
+    "nameKey": "building.tn_fort.name",
+    "hp": 2200,
+    "armor": 6,
+    "armorType": "building",
+    "preset": true,
+    "cost": {
+      "grain": 0,
+      "wood": 0,
+      "powder": 0,
+      "deerskin": 0
+    },
+    "buildTime": 0,
+    "popCap": 0,
+    "size": 3,
+    "sight": 10,
+    "dropoff": false,
+    "produces": [],
+    "researches": [],
+    "garrison": 0,
+    "diseaseShelter": false,
+    "attack": {
+      "guns": 2,
+      "atk": 60,
+      "atkType": "cannon",
+      "range": 9,
+      "atkInterval": 6,
+      "hitChance": 0.6
+    },
+    "crossfire": true,
+    "capturable": false
+  },
+  {
+    "id": "tn_battery",
+    "faction": "faction_tungning",
+    "nameKey": "building.tn_battery.name",
+    "hp": 1000,
+    "armor": 4,
+    "armorType": "building",
+    "preset": true,
+    "cost": {
+      "grain": 0,
+      "wood": 0,
+      "powder": 0,
+      "deerskin": 0
+    },
+    "buildTime": 0,
+    "popCap": 0,
+    "size": 2,
+    "sight": 10,
+    "dropoff": false,
+    "produces": [],
+    "researches": [],
+    "garrison": 0,
+    "diseaseShelter": false,
+    "attack": {
+      "guns": 1,
+      "atk": 55,
+      "atkType": "cannon",
+      "range": 9,
+      "atkInterval": 6,
+      "hitChance": 0.6
+    },
+    "crossfire": true,
+    "capturable": false
   }
 ]

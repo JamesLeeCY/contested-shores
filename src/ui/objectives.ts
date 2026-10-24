@@ -31,7 +31,7 @@ export class ObjectivePanel {
     const choices = availableChoices(w, this.s.player);
     // Live counts (e.g. defenders left on the heights) shown to both sides.
     const status = (w.scenario?.status ?? []).map((st) =>
-      t(st.textKey, Object.fromEntries(st.counts.map(([region, owner], i) => [`n${i}`, regionPop(w, region, owner)]))),
+      t(st.textKey, Object.fromEntries(st.counts.map(([region, owner, unit], i) => [`n${i}`, regionPop(w, region, owner, undefined, unit === 'units')]))),
     );
     const sig = JSON.stringify([mine, choices.map((c) => c.id), status]);
     this.root.style.display = mine.length || choices.length ? 'block' : 'none';

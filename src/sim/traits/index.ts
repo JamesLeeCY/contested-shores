@@ -32,6 +32,8 @@ export const TRAITS: Record<(typeof KNOWN_TRAITS)[number] | 'grapeshot', TraitHa
   aura_aruqu: passive,
   civilian: passive,
   mountain_stealth: passive,
+  aura_admiral: passive,
+  aura_captain: passive,
   block_arrow_30,
   cleave_2,
   volley,

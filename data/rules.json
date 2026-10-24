@@ -161,7 +161,12 @@
     "garrisonRangeBonus": 1,
     "buildingTargetPriority": "nearest",
     "counterAttackTicks": 40,
-    "uphillUnitDamageMul": 1
+    "uphillUnitDamageMul": 1,
+    "encircle": {
+      "minShips": 0,
+      "radius": 7,
+      "bonus": 0
+    }
   },
   "morale": {
     "unitStart": 70,
@@ -239,6 +244,16 @@
       "radius": 7,
       "atkBonus": 0.15,
       "moraleRegenMul": 1.5
+    },
+    "aura_admiral": {
+      "radius": 8,
+      "atkBonus": 0.15,
+      "moraleRegenMul": 1.5
+    },
+    "aura_captain": {
+      "radius": 6,
+      "atkBonus": 0.1,
+      "moraleRegenMul": 1.2
     }
   },
   "disease": {
@@ -714,5 +729,9 @@
       ]
     },
     "skirmishRetreatDistance": 5
+  },
+  "wind": {
+    "minMul": 0.55,
+    "maxMul": 1.45
   }
 }

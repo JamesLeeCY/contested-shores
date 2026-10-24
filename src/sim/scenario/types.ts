@@ -56,9 +56,11 @@ export interface Scenario {
   /** Rule overrides for this scenario, as dotted paths into rules.json (e.g. "combat.uphillUnitDamageMul"). */
   rules?: Record<string, number>;
   /** Live counts shown under the objectives (both sides see them): text params n0, n1… */
-  status?: { textKey: string; counts: [region: string, owner: Owner][] }[];
+  status?: { textKey: string; counts: [region: string, owner: Owner, unit?: 'units'][] }[];
   /** Units that appear only if an earlier scenario ended a certain way (e.g. 阿祿古 survived). */
   carry?: { if: { scenario: string; faction: Owner; reasons: string[] }; units: UnitSpec[] }[];
+  /** Wind: compass bearing it blows from, strength 0..1, and scripted shifts. */
+  wind?: { from: number; strength: number; shifts?: { atSeconds: number; from: number; strength?: number }[] };
   chapter: number;
   nameKey: string;
   dateKey: string;

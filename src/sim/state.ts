@@ -70,6 +70,8 @@ export interface ExtState {
   tatu: { batch: number; lastEnter: number; northern: Record<Owner, number>; enabled: boolean };
   /** Scenario flags and misc counters (e.g. requisition used). */
   flags: Record<string, number | boolean | string>;
+  /** Wind (1683 scenarios); absent elsewhere. */
+  wind?: { from: number; strength: number };
 }
 
 export function initialExt(): ExtState {

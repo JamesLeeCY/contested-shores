@@ -154,8 +154,13 @@ export function drawGun(g: Graphics, type: string, c1: number) {
  * Ship hull and sails. `a` is the heading in tile space; hull points are rotated then projected
  * into the 2:1 view. Junks get battened fan sails, Dutch ships square sails with the company flag.
  */
+/** Chinese junks (鄭軍 1661, both 1683 fleets) get battened lug sails; the rest are Dutch rigs. */
+const JUNKS = /^(junk|fire_ship|qing_|tn_|shi_lang|lan_li|liu_guoxuan|lin_sheng|qiu_hui)/;
+
 export function drawShipArt(g: Graphics, type: string, a: number, len: number, c1: number, c2: number, stranded: boolean) {
   const wid = len * 0.32;
+  const junk = JUNKS.test(type);
+  const fire = type.endsWith('fire_ship');
   const proj = (px: number, py: number): [number, number] => {
     const rx = px * Math.cos(a) - py * Math.sin(a);
     const ry = px * Math.sin(a) + py * Math.cos(a);
@@ -163,16 +168,16 @@ export function drawShipArt(g: Graphics, type: string, a: number, len: number, c
   };
   const pts = [[len * 0.55, 0], [len * 0.25, wid * 0.5], [-len * 0.45, wid * 0.45], [-len * 0.5, 0], [-len * 0.45, -wid * 0.45], [len * 0.25, -wid * 0.5]] as const;
   g.ellipse(0, 2, len * 0.5, len * 0.18).fill({ color: 0x0a2030, alpha: 0.25 });
-  g.poly(pts.flatMap(([x, y]) => proj(x, y))).fill(stranded ? 0x6d5a3a : type === 'junk' || type === 'fire_ship' ? 0x6b3f1f : 0x4a3322).stroke({ color: c2, width: 1.5 });
+  g.poly(pts.flatMap(([x, y]) => proj(x, y))).fill(stranded ? 0x6d5a3a : junk ? 0x6b3f1f : 0x4a3322).stroke({ color: c2, width: 1.5 });
   const masts = len > 30 ? [-0.2, 0.15] : [0];
   for (const m of masts) {
     const [mx, my] = proj(len * m, 0);
     const H = len * 0.75;
     g.moveTo(mx, my).lineTo(mx, my - H).stroke({ color: DARK, width: 1.8 });
-    if (type === 'junk' || type === 'fire_ship') {
+    if (junk) {
       // Battened lug sail.
       const sw = len * 0.32;
-      g.poly([mx, my - H, mx + sw, my - H * 0.85, mx + sw * 1.1, my - H * 0.3, mx, my - H * 0.25]).fill(type === 'fire_ship' ? 0x8a3a1a : 0xa8582e).stroke(LINE);
+      g.poly([mx, my - H, mx + sw, my - H * 0.85, mx + sw * 1.1, my - H * 0.3, mx, my - H * 0.25]).fill(fire ? 0x8a3a1a : 0xa8582e).stroke(LINE);
       for (let i = 1; i < 4; i++) g.moveTo(mx, my - H + (H * 0.75 * i) / 4).lineTo(mx + sw * 1.05, my - H * 0.85 + (H * 0.55 * i) / 4).stroke({ color: DARK, width: 0.8 });
     } else {
       const sw = len * 0.22;
@@ -181,7 +186,7 @@ export function drawShipArt(g: Graphics, type: string, a: number, len: number, c
     }
     g.poly([mx, my - H, mx + 8, my - H + 3, mx, my - H + 6]).fill(c1);
   }
-  if (type === 'fire_ship') g.circle(0, -6, 3).fill({ color: 0xff8030, alpha: 0.8 });
+  if (fire) g.circle(0, -6, 3).fill({ color: 0xff8030, alpha: 0.8 });
 }
 
 /** Crenellations along the top edge of a fortification. */

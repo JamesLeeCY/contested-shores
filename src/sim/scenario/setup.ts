@@ -93,6 +93,7 @@ export function applyScenario(world: World, sc: Scenario, campaign: CampaignStat
   }
   for (const id of Object.keys(world.ext.parties).sort()) evaluate(world, world.ext.parties[id]);
   world.ext.flags.timerTicks = sc.timerMinutes * 60 * world.ticksPerSecond;
+  if (sc.wind) world.ext.wind = { from: sc.wind.from, strength: sc.wind.strength };
   initTriggers(world);
 }
 

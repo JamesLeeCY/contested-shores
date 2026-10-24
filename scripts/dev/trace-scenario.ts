@@ -23,9 +23,11 @@ while (!w.ext.flags.missionOver && w.tick < sc.timerMinutes * 60 * 20 + 40) {
   if (w.tick % every === 0) {
     const parts = (sc.factions ?? []).map((f) => {
       const by: Record<string, number> = {};
-      for (const u of army(w, f)) by[where(u.x, u.y)] = (by[where(u.x, u.y)] ?? 0) + 1;
+      // Land armies, or the fleet on the sea maps.
+      const force = army(w, f).length ? army(w, f) : [...w.all()].filter((e) => e.kind === 'unit' && e.owner === f && e.moveClass !== 'foot');
+      for (const u of force) by[where(u.x, u.y)] = (by[where(u.x, u.y)] ?? 0) + 1;
       const ai = w.ext.ai[f];
-      return `${f.replace('faction_', '')}=${army(w, f).length} ${JSON.stringify(by)} step=${ai?.plans[ai.planIdx] ?? ''}#${ai?.stepIdx}`;
+      return `${f.replace('faction_', '')}=${Object.values(by).reduce((a, b) => a + b, 0)} ${JSON.stringify(by)} step=${ai?.plans[ai.planIdx] ?? ''}#${ai?.stepIdx}`;
     });
     console.log(`${w.tick / 20}s ${parts.join(' | ')}`);
   }

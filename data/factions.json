@@ -72,6 +72,45 @@
         "powder": 0,
         "deerskin": 0
       }
+    },
+    {
+      "id": "faction_qing",
+      "nameKey": "faction.faction_qing.name",
+      "basePopCap": 200,
+      "colors": {
+        "primary": "#d4a72c",
+        "secondary": "#1d3557"
+      },
+      "heroes": [
+        "shi_lang",
+        "lan_li"
+      ],
+      "startResources": {
+        "grain": 0,
+        "wood": 0,
+        "powder": 0,
+        "deerskin": 0
+      }
+    },
+    {
+      "id": "faction_tungning",
+      "nameKey": "faction.faction_tungning.name",
+      "basePopCap": 200,
+      "colors": {
+        "primary": "#a52a2a",
+        "secondary": "#111111"
+      },
+      "heroes": [
+        "liu_guoxuan",
+        "lin_sheng",
+        "qiu_hui"
+      ],
+      "startResources": {
+        "grain": 0,
+        "wood": 0,
+        "powder": 0,
+        "deerskin": 0
+      }
     }
   ],
   "villages": [
