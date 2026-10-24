@@ -156,6 +156,9 @@ export function takenMul(ctx: AttackCtx): number {
     if ((atkType === 'arrow' || atkType === 'musket') && inTrench(world, t)) m *= world.rules.combat.trenchCoverMul;
     if (onBattery(world, t)) m *= world.rules.siege.battery.damageTakenMul;
     if (t.stranded) m *= world.rules.tide.strandedDamageTakenMul;
+    // Wading a river: soldiers in the water are easy targets (1895 scenarios; default 1).
+    const tt = (world.rules.terrain.types as Record<string, { damageTakenMul?: number }>)[TERRAIN_IDS[tileOf(world, t)]];
+    if (t.moveClass === 'foot' && tt?.damageTakenMul) m *= tt.damageTakenMul;
     // Shooting uphill at soldiers on a height (1874 scenarios set this below 1; default 1).
     const uphill = (world.rules.combat as { uphillUnitDamageMul?: number }).uphillUnitDamageMul ?? 1;
     if (uphill !== 1 && (atkType === 'arrow' || atkType === 'musket') && heightOf(world, t) > heightOf(world, ctx.attacker)) m *= uphill;
@@ -264,6 +267,7 @@ registerCommand('attack', (world, cmd) => {
 registerCommand('stance', (world, cmd) => {
   for (const u of ownedUnits(world, cmd.owner, cmd.ids)) {
     u.hold = cmd.hold || undefined;
+    u.holdFire = cmd.holdFire || undefined;
     if (cmd.hold && u.chasing) {
       clearMove(world, u);
       u.chasing = false;
@@ -366,6 +370,10 @@ function unitCombat(world: World, u: Entity) {
     const busy = o.type === 'gather' || o.type === 'build' || o.type === 'garrison' || o.type === 'tuntian' || o.type === 'embark' || o.type === 'dig_mine';
     const plainMove = o.type === 'move' && !o.attackMove;
     if (busy || plainMove || (isWorker && !world.rules.combat.autoAcquireWorkers)) {
+      u.attackTarget = undefined;
+      return;
+    }
+    if (u.holdFire) {
       u.attackTarget = undefined;
       return;
     }

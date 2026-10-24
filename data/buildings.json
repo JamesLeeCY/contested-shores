@@ -736,5 +736,91 @@
     },
     "crossfire": true,
     "capturable": false
+  },
+  {
+    "id": "jp95_depot",
+    "faction": "faction_japan_1895",
+    "nameKey": "building.jp95_depot.name",
+    "hp": 1500,
+    "armor": 3,
+    "armorType": "building",
+    "preset": true,
+    "cost": {
+      "grain": 0,
+      "wood": 0,
+      "powder": 0,
+      "deerskin": 0
+    },
+    "buildTime": 0,
+    "popCap": 0,
+    "size": 3,
+    "sight": 10,
+    "dropoff": false,
+    "produces": [],
+    "researches": [],
+    "garrison": 0,
+    "diseaseShelter": false,
+    "attack": null,
+    "capturable": false
+  },
+  {
+    "id": "fm_fort",
+    "faction": "faction_formosa",
+    "nameKey": "building.fm_fort.name",
+    "hp": 1800,
+    "armor": 6,
+    "armorType": "building",
+    "preset": true,
+    "cost": {
+      "grain": 0,
+      "wood": 0,
+      "powder": 0,
+      "deerskin": 0
+    },
+    "buildTime": 0,
+    "popCap": 0,
+    "size": 3,
+    "sight": 10,
+    "dropoff": false,
+    "produces": [],
+    "researches": [],
+    "garrison": 0,
+    "diseaseShelter": false,
+    "attack": {
+      "guns": 2,
+      "atk": 55,
+      "atkType": "cannon",
+      "range": 11,
+      "atkInterval": 6,
+      "hitChance": 0.55
+    },
+    "capturable": false,
+    "crossfire": true
+  },
+  {
+    "id": "walled_city",
+    "faction": "faction_neutral",
+    "nameKey": "building.walled_city.name",
+    "hp": 3000,
+    "armor": 6,
+    "armorType": "building",
+    "preset": true,
+    "cost": {
+      "grain": 0,
+      "wood": 0,
+      "powder": 0,
+      "deerskin": 0
+    },
+    "buildTime": 0,
+    "popCap": 0,
+    "size": 4,
+    "sight": 10,
+    "dropoff": false,
+    "produces": [],
+    "researches": [],
+    "garrison": 0,
+    "diseaseShelter": false,
+    "attack": null,
+    "capturable": false
   }
 ]

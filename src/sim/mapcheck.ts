@@ -231,3 +231,19 @@ export function checkPenghu(map: GameMap, rules: RulesLike, buildings: BuildingL
   results.push({ name: '風櫃尾砲城的射程涵蓋港口入口、娘媽宮砲城涵蓋內港', ok: covers('fenggui', 'bay_mouth') && covers('niangmagong', 'inner_harbor') });
   return results;
 }
+
+/** Foot routes between named regions (1895 maps): every pair must be connected at any tide. */
+export function checkRoutes(map: GameMap, rules: RulesLike, routes: [from: string, to: string, label: string][]): CheckResult[] {
+  const nav = new NavGrids(map, rules.terrain);
+  for (const o of map.objects) nav.setBlocked(o.x, o.y, o.w, o.h, true);
+  const start = (id: string): [number, number] => {
+    const r = findRegion(map, id);
+    for (let y = r.y; y < r.y + r.h; y++) for (let x = r.x; x < r.x + r.w; x++) if (nav.passable('foot', x, y, false)) return [x, y];
+    throw new Error(`region ${id} has no passable tile`);
+  };
+  return routes.map(([from, to, label]) => {
+    const r = findRegion(map, to);
+    const ok = [true, false].every((tide) => reachable(nav, 'foot', tide, start(from), (x, y) => regionContains(r, x, y)));
+    return { name: label, ok };
+  });
+}

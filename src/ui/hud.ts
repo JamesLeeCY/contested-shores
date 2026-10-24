@@ -54,8 +54,8 @@ export class ClockHud {
     this.root.appendChild(this.ring);
     const info = el('div', 'clock-info', this.root);
     this.tideText = el('div', 'tide-text', info);
-    // Tides matter on the sea maps; the 1874 mountain map hides the dial.
-    if (world.map.id === 'hengchun') {
+    // Tides only matter on the sea maps (臺江, 澎湖); the land campaigns hide the dial.
+    if (!['taijiang', 'penghu'].includes(world.map.id)) {
       this.ring.style.display = 'none';
       this.tideText.style.display = 'none';
     }

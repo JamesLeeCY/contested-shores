@@ -61,6 +61,10 @@ export interface Scenario {
   carry?: { if: { scenario: string; faction: Owner; reasons: string[] }; units: UnitSpec[] }[];
   /** Wind: compass bearing it blows from, strength 0..1, and scripted shifts. */
   wind?: { from: number; strength: number; shifts?: { atSeconds: number; from: number; strength?: number }[] };
+  /** Supply line: `owner`'s soldiers farther than `radius` from a source unit/building lose morale. */
+  supply?: { owner: Owner; radius: number; drainPerSecond: number; sources: string[] };
+  /** Night until dawn: sight multiplied by `sightMul`. */
+  night?: { untilSeconds: number; sightMul: number };
   chapter: number;
   nameKey: string;
   dateKey: string;

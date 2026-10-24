@@ -8,7 +8,7 @@ import { captureBuilding } from '../systems/siege';
 import { formationSlots } from '../systems/movement';
 import type { World } from '../world';
 import { spawnRelief } from './setup';
-import { act, evaluate, noteDeath, runTriggers, type Condition, type Trigger } from './triggers';
+import { act, evaluate, noteDeath, runTriggers, type Action, type Condition, type Trigger } from './triggers';
 
 const GLOBAL = (globalRules as { triggers: Trigger[] }).triggers;
 const TRIGGER_TICKS = 5;
@@ -22,6 +22,8 @@ export interface ScenarioChoice {
   faction: string;
   labelKey: string;
   while: Condition;
+  /** Data-driven choices (1895): actions run when the choice is taken. */
+  do?: Action[];
 }
 
 export function availableChoices(world: World, faction: string): ScenarioChoice[] {
@@ -56,7 +58,7 @@ registerCommand('choice', (world, cmd) => {
     act(world, { type: 'show_cutscene', id: 'ch4_treaty' });
     act(world, { type: 'win_mission', faction: 'faction_voc', rating: 'historical', reasonKey: 'ch4.end.treaty', keepOpen: true });
     act(world, { type: 'win_mission', faction: 'faction_zheng', rating: 'victory', reasonKey: 'ch4.end.treaty' });
-  }
+  } else for (const a of c.do ?? []) act(world, a);
 });
 
 export function scenarioSystem(world: World) {

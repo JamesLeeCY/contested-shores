@@ -2,12 +2,19 @@
 // (the plan runner splits verb and argument at the first ':').
 //   Expedition: push:<region>  flank:<region>/<n>  hold_region:<region>  column:<tag>/<region>
 //   Both:       evacuate:<tag>/<region>
+//   1895:       escort:<cart tag>/<troop tag>  raid:<region>/<n>/<target type>  hold_line:<region>/<n>
 //   Defenders:  ambush:<region>/<n>/<facing region>  skirmish:<region>/<n>/<facing region>  harass:<region>/<n>  guard:<region>/<n>  fallback:<region>/<enemy region>/<pop>
 // Units belong to at most one named group (kept in ai.mem); everyone else is the main body.
 import { T, TERRAIN_IDS } from '../map';
 import { isMoving } from '../systems/movement';
 import type { Entity } from '../types';
-import { army, inRegion, isHero, issue, regionCenter, visibleEnemies, type AiCtx } from './common';
+import { army, inRegion, isHero, issue, passablePoint, regionCenter as rawCenter, visibleEnemies, type AiCtx } from './common';
+
+/** A region's centre, moved to the nearest walkable tile (a harbour region's centre may be water). */
+const regionCenter = (w: AiCtx['world'], id: string): [number, number] => {
+  const c = rawCenter(w, id);
+  return passablePoint(w, 'foot', c[0], c[1]) ?? c;
+};
 
 type Result = 'done' | 'running' | 'persist';
 type Handler = (ctx: AiCtx, arg: string) => Result;
@@ -271,7 +278,7 @@ const fallback: Handler = (ctx, arg) => {
   m.initArmy ??= mine.length;
   const enemy = army(w, w.enemyOf(ctx.owner)).filter((u) => inRegion(w, enemyRegion, u)).length;
   if (enemy < Number(popArg ?? 5) && mine.length > (m.initArmy as number) / 3) return 'running';
-  ctx.ai.background = ctx.ai.background.filter((b) => !b.startsWith('ambush:') && !b.startsWith('guard:'));
+  ctx.ai.background = ctx.ai.background.filter((b) => !b.startsWith('ambush:') && !b.startsWith('guard:') && !b.startsWith('hold_line:'));
   ctx.ai.mem.groups = {};
   ctx.ai.mem.slots = {};
   if (mine.length) {
@@ -282,4 +289,108 @@ const fallback: Handler = (ctx, arg) => {
   return 'done';
 };
 
-export const MOUNTAIN_STEPS: Record<string, Handler> = { push, flank, hold_region, column, evacuate, ambush, skirmish, harass, guard, fallback };
+/** Supply carts trail their column: a few tiles behind its centre, on the side it came from. */
+const escort: Handler = (ctx, arg) => {
+  const w = ctx.world;
+  const [cartTag, troopTag] = arg.split('/');
+  const troops = army(w, ctx.owner).filter((u) => u.tag === troopTag);
+  const carts = [...w.all()].filter((e) => e.kind === 'unit' && e.owner === ctx.owner && e.tag === cartTag);
+  if (!troops.length || !carts.length) return 'persist';
+  const cx = troops.reduce((s, u) => s + u.x, 0) / troops.length;
+  const cy = troops.reduce((s, u) => s + u.y, 0) / troops.length;
+  const [hx, hy] = ctx.ai.home;
+  const d = Math.max(1, Math.hypot(hx - cx, hy - cy));
+  const tx = cx + ((hx - cx) / d) * 4;
+  const ty = cy + ((hy - cy) / d) * 4;
+  const lagging = carts.filter((c) => !isMoving(c) && Math.hypot(c.x - tx, c.y - ty) > 3);
+  if (lagging.length) issue(ctx, { type: 'move', ids: ids(lagging), x: tx, y: ty });
+  return 'persist';
+};
+
+/**
+ * Raiders wait in cover near a road and fall on enemy units of `targetType` (supply carts) that come
+ * within reach; they slip away when soldiers close in, like skirmishers.
+ */
+const raid: Handler = (ctx, arg) => {
+  const w = ctx.world;
+  const [region, nArg, targetType] = arg.split('/');
+  const key = `raid_${region}`;
+  const c = regionCenter(w, region);
+  const before = new Set(ids(members(ctx, key)));
+  const g = recruit(ctx, key, Number(nArg ?? 6), (u) => !isHero(w, u) && isRanged(ctx, u), c);
+  // Hidden posts in the region's woods and hills, off the road: let the column pass, wait for the carts.
+  const fresh = g.filter((u) => !before.has(u.id));
+  if (fresh.length) issue(ctx, { type: 'stance', ids: ids(fresh), hold: true, holdFire: true });
+  const s = slots(ctx);
+  const used = new Set(g.map((u) => s[u.id]?.join(',')).filter(Boolean));
+  const cover = regionTiles(ctx, region)
+    .filter(([x, y]) => w.map.terrain[y * w.map.width + x] === T.forest || heightAt(ctx, x, y) >= 1)
+    .sort((a, b) => Math.hypot(a[0] - c[0], a[1] - c[1]) - Math.hypot(b[0] - c[0], b[1] - c[1]) || a[1] - b[1] || a[0] - b[0]);
+  for (const u of g)
+    if (!s[u.id]) {
+      const t = cover.find(([x, y]) => !used.has(`${x},${y}`));
+      if (t) {
+        s[u.id] = t;
+        used.add(`${t[0]},${t[1]}`);
+      }
+    }
+  const away = (ctx.ai.mem.away ??= {}) as Record<string, number>;
+  const reach = (w.rules.ai as { skirmishRetreatDistance?: number }).skirmishRetreatDistance ?? 4;
+  const prey = visibleEnemies(w, ctx.owner, (e) => e.type === targetType);
+  for (const u of g) {
+    if ((away[u.id] ?? -1) > w.tick) continue;
+    // Raiders hold their nerve longer than skirmishers: they only break off when soldiers are on top of them.
+    const close = visibleEnemies(w, ctx.owner, (e) => e.type !== targetType && dist(e, [u.x, u.y]) < reach - 2);
+    if (close.length) {
+      const e = close[0];
+      const d = Math.max(0.1, dist(e, [u.x, u.y]));
+      const to = escapeTile(ctx, u.x + ((u.x - e.x) / d) * 8, u.y + ((u.y - e.y) / d) * 8);
+      if (to) issue(ctx, { type: 'move', ids: [u.id], x: to[0] + 0.5, y: to[1] + 0.5 });
+      away[u.id] = w.tick + 20 * w.ticksPerSecond;
+      continue;
+    }
+    const t = prey.filter((e) => dist(e, [u.x, u.y]) < 12).sort((a, b) => dist(a, [u.x, u.y]) - dist(b, [u.x, u.y]) || a.id - b.id)[0];
+    if (t) {
+      if (u.order?.type !== 'attack' || u.order.target !== t.id) issue(ctx, { type: 'attack', ids: [u.id], target: t.id });
+    } else if (!isMoving(u) && u.order?.type !== 'attack') {
+      const [px, py] = s[u.id] ?? [Math.floor(c[0]), Math.floor(c[1])];
+      if (Math.hypot(u.x - px - 0.5, u.y - py - 0.5) > 0.8) issue(ctx, { type: 'move', ids: [u.id], x: px + 0.5, y: py + 0.5 });
+    }
+  }
+  return 'persist';
+};
+
+/** Soldiers spread over a region and hold it: they fire at whatever comes in range, never chase. */
+const hold_line: Handler = (ctx, arg) => {
+  const w = ctx.world;
+  const [region, nArg] = arg.split('/');
+  const key = `line_${region}`;
+  const before = new Set(ids(members(ctx, key)));
+  // Commanders stay behind the line.
+  const g = recruit(ctx, key, Number(nArg ?? 10), (u) => !isHero(w, u), regionCenter(w, region));
+  const fresh = g.filter((u) => !before.has(u.id));
+  if (fresh.length) issue(ctx, { type: 'stance', ids: ids(fresh), hold: true });
+  const tiles = regionTiles(ctx, region);
+  const s = slots(ctx);
+  const used = new Set(g.map((u) => s[u.id]?.join(',')).filter(Boolean));
+  const [cx, cy] = regionCenter(w, region);
+  // Higher ground first (slopes and hilltops), then nearest the centre.
+  tiles.sort((a, b) => heightAt(ctx, b[0], b[1]) - heightAt(ctx, a[0], a[1]) || Math.hypot(a[0] - cx, a[1] - cy) - Math.hypot(b[0] - cx, b[1] - cy) || a[1] - b[1] || a[0] - b[0]);
+  for (const u of g) {
+    if (!s[u.id]) {
+      // Every other tile, so the line does not crowd into one spot.
+      const t = tiles.find(([x, y]) => (x + y) % 2 === 0 && !used.has(`${x},${y}`));
+      if (!t) continue;
+      s[u.id] = t;
+      used.add(`${t[0]},${t[1]}`);
+    }
+    const [tx, ty] = s[u.id];
+    if (!isMoving(u) && u.attackTarget === undefined && Math.hypot(u.x - tx - 0.5, u.y - ty - 0.5) > 0.8) issue(ctx, { type: 'move', ids: [u.id], x: tx + 0.5, y: ty + 0.5 });
+  }
+  return 'persist';
+};
+
+/** Holds the plan until a scenario flag is set. */
+const wait_flag: Handler = (ctx, flag) => (ctx.world.ext.flags[flag] ? 'done' : 'running');
+
+export const MOUNTAIN_STEPS: Record<string, Handler> = { push, flank, hold_region, column, evacuate, ambush, skirmish, harass, guard, fallback, escort, raid, hold_line, wait_flag };

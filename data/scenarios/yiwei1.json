@@ -1,0 +1,470 @@
+{
+  "id": "yiwei1",
+  "campaign": "yiwei",
+  "map": "taipei",
+  "factions": [
+    "faction_formosa",
+    "faction_japan_1895"
+  ],
+  "historyKey": "history.yiwei1",
+  "chapter": 1,
+  "nameKey": "scenario.yiwei1.name",
+  "dateKey": "scenario.yiwei1.date",
+  "timerMinutes": 10,
+  "stage": {
+    "faction_formosa": 1,
+    "faction_japan_1895": 1
+  },
+  "resources": {
+    "faction_formosa": {
+      "powder": 3000
+    },
+    "faction_japan_1895": {
+      "powder": 3000
+    }
+  },
+  "castleMorale": 0,
+  "units": [
+    {
+      "type": "kitashirakawa",
+      "owner": "faction_japan_1895",
+      "count": 1,
+      "at": [
+        115,
+        34
+      ]
+    },
+    {
+      "type": "jp95_guard",
+      "owner": "faction_japan_1895",
+      "count": 30,
+      "at": [
+        115,
+        33
+      ]
+    },
+    {
+      "type": "jp95_cavalry",
+      "owner": "faction_japan_1895",
+      "count": 4,
+      "at": [
+        114,
+        36
+      ]
+    },
+    {
+      "type": "jp95_gun",
+      "owner": "faction_japan_1895",
+      "count": 4,
+      "at": [
+        115,
+        37
+      ]
+    },
+    {
+      "type": "fm_regular",
+      "owner": "faction_formosa",
+      "count": 10,
+      "at": [
+        103,
+        31
+      ],
+      "tag": "sandiao_guard"
+    },
+    {
+      "type": "fm_regular",
+      "owner": "faction_formosa",
+      "count": 12,
+      "at": [
+        91,
+        25
+      ],
+      "tag": "ruifang_guard"
+    },
+    {
+      "type": "fm_regular",
+      "owner": "faction_formosa",
+      "count": 14,
+      "at": [
+        80,
+        21
+      ],
+      "tag": "keelung_garrison"
+    },
+    {
+      "type": "fm_militia",
+      "owner": "faction_formosa",
+      "count": 4,
+      "at": [
+        82,
+        22
+      ],
+      "tag": "keelung_garrison"
+    },
+    {
+      "type": "fm_regular",
+      "owner": "faction_formosa",
+      "count": 10,
+      "at": [
+        54,
+        45
+      ],
+      "tag": "taipei_garrison"
+    }
+  ],
+  "ai": {
+    "faction_japan_1895": {
+      "plans": [
+        "yiwei1_japan"
+      ],
+      "composition": {},
+      "targetArmy": 0,
+      "home": [
+        115,
+        34
+      ],
+      "scripted": true
+    },
+    "faction_formosa": {
+      "plans": [
+        "yiwei1_formosa"
+      ],
+      "composition": {},
+      "targetArmy": 0,
+      "home": [
+        80,
+        22
+      ],
+      "scripted": true
+    }
+  },
+  "historicalLoser": "faction_formosa",
+  "objectives": {
+    "faction_japan_1895": [
+      "yiwei1.obj.take"
+    ],
+    "faction_formosa": [
+      "yiwei1.obj.hold"
+    ]
+  },
+  "status": [
+    {
+      "textKey": "yiwei1.status",
+      "counts": [
+        [
+          "keelung",
+          "faction_japan_1895"
+        ],
+        [
+          "keelung",
+          "faction_formosa"
+        ]
+      ]
+    }
+  ],
+  "triggers": [
+    {
+      "id": "y1_start",
+      "when": {
+        "type": "time_elapsed",
+        "seconds": 0
+      },
+      "do": [
+        {
+          "type": "show_cutscene",
+          "id": "yiwei1_intro"
+        },
+        {
+          "type": "set_objective",
+          "id": "take",
+          "faction": "faction_japan_1895",
+          "textKey": "yiwei1.obj.take",
+          "primary": true
+        },
+        {
+          "type": "set_objective",
+          "id": "hold",
+          "faction": "faction_formosa",
+          "textKey": "yiwei1.obj.hold",
+          "primary": true
+        }
+      ]
+    },
+    {
+      "id": "y1_second",
+      "when": {
+        "type": "time_elapsed",
+        "seconds": 150
+      },
+      "do": [
+        {
+          "type": "spawn_units",
+          "units": [
+            {
+              "type": "jp95_guard",
+              "owner": "faction_japan_1895",
+              "count": 12,
+              "at": [
+                115,
+                34
+              ]
+            }
+          ]
+        },
+        {
+          "type": "show_message",
+          "textKey": "yiwei1.msg.second",
+          "kind": "good",
+          "to": "faction_japan_1895"
+        },
+        {
+          "type": "show_message",
+          "textKey": "yiwei1.msg.second_enemy",
+          "kind": "warn",
+          "to": "faction_formosa"
+        }
+      ]
+    },
+    {
+      "id": "y1_ruifang",
+      "when": {
+        "type": "area_entered",
+        "region": "ruifang",
+        "owner": "faction_japan_1895",
+        "pop": 8
+      },
+      "do": [
+        {
+          "type": "set_flag",
+          "name": "ruifang_lost",
+          "value": true
+        },
+        {
+          "type": "show_message",
+          "textKey": "yiwei1.msg.ruifang",
+          "kind": "warn"
+        }
+      ]
+    },
+    {
+      "id": "y1_tang_flees",
+      "when": {
+        "type": "any_of",
+        "conditions": [
+          {
+            "type": "time_elapsed",
+            "seconds": 300
+          },
+          {
+            "type": "building_dead",
+            "building": "keelung_fort"
+          }
+        ]
+      },
+      "do": [
+        {
+          "type": "disband",
+          "unitTag": "taipei_garrison"
+        },
+        {
+          "type": "show_message",
+          "textKey": "yiwei1.msg.tang",
+          "kind": "warn"
+        }
+      ]
+    },
+    {
+      "id": "y1_taken_rout",
+      "when": {
+        "type": "all_of",
+        "conditions": [
+          {
+            "type": "all_of",
+            "conditions": [
+              {
+                "type": "building_dead",
+                "building": "shiqiuling"
+              },
+              {
+                "type": "held_for",
+                "id": "keelung",
+                "seconds": 30,
+                "condition": {
+                  "type": "all_of",
+                  "conditions": [
+                    {
+                      "type": "area_entered",
+                      "region": "keelung",
+                      "owner": "faction_japan_1895",
+                      "pop": 6
+                    },
+                    {
+                      "type": "not",
+                      "condition": {
+                        "type": "area_entered",
+                        "region": "keelung",
+                        "owner": "faction_formosa",
+                        "pop": 1
+                      }
+                    }
+                  ]
+                }
+              }
+            ]
+          },
+          {
+            "type": "army_pop_below",
+            "owner": "faction_formosa",
+            "pop": 2
+          }
+        ]
+      },
+      "do": [
+        {
+          "type": "complete_objective",
+          "id": "take",
+          "faction": "faction_japan_1895"
+        },
+        {
+          "type": "complete_objective",
+          "id": "hold",
+          "faction": "faction_formosa",
+          "failed": true
+        },
+        {
+          "type": "fail_mission",
+          "faction": "faction_formosa",
+          "reasonKey": "yiwei1.end.rout",
+          "keepOpen": true
+        },
+        {
+          "type": "win_mission",
+          "faction": "faction_japan_1895",
+          "rating": "victory",
+          "reasonKey": "yiwei1.end.rout"
+        }
+      ]
+    },
+    {
+      "id": "y1_taken",
+      "when": {
+        "type": "all_of",
+        "conditions": [
+          {
+            "type": "building_dead",
+            "building": "shiqiuling"
+          },
+          {
+            "type": "held_for",
+            "id": "keelung",
+            "seconds": 30,
+            "condition": {
+              "type": "all_of",
+              "conditions": [
+                {
+                  "type": "area_entered",
+                  "region": "keelung",
+                  "owner": "faction_japan_1895",
+                  "pop": 6
+                },
+                {
+                  "type": "not",
+                  "condition": {
+                    "type": "area_entered",
+                    "region": "keelung",
+                    "owner": "faction_formosa",
+                    "pop": 1
+                  }
+                }
+              ]
+            }
+          }
+        ]
+      },
+      "do": [
+        {
+          "type": "complete_objective",
+          "id": "take",
+          "faction": "faction_japan_1895"
+        },
+        {
+          "type": "complete_objective",
+          "id": "hold",
+          "faction": "faction_formosa",
+          "failed": true
+        },
+        {
+          "type": "win_mission",
+          "faction": "faction_japan_1895",
+          "rating": "victory",
+          "reasonKey": "yiwei1.end.history"
+        }
+      ]
+    },
+    {
+      "id": "y1_repulsed",
+      "when": {
+        "type": "all_of",
+        "conditions": [
+          {
+            "type": "time_elapsed",
+            "seconds": 60
+          },
+          {
+            "type": "army_pop_below",
+            "owner": "faction_japan_1895",
+            "pop": 12
+          }
+        ]
+      },
+      "do": [
+        {
+          "type": "complete_objective",
+          "id": "hold",
+          "faction": "faction_formosa"
+        },
+        {
+          "type": "complete_objective",
+          "id": "take",
+          "faction": "faction_japan_1895",
+          "failed": true
+        },
+        {
+          "type": "win_mission",
+          "faction": "faction_formosa",
+          "rating": "victory",
+          "reasonKey": "yiwei1.end.repulsed"
+        }
+      ]
+    },
+    {
+      "id": "y1_held",
+      "when": {
+        "type": "time_elapsed",
+        "seconds": 600
+      },
+      "do": [
+        {
+          "type": "complete_objective",
+          "id": "hold",
+          "faction": "faction_formosa"
+        },
+        {
+          "type": "complete_objective",
+          "id": "take",
+          "faction": "faction_japan_1895",
+          "failed": true
+        },
+        {
+          "type": "win_mission",
+          "faction": "faction_formosa",
+          "rating": "victory",
+          "reasonKey": "yiwei1.end.held"
+        }
+      ]
+    }
+  ],
+  "rules": {
+    "combat.uphillUnitDamageMul": 0.6
+  }
+}

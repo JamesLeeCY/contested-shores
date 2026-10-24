@@ -9,7 +9,7 @@ const CONDITIONS = new Set([
 const ACTIONS = new Set([
   'show_message', 'show_cutscene', 'spawn_units', 'kill_unit', 'set_objective', 'complete_objective', 'fail_mission',
   'win_mission', 'modify_morale', 'modify_favor', 'set_stage', 'start_timer', 'trigger_weather', 'reveal_area',
-  'set_ai_plan', 'set_flag', 'mark_army', 'move_units',
+  'set_ai_plan', 'set_flag', 'mark_army', 'move_units', 'disband', 'spawn_building',
 ]);
 /** Spec §7.1: types every MVP scenario engine must support. */
 export const REQUIRED_WHEN = ['time_elapsed', 'game_day', 'unit_hp_below', 'unit_dead', 'building_captured', 'area_entered', 'favor_reached', 'tide_state', 'resource_below', 'all_of', 'any_of'];

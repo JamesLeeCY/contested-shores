@@ -16,7 +16,10 @@ function shade(hex: number, f: number) {
 }
 
 const PAIWAN = new Set(['paiwan_hunter', 'paiwan_warrior', 'aruqu', 'paiwan_family']);
-const JAPAN = new Set(['japan_infantry', 'japan_volunteer', 'sakuma']);
+const JAPAN = new Set(['japan_infantry', 'japan_volunteer', 'sakuma', 'jp95_guard', 'jp95_infantry', 'jp95_cavalry', 'kitashirakawa', 'nogi']);
+const RIFLES = new Set(['japan_infantry', 'jp95_guard', 'jp95_infantry']);
+/** 1895 臺灣 side: 黑旗軍 in black; the others in the faction colour with straw hats. */
+const BLACKFLAG = new Set(['fm_blackflag', 'wu_pengnian', 'liu_yongfu']);
 
 function heroBanner(g: Graphics, c1: number) {
   g.moveTo(-9, 0).lineTo(-9, -40).stroke({ color: WOOD, width: 1.5 });
@@ -64,7 +67,8 @@ function drawJapanese(g: Graphics, type: string, c1: number, hero: boolean) {
   g.circle(0, -24.5, 3.6).fill(SKIN).stroke(LINE);
   if (volunteer) g.rect(-3.8, -26.5, 7.6, 1.4).fill(0xf2efe6);
   else g.rect(-3.6, -31, 7.2, 4.5).fill(c1).stroke(LINE).rect(-4.6, -27, 9.2, 1.4).fill(0x1b1b1b);
-  if (type === 'japan_infantry') {
+  if (type === 'jp95_cavalry') g.ellipse(0, -3, 10, 4).fill(0x6b4a2b).stroke(LINE);
+  if (RIFLES.has(type)) {
     g.moveTo(4, -9).lineTo(10, -29).stroke({ color: WOOD, width: 2 });
     g.moveTo(9.7, -28).lineTo(11, -34).stroke({ color: 0xcfd3d6, width: 1 });
   } else {
@@ -79,6 +83,15 @@ export function drawFigure(g: Graphics, type: string, c1: number, c2: number, he
   g.ellipse(0, 0, 8, 3.5).fill({ color: 0x000000, alpha: 0.25 });
   if (PAIWAN.has(type)) return drawPaiwan(g, type, c1, hero);
   if (JAPAN.has(type)) return drawJapanese(g, type, c1, hero);
+  if (type === 'jp95_cart') {
+    // A two-wheeled supply cart with its load.
+    g.roundRect(-9, -12, 18, 7, 2).fill(0x8a6a3a).stroke(LINE);
+    g.rect(-7, -18, 14, 6).fill(0xc9b58a).stroke(LINE);
+    g.circle(-6, -4, 3.5).fill(WOOD).stroke(LINE);
+    g.circle(6, -4, 3.5).fill(WOOD).stroke(LINE);
+    return;
+  }
+  if (BLACKFLAG.has(type)) c1 = 0x1f1f1f;
   const armoured = type === 'iron_man' || type === 'koxinga';
   const dutch = ['musketeer_voc', 'pikeman', 'grenadier', 'company_worker', 'coyett', 'pedel'].includes(type);
   // Legs and body.
@@ -109,6 +122,14 @@ export function drawFigure(g: Graphics, type: string, c1: number, c2: number, he
       g.moveTo(6, -6).lineTo(10, -30).stroke({ color: WOOD, width: 1.8 });
       g.poly([9, -30, 13, -37, 11, -28]).fill(0xcfd3d6).stroke(LINE);
       break;
+    case 'fm_regular':
+    case 'fm_blackflag':
+    case 'fm_militia':
+    case 'wu_tangxing':
+    case 'jiang_shaozu':
+    case 'xu_xiang':
+    case 'wu_pengnian':
+    case 'liu_yongfu':
     case 'musketeer_zheng':
     case 'musketeer_voc':
     case 'coyett':

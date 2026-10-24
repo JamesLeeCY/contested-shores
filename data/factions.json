@@ -111,6 +111,47 @@
         "powder": 0,
         "deerskin": 0
       }
+    },
+    {
+      "id": "faction_formosa",
+      "nameKey": "faction.faction_formosa.name",
+      "basePopCap": 200,
+      "colors": {
+        "primary": "#2b5fa8",
+        "secondary": "#f2c230"
+      },
+      "heroes": [
+        "wu_tangxing",
+        "jiang_shaozu",
+        "xu_xiang",
+        "wu_pengnian",
+        "liu_yongfu"
+      ],
+      "startResources": {
+        "grain": 0,
+        "wood": 0,
+        "powder": 0,
+        "deerskin": 0
+      }
+    },
+    {
+      "id": "faction_japan_1895",
+      "nameKey": "faction.faction_japan_1895.name",
+      "basePopCap": 200,
+      "colors": {
+        "primary": "#d9d4c3",
+        "secondary": "#1d1d1d"
+      },
+      "heroes": [
+        "kitashirakawa",
+        "nogi"
+      ],
+      "startResources": {
+        "grain": 0,
+        "wood": 0,
+        "powder": 0,
+        "deerskin": 0
+      }
     }
   ],
   "villages": [

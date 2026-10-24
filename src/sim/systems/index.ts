@@ -11,6 +11,7 @@ import './sandbox';
 import { supplySystem } from './supply';
 import { weatherSystem } from './weather';
 import { windSystem } from './wind';
+import { frontlineSystem } from './frontline';
 import { combatSystem } from './combat';
 import { economySystem } from './economy';
 import { fogSystem } from './fog';
@@ -28,6 +29,7 @@ export const SYSTEMS: { name: string; fn: System }[] = [
   { name: 'tide', fn: tideSystem },
   { name: 'weather', fn: weatherSystem },
   { name: 'wind', fn: windSystem },
+  { name: 'frontline', fn: frontlineSystem },
   { name: 'fog', fn: fogSystem },
   { name: 'production', fn: productionSystem },
   { name: 'build', fn: buildSystem },

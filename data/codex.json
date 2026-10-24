@@ -655,5 +655,170 @@
     "sources": [
       "src.penghu_wiki"
     ]
+  },
+  {
+    "id": "jp95_guard",
+    "category": "units",
+    "dispute": false,
+    "sources": [
+      "src.yiwei_zh",
+      "src.yiwei_en"
+    ]
+  },
+  {
+    "id": "jp95_cart",
+    "category": "units",
+    "dispute": false,
+    "sources": [
+      "src.yiwei_zh"
+    ]
+  },
+  {
+    "id": "fm_regular",
+    "category": "units",
+    "dispute": false,
+    "sources": [
+      "src.yiwei_zh",
+      "src.yiwei_en"
+    ]
+  },
+  {
+    "id": "fm_blackflag",
+    "category": "units",
+    "dispute": false,
+    "sources": [
+      "src.yiwei_zh",
+      "src.yiwei_en"
+    ]
+  },
+  {
+    "id": "fm_militia",
+    "category": "units",
+    "dispute": false,
+    "sources": [
+      "src.yiwei_zh",
+      "src.yiwei_en"
+    ]
+  },
+  {
+    "id": "fm_fort",
+    "category": "buildings",
+    "dispute": false,
+    "sources": [
+      "src.yiwei_zh"
+    ]
+  },
+  {
+    "id": "liu_yongfu",
+    "category": "people",
+    "dispute": false,
+    "sources": [
+      "src.yiwei_zh",
+      "src.yiwei_en"
+    ]
+  },
+  {
+    "id": "wu_tangxing",
+    "category": "people",
+    "dispute": false,
+    "sources": [
+      "src.yiwei_zh"
+    ]
+  },
+  {
+    "id": "jiang_shaozu",
+    "category": "people",
+    "dispute": false,
+    "sources": [
+      "src.yiwei_zh"
+    ]
+  },
+  {
+    "id": "xu_xiang",
+    "category": "people",
+    "dispute": false,
+    "sources": [
+      "src.yiwei_zh"
+    ]
+  },
+  {
+    "id": "wu_pengnian",
+    "category": "people",
+    "dispute": false,
+    "sources": [
+      "src.yiwei_zh"
+    ]
+  },
+  {
+    "id": "kitashirakawa",
+    "category": "people",
+    "dispute": true,
+    "sources": [
+      "src.yiwei_zh",
+      "src.yiwei_en"
+    ]
+  },
+  {
+    "id": "nogi",
+    "category": "people",
+    "dispute": false,
+    "sources": [
+      "src.yiwei_zh",
+      "src.yiwei_en"
+    ]
+  },
+  {
+    "id": "y_tang",
+    "category": "people",
+    "dispute": false,
+    "sources": [
+      "src.yiwei_zh",
+      "src.yiwei_en"
+    ]
+  },
+  {
+    "id": "y_keelung",
+    "category": "places",
+    "dispute": false,
+    "sources": [
+      "src.yiwei_zh",
+      "src.yiwei_en"
+    ]
+  },
+  {
+    "id": "y_baguashan",
+    "category": "places",
+    "dispute": true,
+    "sources": [
+      "src.yiwei_zh",
+      "src.yiwei_en"
+    ]
+  },
+  {
+    "id": "y_republic",
+    "category": "disputes",
+    "dispute": true,
+    "sources": [
+      "src.yiwei_zh",
+      "src.yiwei_en"
+    ]
+  },
+  {
+    "id": "y_numbers",
+    "category": "disputes",
+    "dispute": true,
+    "sources": [
+      "src.yiwei_zh",
+      "src.yiwei_en"
+    ]
+  },
+  {
+    "id": "y_reprisals",
+    "category": "disputes",
+    "dispute": true,
+    "sources": [
+      "src.yiwei_zh",
+      "src.yiwei_en"
+    ]
   }
 ]

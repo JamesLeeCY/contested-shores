@@ -62,7 +62,9 @@ export type Action =
   | { type: 'set_ai_plan'; faction: Owner; plans: string[] }
   | { type: 'set_flag'; name: string; value: number | boolean | string }
   | { type: 'mark_army'; owner: Owner; mark: string }
-  | { type: 'move_units'; unitTag: string; region: string };
+  | { type: 'move_units'; unitTag: string; region: string }
+  | { type: 'disband'; unitTag: string }
+  | { type: 'spawn_building'; building: string; owner: Owner; at: [number, number]; tag?: string };
 
 export interface Trigger {
   id: string;
@@ -347,6 +349,29 @@ export function act(world: World, a: Action) {
       } else if (world.scenario?.ai?.[a.faction] && world.ext.flags.player !== a.faction) {
         enableAi(world, a.faction, { ...world.scenario.ai[a.faction], plans: a.plans });
       }
+      break;
+    }
+    case 'spawn_building': {
+      // A new supply depot (1895): placed on the nearest free tiles around the point.
+      const size = world.data.buildings.get(a.building)!.size;
+      for (let r = 0; r < 8; r++)
+        for (let dy = -r; dy <= r; dy++)
+          for (let dx = -r; dx <= r; dx++) {
+            const tx = a.at[0] + dx;
+            const ty = a.at[1] + dy;
+            let free = true;
+            for (let y = ty; y < ty + size && free; y++)
+              for (let x = tx; x < tx + size && free; x++) free = x >= 0 && y >= 0 && x < world.map.width && y < world.map.height && !world.occupancy[y * world.map.width + x] && world.nav.passable('foot', x, y);
+            if (free) {
+              world.spawnBuilding(a.building, a.owner, tx, ty, 1, a.tag);
+              return;
+            }
+          }
+      break;
+    }
+    case 'disband': {
+      // Troops who melt away (not battle losses): removed without a death.
+      for (const e of tagged(world, a.unitTag)) world.remove(e.id);
       break;
     }
     case 'move_units': {

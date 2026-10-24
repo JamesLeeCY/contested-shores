@@ -198,3 +198,27 @@ export function writeTileset() {
   mkdirSync(join(root, 'assets/tiles'), { recursive: true });
   writeFileSync(join(root, 'assets/tiles/terrain.png'), png(imgW, TH, rgba));
 }
+
+/** Distance from (x, y) to a polyline. */
+export function distToPolyline(line: [number, number][], x: number, y: number): number {
+  let best = Infinity;
+  for (let i = 1; i < line.length; i++) {
+    const [ax, ay] = line[i - 1];
+    const [bx, by] = line[i];
+    const dx = bx - ax;
+    const dy = by - ay;
+    const t = Math.max(0, Math.min(1, ((x - ax) * dx + (y - ay) * dy) / (dx * dx + dy * dy || 1)));
+    best = Math.min(best, Math.hypot(x - (ax + t * dx), y - (ay + t * dy)));
+  }
+  return best;
+}
+
+/** Paints every tile within `halfWidth` of a polyline (optionally only over some terrains). */
+export function paintLine(p: Painter, line: [number, number][], halfWidth: number, t: number, onto?: number[]) {
+  const xs = line.map((q) => q[0]);
+  const ys = line.map((q) => q[1]);
+  const r = Math.ceil(halfWidth) + 1;
+  for (let y = Math.max(0, Math.min(...ys) - r); y <= Math.min(p.H - 1, Math.max(...ys) + r); y++)
+    for (let x = Math.max(0, Math.min(...xs) - r); x <= Math.min(p.W - 1, Math.max(...xs) + r); x++)
+      if (distToPolyline(line, x, y) <= halfWidth && (!onto || onto.includes(p.get(x, y)))) p.set(x, y, t);
+}

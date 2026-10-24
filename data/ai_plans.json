@@ -280,5 +280,122 @@
       "harbor:qiu+qiu_hui/bay_mouth",
       "encircle:qiu+qiu_hui/4"
     ]
+  },
+  {
+    "id": "yiwei1_japan",
+    "faction": "faction_japan_1895",
+    "chapters": [
+      1
+    ],
+    "steps": [
+      "push:sandiao",
+      "push:ruifang",
+      "push:keelung",
+      "push:shiqiuling",
+      "hold_region:keelung"
+    ]
+  },
+  {
+    "id": "yiwei1_formosa",
+    "faction": "faction_formosa",
+    "chapters": [
+      1
+    ],
+    "steps": [
+      "hold_line:sandiao/10",
+      "hold_line:ruifang/12",
+      "hold_line:shiqiuling/18",
+      "hold_line:keelung/10"
+    ]
+  },
+  {
+    "id": "yiwei2_japan",
+    "faction": "faction_japan_1895",
+    "chapters": [
+      2
+    ],
+    "steps": [
+      "column:troops/hsinchu",
+      "column:kitashirakawa/hsinchu",
+      "wait_flag:hsinchu_held",
+      "column:carts/hsinchu",
+      "column:escort/hsinchu",
+      "wait_flag:hsinchu_taken",
+      "drop:column/troops",
+      "drop:column/kitashirakawa",
+      "column:troops/miaoli",
+      "column:kitashirakawa/miaoli"
+    ]
+  },
+  {
+    "id": "yiwei2_formosa",
+    "faction": "faction_formosa",
+    "chapters": [
+      2
+    ],
+    "steps": [
+      "raid:raid_e1/5/jp95_cart",
+      "raid:raid_w1/5/jp95_cart",
+      "raid:raid_e2/5/jp95_cart",
+      "raid:raid_w2/5/jp95_cart",
+      "skirmish:hills_b/10/hsinchu",
+      "hold_line:hsinchu/8",
+      "harass:miaoli/6"
+    ]
+  },
+  {
+    "id": "yiwei3_japan",
+    "faction": "faction_japan_1895",
+    "chapters": [
+      3
+    ],
+    "steps": [
+      "push:ford_west",
+      "wait:150",
+      "push:baguashan",
+      "push:changhua",
+      "hold_region:changhua"
+    ]
+  },
+  {
+    "id": "yiwei3_formosa",
+    "faction": "faction_formosa",
+    "chapters": [
+      3
+    ],
+    "steps": [
+      "ambush:baguashan/26/daduxi",
+      "guard:baguashan/6",
+      "hold_line:changhua/8"
+    ]
+  },
+  {
+    "id": "yiwei4_japan",
+    "faction": "faction_japan_1895",
+    "chapters": [
+      4
+    ],
+    "steps": [
+      "wait:240",
+      "column:north/tainan",
+      "column:kitashirakawa/tainan",
+      "column:budai/tainan",
+      "column:south/tainan",
+      "column:nogi/tainan",
+      "hold_region:tainan"
+    ]
+  },
+  {
+    "id": "yiwei4_formosa",
+    "faction": "faction_formosa",
+    "chapters": [
+      4
+    ],
+    "steps": [
+      "hold_line:tainan/27",
+      "skirmish:amb_north/12/chiayi",
+      "skirmish:amb_south/8/fangliao",
+      "skirmish:amb_east/8/fangliao"
+    ]
   }
 ]

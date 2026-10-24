@@ -108,6 +108,8 @@ export interface Entity {
   chasing?: boolean;
   /** Hold-position stance: fire at whatever comes into range but never chase (spec: 固守). */
   hold?: boolean;
+  /** Hold fire: never pick targets on its own (ambushers waiting for a convoy); explicit attacks still go. */
+  holdFire?: boolean;
   /** Tick until which a forest-hidden shooter stays visible (matchlock smoke). */
   revealedUntil?: number;
   chaseAt?: number;

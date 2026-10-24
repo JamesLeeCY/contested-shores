@@ -94,5 +94,42 @@
       "cut.penghu2_intro.2",
       "cut.penghu2_intro.3"
     ]
+  },
+  "yiwei1_intro": {
+    "titleKey": "cut.yiwei1_intro.title",
+    "art": "sea",
+    "lines": [
+      "cut.yiwei1_intro.1",
+      "cut.yiwei1_intro.2",
+      "cut.yiwei1_intro.3",
+      "cut.yiwei1_intro.4"
+    ]
+  },
+  "yiwei2_intro": {
+    "titleKey": "cut.yiwei2_intro.title",
+    "art": "mountain",
+    "lines": [
+      "cut.yiwei2_intro.1",
+      "cut.yiwei2_intro.2",
+      "cut.yiwei2_intro.3"
+    ]
+  },
+  "yiwei3_intro": {
+    "titleKey": "cut.yiwei3_intro.title",
+    "art": "mountain",
+    "lines": [
+      "cut.yiwei3_intro.1",
+      "cut.yiwei3_intro.2",
+      "cut.yiwei3_intro.3"
+    ]
+  },
+  "yiwei4_intro": {
+    "titleKey": "cut.yiwei4_intro.title",
+    "art": "fort",
+    "lines": [
+      "cut.yiwei4_intro.1",
+      "cut.yiwei4_intro.2",
+      "cut.yiwei4_intro.3"
+    ]
   }
 }

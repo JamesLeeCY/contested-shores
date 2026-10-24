@@ -21,7 +21,7 @@ type BaseCommand =
   | { type: 'attack'; owner: Owner; ids: number[]; target: number }
   | { type: 'attack_move'; owner: Owner; ids: number[]; x: number; y: number }
   | { type: 'attack_ground'; owner: Owner; ids: number[]; x: number; y: number }
-  | { type: 'stance'; owner: Owner; ids: number[]; hold: boolean }
+  | { type: 'stance'; owner: Owner; ids: number[]; hold: boolean; holdFire?: boolean }
   | { type: 'patrol'; owner: Owner; ids: number[]; x: number; y: number }
   | { type: 'dig_mine'; owner: Owner; ids: number[]; target: number }
   | { type: 'embark'; owner: Owner; ids: number[]; target: number }

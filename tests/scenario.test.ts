@@ -624,6 +624,215 @@ describe('1683 澎湖海戰', () => {
   });
 });
 
+describe('1895 乙未戰爭', () => {
+  const J = 'faction_japan_1895';
+  const F = 'faction_formosa';
+  const land = (id: string, seed = 7) => {
+    const sc = scenarioById(id);
+    const w = new WorldClass(DATA, loadMap(sc.map!), { seed, factions: sc.factions });
+    applyScenario(w, sc);
+    w.ext.flags.player = '';
+    at(w, 1);
+    return w;
+  };
+  const region = (w: World, id: string) => w.map.regions.find((r) => r.id === id)!;
+  /** Clears a region of defenders and stands n Japanese soldiers in it. */
+  const occupy = (w: World, id: string, n: number) => {
+    const r = region(w, id);
+    w.rebuildSpatial();
+    // Defenders within sight would walk back in: clear a wide margin (heroes are moved out by the caller).
+    for (const e of [...w.all()]) if (e.owner === F && e.kind === 'unit' && e.x >= r.x - 10 && e.y >= r.y - 10 && e.x <= r.x + r.w + 10 && e.y <= r.y + r.h + 10) killEntity(w, e);
+    spawnIn(w, J, 'jp95_guard', n, r.x + 2, r.y + 2);
+    // Test occupiers neither fall to the remaining batteries nor break for lack of supply.
+    for (const e of w.all())
+      if (e.owner === J && e.type === 'jp95_guard' && e.x >= r.x && e.y >= r.y && e.x < r.x + r.w && e.y < r.y + r.h) {
+        e.hp = e.maxHp = 1e9;
+        e.morale = 100;
+      }
+  };
+  const destroy = (w: World, tag: string) => {
+    w.rebuildSpatial();
+    killEntity(w, w.buildings().find((b) => b.tag === tag)!);
+  };
+  const killSide = (w: World, owner: string, keep = 0) => {
+    w.rebuildSpatial();
+    for (const e of [...w.all()].filter((u) => u.owner === owner && u.kind === 'unit').slice(keep)) killEntity(w, e);
+  };
+  const cartsInto = (w: World, id: string, n: number) => {
+    const r = region(w, id);
+    for (const c of tagged(w, 'carts').slice(0, n)) {
+      c.x = c.px = r.x + 4;
+      c.y = c.py = r.y + 4;
+      c.order = { type: 'idle' };
+      c.path = null;
+    }
+  };
+
+  it('澳底: landing reinforcements, 瑞芳 falls, 唐景崧 flees, 基隆 taken (historical)', () => {
+    const w = land('yiwei1');
+    at(w, 150);
+    occupy(w, 'ruifang', 8);
+    run(w, 5);
+    expect(w.ext.flags.ruifang_lost).toBe(true);
+    at(w, 300);
+    expect(tagged(w, 'taipei_garrison')).toHaveLength(0);
+    spawnIn(w, F, 'fm_regular', 3, 20, 30); // survivors who withdraw: not a rout
+    destroy(w, 'shiqiuling');
+    occupy(w, 'keelung', 6);
+    run(w, 32 * 20);
+    collect(w);
+    expect(outcomeOf(w, J)).toBe('victory');
+    expect(outcomeOf(w, F)).toBe('historical');
+  });
+
+  it('澳底: defenders wiped out, the Japanese worn down, or the deadline', () => {
+    const a = land('yiwei1');
+    killSide(a, F);
+    destroy(a, 'shiqiuling');
+    occupy(a, 'keelung', 6);
+    run(a, 32 * 20);
+    collect(a);
+    expect(outcomeOf(a, F)).toBe('defeat');
+    const b = land('yiwei1');
+    at(b, 61);
+    killSide(b, J, 8);
+    run(b, 5);
+    collect(b);
+    expect(b.ext.flags[`outcomeReason:${F}`]).toBe('yiwei1.end.repulsed');
+    const c = land('yiwei1');
+    at(c, 600);
+    collect(c);
+    expect(outcomeOf(c, J)).toBe('defeat');
+  });
+
+  it('桃竹苗: the convoy is ambushed, 新竹 gets its depot, 苗栗 falls (historical)', () => {
+    const w = land('yiwei2');
+    at(w, 300);
+    expect(tagged(w, 'carts').length).toBeGreaterThanOrEqual(9);
+    w.rebuildSpatial();
+    for (const c of tagged(w, 'carts').slice(0, 4)) killEntity(w, c);
+    killTag(w, 'jiang_shaozu');
+    run(w, 5);
+    expect(w.ext.flags.carts_lost).toBe(true);
+    occupy(w, 'hsinchu', 6);
+    cartsInto(w, 'hsinchu', 3);
+    run(w, 22 * 20);
+    expect(w.ext.flags.hsinchu_taken).toBe(true);
+    expect(w.buildings().some((b) => b.tag === 'hsinchu_depot')).toBe(true);
+    occupy(w, 'miaoli', 6);
+    run(w, 32 * 20);
+    collect(w);
+    expect(w.ext.flags[`outcomeReason:${F}`]).toBe('yiwei2.end.history');
+  });
+
+  it('桃竹苗: an unbroken supply line, a wiped-out militia, a starved column, or the deadline', () => {
+    const takeBoth = (w: World) => {
+      occupy(w, 'hsinchu', 6);
+      cartsInto(w, 'hsinchu', 3);
+      run(w, 22 * 20);
+      occupy(w, 'miaoli', 6);
+      run(w, 32 * 20);
+    };
+    const a = land('yiwei2');
+    takeBoth(a);
+    collect(a);
+    expect(a.ext.flags[`outcomeReason:${F}`]).toBe('yiwei2.end.swift');
+    const b = land('yiwei2');
+    killSide(b, F);
+    takeBoth(b);
+    collect(b);
+    expect(outcomeOf(b, F)).toBe('defeat');
+    const c = land('yiwei2');
+    at(c, 61);
+    killSide(c, J, 8);
+    run(c, 5);
+    collect(c);
+    expect(c.ext.flags[`outcomeReason:${F}`]).toBe('yiwei2.end.repulsed');
+    const d = land('yiwei2');
+    at(d, 840);
+    collect(d);
+    expect(outcomeOf(d, F)).toBe('victory');
+  });
+
+  it('八卦山: night until dawn; the battery and 彰化 fall, 吳湯興 and 吳彭年 killed (historical)', () => {
+    const w = land('yiwei3');
+    expect(w.weather.sightMul).toBeLessThan(1);
+    at(w, 151);
+    expect(w.weather.sightMul).toBe(1);
+    at(w, 240);
+    killTag(w, 'wu_tangxing');
+    killTag(w, 'wu_pengnian');
+    run(w, 5);
+    expect(w.ext.flags.leader_dead).toBe(true);
+    spawnIn(w, F, 'fm_regular', 3, 30, 60); // survivors who fall back to 嘉義: not a rout
+    destroy(w, 'baguashan');
+    occupy(w, 'changhua', 6);
+    run(w, 32 * 20);
+    collect(w);
+    expect(outcomeOf(w, F)).toBe('historical');
+  });
+
+  it('八卦山: defenders wiped out, the Japanese worn down, or the deadline', () => {
+    const a = land('yiwei3');
+    killSide(a, F);
+    destroy(a, 'baguashan');
+    occupy(a, 'changhua', 6);
+    run(a, 32 * 20);
+    collect(a);
+    expect(outcomeOf(a, F)).toBe('defeat');
+    const b = land('yiwei3');
+    at(b, 61);
+    killSide(b, J, 10);
+    run(b, 5);
+    collect(b);
+    expect(b.ext.flags[`outcomeReason:${F}`]).toBe('yiwei3.end.repulsed');
+    const c = land('yiwei3');
+    at(c, 720);
+    collect(c);
+    expect(outcomeOf(c, J)).toBe('defeat');
+  });
+
+  it('臺南: landings; 劉永福 may leave (historical) — or die, worse than history', () => {
+    const w = land('yiwei4');
+    at(w, 60);
+    expect(tagged(w, 'nogi')).toHaveLength(1);
+    killTag(w, 'kitashirakawa');
+    at(w, 361);
+    w.enqueue({ type: 'choice', owner: F, id: 'liu_flees' });
+    run(w, 5);
+    collect(w);
+    expect(w.ext.flags[`outcomeReason:${F}`]).toBe('yiwei4.end.liu_fled');
+    expect(outcomeOf(w, F)).toBe('historical');
+    const b = land('yiwei4');
+    killTag(b, 'liu_yongfu');
+    occupy(b, 'tainan', 8);
+    run(b, 32 * 20);
+    collect(b);
+    expect(outcomeOf(b, F)).toBe('defeat');
+    const c = land('yiwei4');
+    const liu = tagged(c, 'liu_yongfu')[0];
+    liu.x = liu.px = 70;
+    liu.y = liu.py = 80;
+    occupy(c, 'tainan', 8);
+    run(c, 32 * 20);
+    collect(c);
+    expect(c.ext.flags[`outcomeReason:${F}`]).toBe('yiwei4.end.history');
+  });
+
+  it('臺南: disease and losses break the advance, or the deadline', () => {
+    const a = land('yiwei4');
+    at(a, 61);
+    killSide(a, J, 10);
+    run(a, 5);
+    collect(a);
+    expect(a.ext.flags[`outcomeReason:${F}`]).toBe('yiwei4.end.repulsed');
+    const b = land('yiwei4');
+    at(b, 900);
+    collect(b);
+    expect(outcomeOf(b, F)).toBe('victory');
+  });
+});
+
 afterAll(() => {
   // Every trigger of every chapter, and every global rule, fired somewhere above.
   const all: string[] = [];
