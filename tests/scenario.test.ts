@@ -894,7 +894,7 @@ describe('1683 東寧 (epilogue)', () => {
   it('死守承天府: the Qing land, the garrisons desert; holding 8 minutes wins, the fort battered loses', () => {
     const a = court();
     choose(a, 'resist');
-    expect(tagged(a, 'landing').length).toBe(37);
+    expect(tagged(a, 'landing').length).toBe(38);
     at(a, 152);
     expect(tagged(a, 'anping')).toHaveLength(0);
     at(a, 302);

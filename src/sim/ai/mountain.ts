@@ -452,16 +452,22 @@ const defend: Handler = (ctx, arg) => {
   if (!sallying && room - going > 0 && shooters.length) issue(ctx, { type: 'garrison', ids: ids(shooters.slice(0, room - going)), target: b.id });
   const foes = visibleEnemies(w, ctx.owner, (e) => e.kind === 'unit' && Math.hypot(e.x - b.x, e.y - b.y) <= r);
   if (!foes.length) return 'persist';
-  // Only a few attackers left (e.g. guns battering the walls): the garrison sallies out to finish them.
-  const sally = foes.length <= 4 && (b.garrisoned?.length ?? 0) >= Math.max(3, foes.length);
+  // The garrison sallies out against guns battering the walls when it is no weaker than the foot
+  // soldiers covering them, or to finish off the last few attackers.
+  const held = b.garrisoned?.length ?? 0;
+  const siege = foes.filter((e) => w.data.units.get(e.type)!.class === 'siege').length;
+  const sally = siege ? held >= 3 && foes.length - siege <= held : foes.length <= 4 && held >= Math.max(3, foes.length);
   if (sally) {
     issue(ctx, { type: 'ungarrison', building: b.id });
     ctx.ai.mem.sallyUntil = w.tick + 30 * w.ticksPerSecond;
   }
   // Idle men only shoot what walks into range; send every one not already on an attack order.
   const free = army(w, ctx.owner).filter((u) => !isHero(w, u) && u.order?.type !== 'attack' && u.order?.type !== 'garrison' && Math.hypot(u.x - b.x, u.y - b.y) <= r + 4);
+  // Guns battering the walls first: that is what brings a fort down.
+  const guns = foes.filter((e) => w.data.units.get(e.type)!.class === 'siege');
   for (const u of free) {
-    const t = foes.reduce((p, q) => (dist(p, [u.x, u.y]) <= dist(q, [u.x, u.y]) ? p : q));
+    const pool = guns.length ? guns : foes;
+    const t = pool.reduce((p, q) => (dist(p, [u.x, u.y]) <= dist(q, [u.x, u.y]) ? p : q));
     issue(ctx, { type: 'attack', ids: [u.id], target: t.id });
   }
   return 'persist';
