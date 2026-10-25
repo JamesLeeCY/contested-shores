@@ -155,7 +155,7 @@ export class SelectionPanel {
       const def = world.data.units.get(e.type)!;
       setText(
         stats,
-        `${t('ui.atk')} ${unitStat(world, e, 'atk')}（${t('atk.' + def.atkType)}）· ${t('ui.armor')} ${unitStat(world, e, 'armor')}（${t('armor.' + def.armorType)}）· ${t('ui.range')} ${unitStat(world, e, 'range')} · ${t('ui.speed_stat')} ${unitStat(world, e, 'speed')}`,
+        `${t('ui.atk')} ${unitStat(world, e, 'atk')}${t('ui.paren', { x: t('atk.' + def.atkType) })} · ${t('ui.armor')} ${unitStat(world, e, 'armor')}${t('ui.paren', { x: t('armor.' + def.armorType) })} · ${t('ui.range')} ${unitStat(world, e, 'range')} · ${t('ui.speed_stat')} ${unitStat(world, e, 'speed')}`,
       );
     }
     const status = q<HTMLDivElement>('.sel-status');

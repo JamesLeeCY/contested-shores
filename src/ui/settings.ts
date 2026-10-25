@@ -1,6 +1,6 @@
 // Player settings (spec §11 stage 8: volume, scroll speed, game speed, colour-blind mode).
 import { el } from './dom';
-import { t } from './i18n';
+import { lang, setLang, t, type Lang } from './i18n';
 
 const KEY = 'tayouan1661.settings';
 
@@ -84,6 +84,14 @@ export function openSettings(parent: HTMLElement, onClose?: () => void) {
     el('span', '', row, t(`settings.${key}`));
     input.onchange = () => updateSettings({ [key]: input.checked } as Partial<Settings>);
   };
+  const langRow = el('div', 'menu-row', card);
+  el('span', 'menu-label wide', langRow, t('settings.language'));
+  for (const l of ['zh-TW', 'en'] as Lang[]) {
+    const b = el('button', 'menu-toggle' + (lang === l ? ' on' : ''), langRow, t(`lang.${l}`));
+    b.onclick = () => {
+      if (l !== lang) setLang(l);
+    };
+  }
   toggle('touchpad');
   el('div', 'settings-note', card, t('settings.touchpad_note'));
   toggle('edgeScroll');

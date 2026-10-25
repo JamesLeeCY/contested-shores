@@ -34,8 +34,16 @@ describe('i18n (spec §11 stage 8: no hard-coded interface strings)', () => {
     expect(missing).toEqual([]);
   });
 
-  it('en.json has every key (English texts may be pending)', () => {
+  it('en.json has every key, each translated, with the same placeholders', () => {
     expect(Object.keys(zh).filter((k) => !(k in en))).toEqual([]);
+    expect(Object.keys(zh).filter((k) => !en[k])).toEqual([]);
+    const ph = (s: string) => [...s.matchAll(/\{(\w+)\}/g)].map((m) => m[1]).sort().join();
+    expect(Object.keys(zh).filter((k) => ph(zh[k]) !== ph(en[k]))).toEqual([]);
+  });
+
+  it('English never uses derogatory terms (a cited title is quoted as published)', () => {
+    const banned = /savage|barbarian|bandit|rebel|red-hair|primitive/i;
+    expect(Object.entries(en).filter(([k, v]) => banned.test(v) && !k.startsWith('src.')).map(([k]) => k)).toEqual([]);
   });
 });
 

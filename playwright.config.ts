@@ -5,6 +5,7 @@ export default defineConfig({
   timeout: 120_000,
   // Serial: the performance and save tests measure timing and must not compete for the CPU.
   workers: 1,
-  use: { baseURL: `http://localhost:4173${process.env.BASE_PATH ?? '/'}`, viewport: { width: 1280, height: 720 } },
+  // The tests read the Chinese texts: run them in a Chinese browser (the game follows its language).
+  use: { baseURL: `http://localhost:4173${process.env.BASE_PATH ?? '/'}`, viewport: { width: 1280, height: 720 }, locale: 'zh-TW' },
   webServer: { command: 'npm run preview -- --port 4173 --strictPort', port: 4173, reuseExistingServer: true },
 });

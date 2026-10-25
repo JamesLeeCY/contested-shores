@@ -72,7 +72,7 @@ export class DiplomacyPanel {
     const state = p.ally
       ? t('diplo.state.allied', { faction: factionName(p.ally) })
       : p.hostile.length
-        ? t('diplo.state.hostile', { faction: p.hostile.map(factionName).join('、') })
+        ? t('diplo.state.hostile', { faction: p.hostile.map(factionName).join(t('ui.list_sep')) })
         : t('diplo.state.neutral');
     const rows = ['faction_zheng', 'faction_voc']
       .map((f) => {
@@ -83,7 +83,7 @@ export class DiplomacyPanel {
     const log = p.log
       .filter((l) => l.reason !== 'drift')
       .slice(0, w.rules.diplomacy.logSize)
-      .map((l) => `<li>${factionName(l.faction)} ${l.delta > 0 ? '+' : ''}${Math.round(l.delta)}（${t('reason.' + l.reason)}）</li>`)
+      .map((l) => `<li>${factionName(l.faction)} ${l.delta > 0 ? '+' : ''}${Math.round(l.delta)}${t('ui.paren', { x: t('reason.' + l.reason) })}</li>`)
       .join('');
     const html = `<div class="diplo-title">${partyName(p)} · ${state}</div>${rows}<div class="diplo-log-title">${t('diplo.recent')}</div><ul class="diplo-log">${log || '<li>—</li>'}</ul>`;
     if (this.root.innerHTML !== html) this.root.innerHTML = html;
