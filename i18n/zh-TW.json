@@ -1396,5 +1396,10 @@
   "lang.zh-TW": "中文",
   "lang.en": "English",
   "ui.paren": "（{x}）",
-  "ui.list_sep": "、"
+  "ui.list_sep": "、",
+  "save.mismatch.title": "這個存檔來自舊版本",
+  "save.mismatch.text": "存檔之後遊戲更新過（平衡或電腦的行為可能改變）。照常讀取會重播你的指令，但電腦會依新規則重新決策，戰局可能和存檔時不同；只還原快照則回到存檔前最近的一個時間點（最多早 1 分鐘），狀態完全準確。",
+  "save.mismatch.snapshot": "只還原快照（建議）",
+  "save.mismatch.replay": "照常讀取",
+  "save.mismatch.cancel": "取消"
 }

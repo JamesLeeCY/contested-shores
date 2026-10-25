@@ -7,6 +7,7 @@ import { restoreWorld, snapshotWorld, type Snapshot } from '../sim/snapshot';
 import type { Scenario } from '../sim/scenario/types';
 import type { SimData } from '../sim/types';
 import type { World } from '../sim/world';
+import { SIM_BUILD } from '../build';
 
 export const SAVE_KEY = 'tayouan1661.save';
 export const SNAPSHOT_EVERY = 1200;
@@ -25,6 +26,8 @@ export interface SaveMeta {
 export interface SaveFile {
   format: 'tayouan1661-save';
   version: 1;
+  /** Simulation fingerprint when saved (absent in saves from before 2026-10-25). */
+  build?: string;
   meta: SaveMeta;
   seed: number;
   map: string;
@@ -55,6 +58,7 @@ export function buildSave(world: World, keeper: SnapshotKeeper, meta: Omit<SaveM
   return {
     format: 'tayouan1661-save',
     version: 1,
+    build: SIM_BUILD,
     meta: { ...meta, savedAt: new Date().toISOString() },
     seed: world.opts.seed,
     map: world.map.id,
@@ -65,8 +69,15 @@ export function buildSave(world: World, keeper: SnapshotKeeper, meta: Omit<SaveM
   };
 }
 
-/** Rebuilds the world exactly as it was when saved. */
-export function loadSave(save: SaveFile, data: SimData, maps: GameMap | ((id: string) => GameMap), scenarios: (id: string) => Scenario): World {
+/** Was this save made by a game that plays out the same way as this one? */
+export const sameBuild = (save: SaveFile) => save.build === SIM_BUILD;
+
+/**
+ * Rebuilds the world exactly as it was when saved. With `replay: false` it stops at the snapshot
+ * (up to a minute before the save point): the safe choice for a save from another game version,
+ * where replaying with a re-deciding AI could lead somewhere else.
+ */
+export function loadSave(save: SaveFile, data: SimData, maps: GameMap | ((id: string) => GameMap), scenarios: (id: string) => Scenario, replay = true): World {
   if (save.format !== 'tayouan1661-save') throw new Error('not a save file');
   const map = typeof maps === 'function' ? maps(save.map ?? 'taijiang') : maps;
   const w = restoreWorld(data, map, save.snapshot, scenarios);
@@ -81,6 +92,7 @@ export function loadSave(save: SaveFile, data: SimData, maps: GameMap | ((id: st
     byTick.set(tick, list);
   }
   for (const { tick, cmd } of save.commandLog) if (tick < w.tick) w.commandLog.push({ tick, cmd });
+  if (!replay) return w;
   while (w.tick < save.tick) {
     for (const c of byTick.get(w.tick) ?? []) w.enqueue(c);
     step(w);

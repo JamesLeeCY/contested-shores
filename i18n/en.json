@@ -1396,5 +1396,10 @@
   "lang.zh-TW": "中文",
   "lang.en": "English",
   "ui.paren": " ({x})",
-  "ui.list_sep": ", "
+  "ui.list_sep": ", ",
+  "save.mismatch.title": "This save is from an older version",
+  "save.mismatch.text": "The game has been updated since this save (balance or AI behaviour may have changed). Loading normally replays your orders, but the AI re-decides under the new rules, so the battle may not match your save; restoring the snapshot returns to the latest checkpoint before the save (up to a minute earlier) with the state exactly as it was.",
+  "save.mismatch.snapshot": "Restore snapshot (recommended)",
+  "save.mismatch.replay": "Load normally",
+  "save.mismatch.cancel": "Cancel"
 }

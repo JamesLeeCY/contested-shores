@@ -5,7 +5,7 @@ import type { Application } from 'pixi.js';
 import { loadMap } from '../data/map';
 import { CAMPAIGNS, SCENARIOS, campaignOf, scenarioById, scenariosOf } from '../data/scenarios';
 import type { World } from '../sim/world';
-import { buildSave, downloadSave, loadSave, pickSaveFile, readStoredSave, storeSave, type SaveFile, type SaveMeta } from './save';
+import { buildSave, downloadSave, loadSave, pickSaveFile, sameBuild, readStoredSave, storeSave, type SaveFile, type SaveMeta } from './save';
 import { setupSandbox, type SandboxMode } from '../sim/sandbox';
 import type { Rating } from '../sim/scenario/triggers';
 import type { Scenario } from '../sim/scenario/types';
@@ -256,11 +256,12 @@ export class GameApp {
 
   readonly gameMenuHooks: ((bar: HTMLElement, app: GameApp) => void)[] = [];
 
-  /** Restores a save and continues it. */
-  loadGame(file: SaveFile) {
+  /** Restores a save and continues it; a save from another game version asks how first. */
+  loadGame(file: SaveFile, replay?: boolean) {
+    if (replay === undefined && !sameBuild(file)) return this.askHowToLoad(file);
     let w: World;
     try {
-      w = loadSave(file, this.data, loadMap, scenarioById);
+      w = loadSave(file, this.data, loadMap, scenarioById, replay ?? true);
     } catch (e) {
       alert(`${t('msg.load_failed')}\n${String(e)}`);
       return;
@@ -270,6 +271,23 @@ export class GameApp {
       void this.startChapter({ scenario: m.scenario, chapter: m.chapter, player: m.player, difficulty: m.difficulty as Difficulty, skipCutscenes: true }, w);
     else if (m.sandboxMode === 'tutorial') this.startTutorial();
     else this.startSandbox((m.sandboxMode as SandboxMode) ?? 'armies', m.player, w);
+  }
+
+  /** The game changed since this save: replay as saved (may drift) or resume from its snapshot. */
+  private askHowToLoad(file: SaveFile) {
+    // Above the main menu (both live in the overlay layer).
+    const m = el('div', 'menu', this.overlay);
+    const card = el('div', 'menu-card save-mismatch', m);
+    el('h2', 'menu-title', card, t('save.mismatch.title'));
+    el('p', 'menu-sub', card, t('save.mismatch.text'));
+    const row = el('div', 'menu-extra', card);
+    const go = (replay: boolean) => {
+      m.remove();
+      this.loadGame(file, replay);
+    };
+    el('button', 'menu-btn primary', row, t('save.mismatch.snapshot')).onclick = () => go(false);
+    el('button', 'menu-btn', row, t('save.mismatch.replay')).onclick = () => go(true);
+    el('button', 'menu-btn', row, t('save.mismatch.cancel')).onclick = () => m.remove();
   }
 
   async startChapter(o: StartOptions, restored?: World) {

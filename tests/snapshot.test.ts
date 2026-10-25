@@ -66,3 +66,25 @@ describe('save replay with an AI opponent', () => {
     expect(hashWorld(r)).toBe(hashWorld(w));
   });
 });
+
+describe('save files across game versions', () => {
+  it('records the build; a save from another build can resume at its snapshot instead of replaying', async () => {
+    const { SnapshotKeeper, buildSave, loadSave, sameBuild } = await import('../src/ui/save');
+    const w = aiChapter(1, 7);
+    const keeper = new SnapshotKeeper(w);
+    for (let i = 0; i < 1500; i++) {
+      run(w, 1);
+      keeper.tick(w);
+    }
+    const save = buildSave(w, keeper, { kind: 'chapter', scenario: 'ch1', chapter: 1, player: 'faction_zheng', difficulty: 'normal' });
+    expect(sameBuild(save)).toBe(true);
+    expect(sameBuild({ ...save, build: 'older' })).toBe(false);
+    expect(sameBuild({ ...save, build: undefined })).toBe(false);
+    const replayed = loadSave(save, DATA, () => MAP, scenarioById);
+    expect(replayed.tick).toBe(1500);
+    expect(hashWorld(replayed)).toBe(hashWorld(w));
+    const resumed = loadSave(save, DATA, () => MAP, scenarioById, false);
+    expect(resumed.tick).toBe(save.snapshot.tick);
+    expect(resumed.tick).toBe(1200);
+  });
+});
