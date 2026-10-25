@@ -820,5 +820,57 @@
       "src.yiwei_zh",
       "src.yiwei_en"
     ]
+  },
+  {
+    "id": "e_tungning_court",
+    "category": "disputes",
+    "dispute": true,
+    "sources": [
+      "src.keshuang_zh"
+    ]
+  },
+  {
+    "id": "e_zheng_keshuang",
+    "category": "people",
+    "dispute": false,
+    "sources": [
+      "src.keshuang_zh"
+    ]
+  },
+  {
+    "id": "haruq_nawi",
+    "category": "people",
+    "dispute": false,
+    "sources": [
+      "src.truku_zh",
+      "src.truku_en"
+    ]
+  },
+  {
+    "id": "e_truku",
+    "category": "places",
+    "dispute": false,
+    "sources": [
+      "src.truku_zh",
+      "src.truku_en"
+    ]
+  },
+  {
+    "id": "e_riban",
+    "category": "disputes",
+    "dispute": true,
+    "sources": [
+      "src.truku_zh",
+      "src.truku_en"
+    ]
+  },
+  {
+    "id": "e_truku_numbers",
+    "category": "disputes",
+    "dispute": true,
+    "sources": [
+      "src.truku_zh",
+      "src.truku_en"
+    ]
   }
 ]

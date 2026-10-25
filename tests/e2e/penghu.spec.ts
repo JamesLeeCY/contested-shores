@@ -51,3 +51,23 @@ test('1683: the battles open without stalling', async ({ page }) => {
     expect(ms, scenario).toBeLessThan(1500);
   }
 });
+
+test('1683: 東寧 — the court decides; 死守 brings the Qing ashore', async ({ page }) => {
+  const errors: string[] = [];
+  page.on('pageerror', (e) => errors.push(e.message));
+  await page.goto('./');
+  await page.locator('.menu-tab', { hasText: '施琅攻臺' }).click();
+  // Only 東寧 can be played: picking the Qing side still opens it as 東寧.
+  await page.locator('.menu-toggle', { hasText: '清' }).first().click();
+  await page.locator('.menu-chapter', { hasText: '東寧（尾聲）' }).click();
+  await expect(page.locator('.cut-title')).toHaveText('東寧・1683 年夏');
+  for (let i = 0; i < 3; i++) await page.locator('.cut-next').click();
+  expect(await page.evaluate(() => (window as any).__game.world.ext.flags.player)).toBe('faction_tungning');
+  await expect(page.locator('.obj-choice')).toHaveCount(3);
+  await page.locator('.obj-choice', { hasText: '死守承天府' }).click();
+  await expect(page.locator('.objectives')).toContainText('守住承天府');
+  await expect(page.locator('.obj-choice')).toHaveCount(0);
+  const landed = await page.evaluate(() => [...(window as any).__game.world.all()].filter((e: any) => e.tag === 'landing').length);
+  expect(landed).toBe(36);
+  expect(errors).toEqual([]);
+});

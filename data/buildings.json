@@ -822,5 +822,90 @@
     "diseaseShelter": false,
     "attack": null,
     "capturable": false
+  },
+  {
+    "id": "truku_village",
+    "faction": "faction_truku",
+    "nameKey": "building.truku_village.name",
+    "hp": 900,
+    "armor": 2,
+    "armorType": "building",
+    "preset": true,
+    "cost": {
+      "grain": 0,
+      "wood": 0,
+      "powder": 0,
+      "deerskin": 0
+    },
+    "buildTime": 0,
+    "popCap": 0,
+    "size": 3,
+    "sight": 9,
+    "dropoff": false,
+    "produces": [],
+    "researches": [],
+    "garrison": 0,
+    "diseaseShelter": false,
+    "attack": null,
+    "capturable": false
+  },
+  {
+    "id": "jp14_post",
+    "faction": "faction_sotokufu",
+    "nameKey": "building.jp14_post.name",
+    "hp": 1200,
+    "armor": 4,
+    "armorType": "building",
+    "preset": true,
+    "cost": {
+      "grain": 0,
+      "wood": 0,
+      "powder": 0,
+      "deerskin": 0
+    },
+    "buildTime": 0,
+    "popCap": 0,
+    "size": 2,
+    "sight": 9,
+    "dropoff": false,
+    "produces": [],
+    "researches": [],
+    "garrison": 0,
+    "diseaseShelter": false,
+    "attack": {
+      "guns": 1,
+      "atk": 30,
+      "atkType": "musket",
+      "range": 8,
+      "atkInterval": 3,
+      "hitChance": 0.6
+    },
+    "capturable": false
+  },
+  {
+    "id": "jp14_camp",
+    "faction": "faction_sotokufu",
+    "nameKey": "building.jp14_camp.name",
+    "hp": 2000,
+    "armor": 4,
+    "armorType": "building",
+    "preset": true,
+    "cost": {
+      "grain": 0,
+      "wood": 0,
+      "powder": 0,
+      "deerskin": 0
+    },
+    "buildTime": 0,
+    "popCap": 0,
+    "size": 3,
+    "sight": 9,
+    "dropoff": false,
+    "produces": [],
+    "researches": [],
+    "garrison": 0,
+    "diseaseShelter": false,
+    "attack": null,
+    "capturable": false
   }
 ]

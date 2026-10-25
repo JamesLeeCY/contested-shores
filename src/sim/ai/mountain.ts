@@ -3,9 +3,11 @@
 //   Expedition: push:<region>  flank:<region>/<n>  hold_region:<region>  column:<tag>/<region>
 //   Both:       evacuate:<tag>/<region>
 //   1895:       escort:<cart tag>/<troop tag>  raid:<region>/<n>/<target type>  hold_line:<region>/<n>
+//   Any:        storm:<building type>  defend:<building type>/<r>  wait_flag:<flag>
 //   Defenders:  ambush:<region>/<n>/<facing region>  skirmish:<region>/<n>/<facing region>  harass:<region>/<n>  guard:<region>/<n>  fallback:<region>/<enemy region>/<pop>
 // Units belong to at most one named group (kept in ai.mem); everyone else is the main body.
 import { T, TERRAIN_IDS } from '../map';
+import { isVisibleTo } from '../systems/fog';
 import { isMoving } from '../systems/movement';
 import type { Entity } from '../types';
 import { army, inRegion, isHero, issue, passablePoint, regionCenter as rawCenter, visibleEnemies, type AiCtx } from './common';
@@ -390,7 +392,46 @@ const hold_line: Handler = (ctx, arg) => {
   return 'persist';
 };
 
+/** The main body storms a building (a fort or a walled city): idle soldiers and guns attack it. */
+const storm: Handler = (ctx, type) => {
+  const w = ctx.world;
+  const target = w.buildings().find((b) => b.type === type && b.owner !== ctx.owner && w.isPlayable(b.owner));
+  if (!target) return 'done';
+  const taken = grouped(ctx);
+  const idle = army(w, ctx.owner).filter((u) => !taken.has(u.id) && !isHero(w, u) && u.order?.type !== 'attack' && !isMoving(u) && u.attackTarget === undefined);
+  if (!idle.length) return 'persist';
+  // Out of sight it can't be targeted yet: march on it (fighting on the way) until it is.
+  if (isVisibleTo(w, ctx.owner, target)) issue(ctx, { type: 'attack', ids: ids(idle), target: target.id });
+  else issue(ctx, { type: 'attack_move', ids: ids(idle), x: target.x, y: target.y });
+  return 'persist';
+};
+
+/** Defenders of a building: soldiers near it close with the nearest visible enemy within `r` tiles of it. */
+const defend: Handler = (ctx, arg) => {
+  const w = ctx.world;
+  const [type, rArg] = arg.split('/');
+  const b = w.buildings().find((x) => x.type === type && x.owner === ctx.owner);
+  if (!b) return 'done';
+  const r = Number(rArg ?? 12);
+  // Shooters man the walls first (out of reach of muskets, a tile more range).
+  const room = (w.data.buildings.get(b.type)!.garrison ?? 0) - (b.garrisoned?.length ?? 0);
+  const going = army(w, ctx.owner).filter((u) => u.order?.type === 'garrison').length;
+  const shooters = army(w, ctx.owner)
+    .filter((u) => !isHero(w, u) && u.order?.type !== 'garrison' && w.data.units.get(u.type)!.atkType === 'musket' && Math.hypot(u.x - b.x, u.y - b.y) <= r)
+    .sort((p, q) => dist(p, [b.x, b.y]) - dist(q, [b.x, b.y]) || p.id - q.id);
+  if (room - going > 0 && shooters.length) issue(ctx, { type: 'garrison', ids: ids(shooters.slice(0, room - going)), target: b.id });
+  const foes = visibleEnemies(w, ctx.owner, (e) => e.kind === 'unit' && Math.hypot(e.x - b.x, e.y - b.y) <= r);
+  if (!foes.length) return 'persist';
+  // Idle men only shoot what walks into range; send every one not already on an attack order.
+  const free = army(w, ctx.owner).filter((u) => !isHero(w, u) && u.order?.type !== 'attack' && u.order?.type !== 'garrison' && Math.hypot(u.x - b.x, u.y - b.y) <= r + 4);
+  for (const u of free) {
+    const t = foes.reduce((p, q) => (dist(p, [u.x, u.y]) <= dist(q, [u.x, u.y]) ? p : q));
+    issue(ctx, { type: 'attack', ids: [u.id], target: t.id });
+  }
+  return 'persist';
+};
+
 /** Holds the plan until a scenario flag is set. */
 const wait_flag: Handler = (ctx, flag) => (ctx.world.ext.flags[flag] ? 'done' : 'running');
 
-export const MOUNTAIN_STEPS: Record<string, Handler> = { push, flank, hold_region, column, evacuate, ambush, skirmish, harass, guard, fallback, escort, raid, hold_line, wait_flag };
+export const MOUNTAIN_STEPS: Record<string, Handler> = { push, flank, hold_region, column, evacuate, ambush, skirmish, harass, guard, fallback, escort, raid, hold_line, wait_flag, storm, defend };

@@ -397,5 +397,104 @@
       "skirmish:amb_south/8/fangliao",
       "skirmish:amb_east/8/fangliao"
     ]
+  },
+  {
+    "id": "penghu3_qing",
+    "faction": "faction_qing",
+    "chapters": [
+      3
+    ],
+    "steps": [
+      "harbor:blockade+shi_lang/main_channel",
+      "harbor:luermen_watch/luermen"
+    ]
+  },
+  {
+    "id": "penghu3_landing",
+    "faction": "faction_qing",
+    "chapters": [
+      3
+    ],
+    "steps": [
+      "harbor:blockade+shi_lang/main_channel",
+      "push:saccam",
+      "storm:provintia_fort"
+    ]
+  },
+  {
+    "id": "penghu3_wait",
+    "faction": "faction_tungning",
+    "chapters": [
+      3
+    ],
+    "steps": []
+  },
+  {
+    "id": "penghu3_luzon",
+    "faction": "faction_tungning",
+    "chapters": [
+      3
+    ],
+    "steps": [
+      "wait_tide_high",
+      "run_to:fleet+liu_guoxuan/8/22",
+      "run_to:fleet+liu_guoxuan/5/110"
+    ]
+  },
+  {
+    "id": "penghu3_resist",
+    "faction": "faction_tungning",
+    "chapters": [
+      3
+    ],
+    "steps": [
+      "defend:provintia_fort/18"
+    ]
+  },
+  {
+    "id": "yiwei5_sotokufu",
+    "faction": "faction_sotokufu",
+    "chapters": [
+      5
+    ],
+    "steps": [
+      "column:west/kbayang",
+      "column:sakuma/kbayang",
+      "column:east/sakahen",
+      "column:east2/kalapau",
+      "wait_flag:occ_kbayang",
+      "drop:column/west",
+      "column:west/kalapau",
+      "wait_flag:occ_sakahen",
+      "drop:column/east",
+      "column:east/kalapau"
+    ]
+  },
+  {
+    "id": "yiwei5_truku",
+    "faction": "faction_truku",
+    "chapters": [
+      5
+    ],
+    "steps": [
+      "skirmish:kbayang_t/12/gorge",
+      "skirmish:sakahen_t/12/gorge",
+      "skirmish:kalapau_t/12/gorge",
+      "harass:kbayang/3",
+      "harass:sakahen/3",
+      "harass:kalapau/3"
+    ]
+  },
+  {
+    "id": "penghu3_qing_luzon",
+    "faction": "faction_qing",
+    "chapters": [
+      3
+    ],
+    "steps": [
+      "harbor:blockade+shi_lang/main_channel",
+      "harbor:luermen_watch/luermen",
+      "harbor:south_patrol/south_patrol"
+    ]
   }
 ]

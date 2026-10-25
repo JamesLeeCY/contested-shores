@@ -3,7 +3,7 @@ import { z } from 'zod';
 export const RESOURCES = ['grain', 'wood', 'powder', 'deerskin'] as const;
 export const ATK_TYPES = ['melee', 'arrow', 'musket', 'cannon', 'fire'] as const;
 export const ARMOR_TYPES = ['none', 'scale', 'cuirass', 'building', 'ship'] as const;
-export const FACTIONS = ['faction_zheng', 'faction_voc', 'faction_neutral', 'faction_settlers', 'faction_village', 'faction_paiwan', 'faction_japan', 'faction_qing', 'faction_tungning', 'faction_japan_1895', 'faction_formosa'] as const;
+export const FACTIONS = ['faction_zheng', 'faction_voc', 'faction_neutral', 'faction_settlers', 'faction_village', 'faction_paiwan', 'faction_japan', 'faction_qing', 'faction_tungning', 'faction_japan_1895', 'faction_formosa', 'faction_truku', 'faction_sotokufu'] as const;
 
 // Every trait used by data must have a handler in src/sim/traits/ (spec §5.1).
 export const KNOWN_TRAITS = [

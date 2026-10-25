@@ -51,3 +51,25 @@ test('1895: every chapter opens without stalling; 八卦山 opens at night', asy
     if (scenario === 'yiwei3') expect(r.sight).toBeLessThan(1);
   }
 });
+
+test('1895 chapter 5: 太魯閣 opens from the menu as the Truku when the defenders were chosen', async ({ page }) => {
+  const errors: string[] = [];
+  page.on('pageerror', (e) => errors.push(e.message));
+  await page.goto('./');
+  await page.locator('.menu-tab', { hasText: '乙未戰爭' }).click();
+  await page.locator('.menu-toggle', { hasText: '臺灣民主國' }).click();
+  await page.locator('.menu-chapter', { hasText: '太魯閣' }).click();
+  await expect(page.locator('.cut-title')).toHaveText('太魯閣・1914');
+  for (let i = 0; i < 4; i++) await page.locator('.cut-next').click();
+  await expect(page.locator('.objectives')).toContainText('守住部落');
+  const r = await page.evaluate(() => {
+    const g = (window as any).__game;
+    g.stepper.paused = true;
+    const t = performance.now();
+    for (let i = 0; i < 100; i++) (window as any).__step(g.world);
+    return { ms: performance.now() - t, player: g.world.ext.flags.player };
+  });
+  expect(r.player).toBe('faction_truku');
+  expect(r.ms).toBeLessThan(1500);
+  expect(errors).toEqual([]);
+});

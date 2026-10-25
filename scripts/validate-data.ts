@@ -33,7 +33,7 @@ const ctx = {
 };
 for (const f of readdirSync(join(root, 'data/scenarios'))) {
   const sc = read(`data/scenarios/${f}`);
-  errors.push(...validateScenario(f, sc, { ...ctx, regions: regionsOf(sc.map ?? 'taijiang') }));
+  errors.push(...validateScenario(f, sc, { ...ctx, regions: new Set([...regionsOf(sc.map ?? 'taijiang'), ...(sc.regions ?? []).map((r: { id: string }) => r.id)]) }));
 }
 errors.push(...validateCutscenes(cutscenes, i18n));
 

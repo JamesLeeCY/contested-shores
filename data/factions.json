@@ -152,6 +152,42 @@
         "powder": 0,
         "deerskin": 0
       }
+    },
+    {
+      "id": "faction_truku",
+      "nameKey": "faction.faction_truku.name",
+      "basePopCap": 200,
+      "colors": {
+        "primary": "#9c2b2b",
+        "secondary": "#f0e6d2"
+      },
+      "heroes": [
+        "haruq_nawi"
+      ],
+      "startResources": {
+        "grain": 0,
+        "wood": 0,
+        "powder": 0,
+        "deerskin": 0
+      }
+    },
+    {
+      "id": "faction_sotokufu",
+      "nameKey": "faction.faction_sotokufu.name",
+      "basePopCap": 200,
+      "colors": {
+        "primary": "#3b4a3f",
+        "secondary": "#e8e4d8"
+      },
+      "heroes": [
+        "sakuma"
+      ],
+      "startResources": {
+        "grain": 0,
+        "wood": 0,
+        "powder": 0,
+        "deerskin": 0
+      }
     }
   ],
   "villages": [

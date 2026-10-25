@@ -27,6 +27,12 @@ const results = [
     ['budai', 'tainan', '布袋嘴可到臺南'],
     ['fangliao', 'tainan', '枋寮可北上臺南'],
   ]),
+  ...checkRoutes(mapFromTiled('taroko', read('data/maps/taroko.json')), rules, [
+    ['west_base', 'kbayang', '合歡山可下到古白楊'],
+    ['east_base', 'sakahen', '新城可沿立霧溪上到沙卡亨'],
+    ['gorge', 'kalapau', '峽谷可上到卡拉寶'],
+    ['kalapau', 'refuge_t', '各社族人能退入北方深山'],
+  ]),
 ];
 
 let failed = 0;

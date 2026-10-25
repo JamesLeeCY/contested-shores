@@ -833,6 +833,171 @@ describe('1895 乙未戰爭', () => {
   });
 });
 
+describe('1683 東寧 (epilogue)', () => {
+  const Q = 'faction_qing';
+  const N = 'faction_tungning';
+  const court = (seed = 3) => {
+    const sc = scenarioById('penghu3');
+    const w = new WorldClass(DATA, loadMap(sc.map!), { seed, factions: sc.factions });
+    applyScenario(w, sc);
+    w.ext.flags.player = '';
+    at(w, 1);
+    return w;
+  };
+  const choose = (w: World, id: string) => {
+    w.enqueue({ type: 'choice', owner: N, id });
+    run(w, 5);
+  };
+  const fleet = (w: World) => [...w.all()].filter((e) => e.owner === N && e.kind === 'unit' && e.moveClass !== 'foot');
+
+  it('surrender, or no decision in 3 minutes: the historical end', () => {
+    const a = court();
+    choose(a, 'surrender');
+    collect(a);
+    expect(outcomeOf(a, N)).toBe('historical');
+    expect(outcomeOf(a, Q)).toBe('victory');
+    const b = court();
+    at(b, 181);
+    collect(b);
+    expect(b.ext.flags[`outcomeReason:${N}`]).toBe('penghu3.end.court');
+  });
+
+  it('南下呂宋: the fleet starts battered; six ships reach the southern sea, or the fleet is caught', () => {
+    const a = court();
+    choose(a, 'luzon');
+    expect(tagged(a, 'south_patrol').length).toBe(8);
+    expect(fleet(a).filter((s) => s.type !== 'liu_guoxuan').every((s) => s.hp < s.maxHp * 0.5)).toBe(true);
+    const r = a.map.regions.find((x) => x.id === 'south_sea')!;
+    for (const [i, s] of fleet(a).slice(0, 6).entries()) {
+      s.x = s.px = r.x + 2 + (i % 3) * 2;
+      s.y = s.py = r.y + 4 + Math.floor(i / 3) * 2;
+      s.order = { type: 'idle' };
+      s.path = null;
+    }
+    run(a, 10);
+    collect(a);
+    expect(outcomeOf(a, N)).toBe('victory');
+    expect(outcomeOf(a, Q)).toBe('historical');
+    const b = court();
+    choose(b, 'luzon');
+    b.rebuildSpatial();
+    for (const s of fleet(b).filter((x) => x.type !== 'liu_guoxuan').slice(0, 7)) killEntity(b, s);
+    run(b, 10);
+    collect(b);
+    expect(b.ext.flags[`outcomeReason:${N}`]).toBe('penghu3.end.caught');
+    expect(outcomeOf(b, N)).toBe('defeat');
+  });
+
+  it('死守承天府: the Qing land, the garrisons desert; holding 8 minutes wins, the fort battered loses', () => {
+    const a = court();
+    choose(a, 'resist');
+    expect(tagged(a, 'landing').length).toBe(36);
+    at(a, 152);
+    expect(tagged(a, 'anping')).toHaveLength(0);
+    at(a, 302);
+    expect(tagged(a, 'chengtian_b')).toHaveLength(0);
+    at(a, 482);
+    collect(a);
+    expect(a.ext.flags[`outcomeReason:${N}`]).toBe('penghu3.end.held');
+    expect(outcomeOf(a, Q)).toBe('defeat');
+    const b = court();
+    choose(b, 'resist');
+    const fort = b.buildings().find((x) => x.type === 'provintia_fort')!;
+    fort.hp = fort.maxHp * 0.3;
+    run(b, 10);
+    collect(b);
+    expect(b.ext.flags[`outcomeReason:${N}`]).toBe('penghu3.end.fallen');
+  });
+});
+
+describe('1914 太魯閣', () => {
+  const T = 'faction_truku';
+  const S = 'faction_sotokufu';
+  const gorge = (seed = 4) => {
+    const sc = scenarioById('yiwei5');
+    const w = new WorldClass(DATA, loadMap(sc.map!), { seed, factions: sc.factions });
+    applyScenario(w, sc);
+    w.ext.flags.player = '';
+    at(w, 1);
+    return w;
+  };
+  /** Moves every Truku out of the villages (to the northern refuge) and stands five invulnerable Japanese soldiers in each. */
+  const occupyAll = (w: World) => {
+    w.rebuildSpatial();
+    const refuge = w.map.regions.find((x) => x.id === 'refuge_t')!;
+    for (const id of ['kbayang', 'kalapau', 'sakahen']) {
+      const r = w.map.regions.find((x) => x.id === id)!;
+      for (const e of [...w.all()])
+        if (e.owner === T && e.kind === 'unit' && e.x >= r.x - 1 && e.y >= r.y - 1 && e.x <= r.x + r.w + 1 && e.y <= r.y + r.h + 1) {
+          e.x = e.px = refuge.x + 4 + (e.id % 20);
+          e.y = e.py = refuge.y + 3 + (e.id % 5);
+          e.order = { type: 'idle' };
+          e.path = null;
+        }
+      spawnIn(w, S, 'jp14_infantry', 5, r.x + 2, r.y + 2);
+    }
+    for (const e of w.all())
+      if (e.owner === S && e.type === 'jp14_infantry') {
+        e.hp = e.maxHp = 1e9;
+        e.morale = 100;
+        // They hold the villages without thinning out the fighters on the terraces.
+        e.holdFire = true;
+      }
+  };
+  const all = (w: World, owner: string) => [...w.all()].filter((u) => u.owner === owner && u.kind === 'unit');
+
+  it('佐久間 hurt at 5:00; the three villages held 45 s each → Japan wins, the Truku get the historical result', () => {
+    const w = gorge();
+    at(w, 301);
+    expect(tagged(w, 'sakuma')).toHaveLength(0);
+    killTag(w, 'haruq_nawi');
+    occupyAll(w);
+    run(w, 47 * 20);
+    collect(w);
+    expect(w.ext.flags[`outcomeReason:${T}`]).toBe('yiwei5.end.history');
+    expect(outcomeOf(w, T)).toBe('historical');
+    expect(outcomeOf(w, S)).toBe('victory');
+  });
+
+  it('every fighter lost as well: worse than history', () => {
+    const w = gorge();
+    w.rebuildSpatial();
+    for (const e of all(w, T).slice(1)) killEntity(w, e);
+    occupyAll(w);
+    run(w, 47 * 20);
+    collect(w);
+    expect(w.ext.flags[`outcomeReason:${T}`]).toBe('yiwei5.end.rout');
+    expect(outcomeOf(w, T)).toBe('defeat');
+  });
+
+  it('a Truku fighter in a village stops its clock', () => {
+    const w = gorge();
+    occupyAll(w);
+    const r = w.map.regions.find((x) => x.id === 'kalapau')!;
+    const h = w.spawnUnit('truku_hunter', T, r.x + 4, r.y + 4);
+    h.hp = h.maxHp = 1e9;
+    run(w, 47 * 20);
+    expect(w.ext.flags.occ_kbayang).toBeTruthy();
+    expect(w.ext.flags.occ_kalapau).toBeFalsy();
+    expect(outcomeOf(w, T)).toBeUndefined();
+  });
+
+  it('the columns worn down, or 15 minutes held: the Truku win', () => {
+    const a = gorge();
+    at(a, 61);
+    a.rebuildSpatial();
+    for (const e of all(a, S).slice(12)) killEntity(a, e);
+    run(a, 10);
+    collect(a);
+    expect(a.ext.flags[`outcomeReason:${T}`]).toBe('yiwei5.end.repulsed');
+    expect(outcomeOf(a, S)).toBe('defeat');
+    const b = gorge();
+    at(b, 901);
+    collect(b);
+    expect(b.ext.flags[`outcomeReason:${T}`]).toBe('yiwei5.end.held');
+  });
+});
+
 afterAll(() => {
   // Every trigger of every chapter, and every global rule, fired somewhere above.
   const all: string[] = [];

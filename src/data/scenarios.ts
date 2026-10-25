@@ -6,13 +6,15 @@ import mudan1 from '../../data/scenarios/mudan1.json';
 import mudan2 from '../../data/scenarios/mudan2.json';
 import penghu1 from '../../data/scenarios/penghu1.json';
 import penghu2 from '../../data/scenarios/penghu2.json';
+import penghu3 from '../../data/scenarios/penghu3.json';
 import yiwei1 from '../../data/scenarios/yiwei1.json';
 import yiwei2 from '../../data/scenarios/yiwei2.json';
 import yiwei3 from '../../data/scenarios/yiwei3.json';
 import yiwei4 from '../../data/scenarios/yiwei4.json';
+import yiwei5 from '../../data/scenarios/yiwei5.json';
 import type { Scenario } from '../sim/scenario/types';
 
-export const SCENARIOS: Scenario[] = [ch1, ch2, ch3, ch4, penghu1, penghu2, mudan1, mudan2, yiwei1, yiwei2, yiwei3, yiwei4] as unknown as Scenario[];
+export const SCENARIOS: Scenario[] = [ch1, ch2, ch3, ch4, penghu1, penghu2, penghu3, mudan1, mudan2, yiwei1, yiwei2, yiwei3, yiwei4, yiwei5] as unknown as Scenario[];
 
 /** Campaigns in menu order; each lists its playable sides and scenarios. */
 export const CAMPAIGNS = [

@@ -8,6 +8,7 @@
 //   sortie_wind:<tag>/<region>/<home>/<bearing>      sail out while the wind blows from about <bearing>, else go home
 //   flagship:<unitTag>/<region>[/<flag>]             a badly hit flagship (or once <flag> is set) breaks off to a region
 //   drop:<verb>/<tag>                                stop a running background step (e.g. drop:sail/center)
+//   run_to:<tag>/<x>/<y>                             make for a point without stopping to fight
 import { distToEntity } from '../geometry';
 import { isVisibleTo } from '../systems/fog';
 import { isMoving } from '../systems/movement';
@@ -101,7 +102,8 @@ const harbor: Handler = (ctx, arg) => {
       continue;
     }
     if (foes.length) {
-      if (s.attackTarget === undefined) {
+      // Ships in the harbour come before any fort ashore.
+      if (s.attackTarget === undefined || w.get(s.attackTarget)?.kind === 'building') {
         const t = foes.reduce((a, b) => (Math.hypot(a.x - s.x, a.y - s.y) <= Math.hypot(b.x - s.x, b.y - s.y) ? a : b));
         issue(ctx, { type: 'attack', ids: [s.id], target: t.id });
       }
@@ -145,6 +147,18 @@ const flagship: Handler = (ctx, arg) => {
   return 'persist';
 };
 
+/** Run for it: ships make for a map point without stopping to fight (blockade runners). */
+const run_to: Handler = (ctx, arg) => {
+  const [tag, xs, ys] = arg.split('/');
+  const x = Number(xs);
+  const y = Number(ys);
+  const squad = squadron(ctx, tag);
+  const idle = squad.filter((s) => !isMoving(s) && Math.hypot(s.x - x, s.y - y) > 3);
+  if (idle.length) issue(ctx, { type: 'move', ids: ids(idle), x, y });
+  // On to the next waypoint once half the squadron is there.
+  return squad.filter((s) => Math.hypot(s.x - x, s.y - y) <= 5).length * 2 >= squad.length ? 'done' : 'running';
+};
+
 const drop: Handler = (ctx, arg) => {
   const [verb, tag] = arg.split('/');
   const head = `${verb}:${tag}`;
@@ -153,4 +167,4 @@ const drop: Handler = (ctx, arg) => {
   return 'done';
 };
 
-export const NAVAL_STEPS: Record<string, Handler> = { wait, sail, encircle, fire_attack, harbor, sortie_wind, flagship, drop };
+export const NAVAL_STEPS: Record<string, Handler> = { wait, sail, encircle, fire_attack, harbor, sortie_wind, flagship, drop, run_to };

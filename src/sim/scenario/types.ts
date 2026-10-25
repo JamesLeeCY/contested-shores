@@ -9,6 +9,8 @@ export interface UnitSpec {
   at?: [number, number];
   tag?: string;
   spacing?: number;
+  /** Starting health as a fraction of full (a fleet still battered from the last battle). */
+  hp?: number;
 }
 
 export interface BuildingSpec {
@@ -63,6 +65,12 @@ export interface Scenario {
   wind?: { from: number; strength: number; shifts?: { atSeconds: number; from: number; strength?: number }[] };
   /** Supply line: `owner`'s soldiers farther than `radius` from a source unit/building lose morale. */
   supply?: { owner: Owner; radius: number; drainPerSecond: number; sources: string[] };
+  /** Campaign side → this scenario's faction (e.g. the 1895 defenders play 太魯閣族 in 1914). */
+  sideOf?: Record<string, Owner>;
+  /** Extra regions for this scenario only (e.g. an escape zone), added to the map's own. */
+  regions?: { id: string; x: number; y: number; w: number; h: number }[];
+  /** Only these factions may be played (the 東寧 epilogue is the court's decision). */
+  playable?: Owner[];
   /** Night until dawn: sight multiplied by `sightMul`. */
   night?: { untilSeconds: number; sightMul: number };
   chapter: number;

@@ -131,5 +131,24 @@
       "cut.yiwei4_intro.2",
       "cut.yiwei4_intro.3"
     ]
+  },
+  "penghu3_intro": {
+    "titleKey": "cut.penghu3_intro.title",
+    "art": "fort",
+    "lines": [
+      "cut.penghu3_intro.1",
+      "cut.penghu3_intro.2",
+      "cut.penghu3_intro.3"
+    ]
+  },
+  "yiwei5_intro": {
+    "titleKey": "cut.yiwei5_intro.title",
+    "art": "mountain",
+    "lines": [
+      "cut.yiwei5_intro.1",
+      "cut.yiwei5_intro.2",
+      "cut.yiwei5_intro.3",
+      "cut.yiwei5_intro.4"
+    ]
   }
 }

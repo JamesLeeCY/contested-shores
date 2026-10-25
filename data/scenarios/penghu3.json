@@ -1,0 +1,749 @@
+{
+  "id": "penghu3",
+  "campaign": "penghu",
+  "map": "taijiang",
+  "factions": [
+    "faction_tungning",
+    "faction_qing"
+  ],
+  "playable": [
+    "faction_tungning"
+  ],
+  "historyKey": "history.penghu3",
+  "chapter": 3,
+  "nameKey": "scenario.penghu3.name",
+  "dateKey": "scenario.penghu3.date",
+  "timerMinutes": 15,
+  "stage": {
+    "faction_tungning": 1,
+    "faction_qing": 1
+  },
+  "resources": {
+    "faction_tungning": {
+      "powder": 3000
+    },
+    "faction_qing": {
+      "powder": 3000
+    }
+  },
+  "castleMorale": 0,
+  "ownership": [
+    {
+      "type": "zeelandia_castle",
+      "owner": "faction_tungning"
+    },
+    {
+      "type": "bastion",
+      "owner": "faction_tungning"
+    },
+    {
+      "type": "utrecht_redoubt",
+      "owner": "faction_tungning"
+    },
+    {
+      "type": "provintia_fort",
+      "owner": "faction_tungning"
+    },
+    {
+      "type": "dock_voc",
+      "owner": "faction_tungning"
+    },
+    {
+      "type": "lower_town_wall",
+      "owner": "faction_tungning"
+    }
+  ],
+  "units": [
+    {
+      "type": "tn_soldier",
+      "owner": "faction_tungning",
+      "count": 18,
+      "at": [
+        120,
+        45
+      ],
+      "tag": "chengtian_a"
+    },
+    {
+      "type": "tn_soldier",
+      "owner": "faction_tungning",
+      "count": 6,
+      "at": [
+        121,
+        48
+      ],
+      "tag": "chengtian_b"
+    },
+    {
+      "type": "tn_soldier",
+      "owner": "faction_tungning",
+      "count": 10,
+      "at": [
+        48,
+        62
+      ],
+      "tag": "anping"
+    },
+    {
+      "type": "liu_guoxuan",
+      "owner": "faction_tungning",
+      "count": 1,
+      "at": [
+        90,
+        46
+      ]
+    },
+    {
+      "type": "tn_paochuan",
+      "owner": "faction_tungning",
+      "count": 2,
+      "at": [
+        94,
+        46
+      ],
+      "tag": "fleet",
+      "hp": 0.42
+    },
+    {
+      "type": "tn_warjunk",
+      "owner": "faction_tungning",
+      "count": 5,
+      "at": [
+        80,
+        38
+      ],
+      "tag": "fleet",
+      "hp": 0.42
+    },
+    {
+      "type": "tn_shuangfan",
+      "owner": "faction_tungning",
+      "count": 4,
+      "at": [
+        86,
+        34
+      ],
+      "tag": "fleet",
+      "hp": 0.42
+    },
+    {
+      "type": "shi_lang",
+      "owner": "faction_qing",
+      "count": 1,
+      "at": [
+        12,
+        46
+      ]
+    },
+    {
+      "type": "qing_niaochuan",
+      "owner": "faction_qing",
+      "count": 5,
+      "at": [
+        16,
+        44
+      ],
+      "tag": "blockade"
+    },
+    {
+      "type": "qing_ganzeng",
+      "owner": "faction_qing",
+      "count": 6,
+      "at": [
+        16,
+        48
+      ],
+      "tag": "blockade"
+    },
+    {
+      "type": "qing_ganzeng",
+      "owner": "faction_qing",
+      "count": 6,
+      "at": [
+        16,
+        24
+      ],
+      "tag": "luermen_watch"
+    },
+    {
+      "type": "qing_shuangfan",
+      "owner": "faction_qing",
+      "count": 4,
+      "at": [
+        12,
+        20
+      ],
+      "tag": "luermen_watch"
+    }
+  ],
+  "ai": {
+    "faction_qing": {
+      "plans": [
+        "penghu3_qing"
+      ],
+      "composition": {},
+      "targetArmy": 0,
+      "home": [
+        10,
+        46
+      ],
+      "scripted": true
+    },
+    "faction_tungning": {
+      "plans": [
+        "penghu3_wait"
+      ],
+      "composition": {},
+      "targetArmy": 0,
+      "home": [
+        120,
+        46
+      ],
+      "scripted": true
+    }
+  },
+  "historicalLoser": "faction_tungning",
+  "objectives": {
+    "faction_tungning": [
+      "penghu3.obj.decide"
+    ],
+    "faction_qing": [
+      "penghu3.obj.take"
+    ]
+  },
+  "status": [
+    {
+      "textKey": "penghu3.status",
+      "counts": [
+        [
+          "south_sea",
+          "faction_tungning",
+          "units"
+        ],
+        [
+          "saccam",
+          "faction_qing"
+        ]
+      ]
+    }
+  ],
+  "choices": [
+    {
+      "id": "surrender",
+      "faction": "faction_tungning",
+      "labelKey": "penghu3.choice.surrender",
+      "while": {
+        "type": "not",
+        "condition": {
+          "type": "flag",
+          "name": "decided"
+        }
+      },
+      "do": [
+        {
+          "type": "set_flag",
+          "name": "decided",
+          "value": true
+        },
+        {
+          "type": "complete_objective",
+          "id": "decide",
+          "faction": "faction_tungning"
+        },
+        {
+          "type": "show_message",
+          "textKey": "penghu3.msg.surrender",
+          "kind": "info"
+        },
+        {
+          "type": "win_mission",
+          "faction": "faction_tungning",
+          "rating": "historical",
+          "reasonKey": "penghu3.end.history",
+          "keepOpen": true
+        },
+        {
+          "type": "win_mission",
+          "faction": "faction_qing",
+          "rating": "victory",
+          "reasonKey": "penghu3.end.history"
+        }
+      ]
+    },
+    {
+      "id": "luzon",
+      "faction": "faction_tungning",
+      "labelKey": "penghu3.choice.luzon",
+      "while": {
+        "type": "not",
+        "condition": {
+          "type": "flag",
+          "name": "decided"
+        }
+      },
+      "do": [
+        {
+          "type": "set_flag",
+          "name": "decided",
+          "value": true
+        },
+        {
+          "type": "set_flag",
+          "name": "luzon",
+          "value": true
+        },
+        {
+          "type": "complete_objective",
+          "id": "decide",
+          "faction": "faction_tungning"
+        },
+        {
+          "type": "start_timer",
+          "id": "luzon",
+          "seconds": 300
+        },
+        {
+          "type": "set_objective",
+          "id": "luzon",
+          "faction": "faction_tungning",
+          "textKey": "penghu3.obj.luzon",
+          "primary": true
+        },
+        {
+          "type": "show_message",
+          "textKey": "penghu3.msg.luzon",
+          "kind": "warn"
+        },
+        {
+          "type": "spawn_units",
+          "units": [
+            {
+              "type": "qing_niaochuan",
+              "owner": "faction_qing",
+              "count": 4,
+              "at": [
+                6,
+                84
+              ],
+              "tag": "south_patrol"
+            },
+            {
+              "type": "qing_ganzeng",
+              "owner": "faction_qing",
+              "count": 4,
+              "at": [
+                8,
+                90
+              ],
+              "tag": "south_patrol"
+            }
+          ]
+        },
+        {
+          "type": "set_ai_plan",
+          "faction": "faction_qing",
+          "plans": [
+            "penghu3_qing_luzon"
+          ]
+        },
+        {
+          "type": "set_ai_plan",
+          "faction": "faction_tungning",
+          "plans": [
+            "penghu3_luzon"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "resist",
+      "faction": "faction_tungning",
+      "labelKey": "penghu3.choice.resist",
+      "while": {
+        "type": "not",
+        "condition": {
+          "type": "flag",
+          "name": "decided"
+        }
+      },
+      "do": [
+        {
+          "type": "set_flag",
+          "name": "decided",
+          "value": true
+        },
+        {
+          "type": "set_flag",
+          "name": "resist",
+          "value": true
+        },
+        {
+          "type": "complete_objective",
+          "id": "decide",
+          "faction": "faction_tungning"
+        },
+        {
+          "type": "start_timer",
+          "id": "resist",
+          "seconds": 480
+        },
+        {
+          "type": "start_timer",
+          "id": "desert1",
+          "seconds": 150
+        },
+        {
+          "type": "start_timer",
+          "id": "desert2",
+          "seconds": 300
+        },
+        {
+          "type": "set_objective",
+          "id": "resist",
+          "faction": "faction_tungning",
+          "textKey": "penghu3.obj.resist",
+          "primary": true
+        },
+        {
+          "type": "show_message",
+          "textKey": "penghu3.msg.resist",
+          "kind": "warn"
+        },
+        {
+          "type": "spawn_units",
+          "units": [
+            {
+              "type": "qing_soldier",
+              "owner": "faction_qing",
+              "count": 34,
+              "at": [
+                112,
+                36
+              ],
+              "tag": "landing"
+            },
+            {
+              "type": "light_cannon",
+              "owner": "faction_qing",
+              "count": 2,
+              "at": [
+                110,
+                37
+              ],
+              "tag": "landing"
+            }
+          ]
+        },
+        {
+          "type": "set_ai_plan",
+          "faction": "faction_qing",
+          "plans": [
+            "penghu3_landing"
+          ]
+        },
+        {
+          "type": "set_ai_plan",
+          "faction": "faction_tungning",
+          "plans": [
+            "penghu3_resist"
+          ]
+        }
+      ]
+    }
+  ],
+  "triggers": [
+    {
+      "id": "p3_start",
+      "when": {
+        "type": "time_elapsed",
+        "seconds": 0
+      },
+      "do": [
+        {
+          "type": "show_cutscene",
+          "id": "penghu3_intro"
+        },
+        {
+          "type": "set_objective",
+          "id": "decide",
+          "faction": "faction_tungning",
+          "textKey": "penghu3.obj.decide",
+          "primary": true
+        },
+        {
+          "type": "set_objective",
+          "id": "take",
+          "faction": "faction_qing",
+          "textKey": "penghu3.obj.take",
+          "primary": true
+        }
+      ]
+    },
+    {
+      "id": "p3_court",
+      "when": {
+        "type": "all_of",
+        "conditions": [
+          {
+            "type": "time_elapsed",
+            "seconds": 180
+          },
+          {
+            "type": "not",
+            "condition": {
+              "type": "flag",
+              "name": "decided"
+            }
+          }
+        ]
+      },
+      "do": [
+        {
+          "type": "set_flag",
+          "name": "decided",
+          "value": true
+        },
+        {
+          "type": "complete_objective",
+          "id": "decide",
+          "faction": "faction_tungning"
+        },
+        {
+          "type": "show_message",
+          "textKey": "penghu3.msg.court",
+          "kind": "info"
+        },
+        {
+          "type": "win_mission",
+          "faction": "faction_tungning",
+          "rating": "historical",
+          "reasonKey": "penghu3.end.court",
+          "keepOpen": true
+        },
+        {
+          "type": "win_mission",
+          "faction": "faction_qing",
+          "rating": "victory",
+          "reasonKey": "penghu3.end.court"
+        }
+      ]
+    },
+    {
+      "id": "p3_luzon_escaped",
+      "when": {
+        "type": "all_of",
+        "conditions": [
+          {
+            "type": "flag",
+            "name": "luzon"
+          },
+          {
+            "type": "area_entered",
+            "region": "south_sea",
+            "owner": "faction_tungning",
+            "pop": 6,
+            "countUnits": true
+          }
+        ]
+      },
+      "do": [
+        {
+          "type": "complete_objective",
+          "id": "luzon",
+          "faction": "faction_tungning"
+        },
+        {
+          "type": "win_mission",
+          "faction": "faction_qing",
+          "rating": "historical",
+          "reasonKey": "penghu3.end.luzon",
+          "keepOpen": true
+        },
+        {
+          "type": "win_mission",
+          "faction": "faction_tungning",
+          "rating": "victory",
+          "reasonKey": "penghu3.end.luzon"
+        }
+      ]
+    },
+    {
+      "id": "p3_luzon_caught",
+      "when": {
+        "type": "all_of",
+        "conditions": [
+          {
+            "type": "flag",
+            "name": "luzon"
+          },
+          {
+            "type": "any_of",
+            "conditions": [
+              {
+                "type": "ships_lost",
+                "owner": "faction_tungning",
+                "count": 7
+              },
+              {
+                "type": "timer_expired",
+                "id": "luzon"
+              }
+            ]
+          }
+        ]
+      },
+      "do": [
+        {
+          "type": "complete_objective",
+          "id": "luzon",
+          "faction": "faction_tungning",
+          "failed": true
+        },
+        {
+          "type": "fail_mission",
+          "faction": "faction_tungning",
+          "reasonKey": "penghu3.end.caught"
+        }
+      ]
+    },
+    {
+      "id": "p3_desert1",
+      "when": {
+        "type": "all_of",
+        "conditions": [
+          {
+            "type": "flag",
+            "name": "resist"
+          },
+          {
+            "type": "timer_expired",
+            "id": "desert1"
+          }
+        ]
+      },
+      "do": [
+        {
+          "type": "disband",
+          "unitTag": "anping"
+        },
+        {
+          "type": "show_message",
+          "textKey": "penghu3.msg.desert1",
+          "kind": "warn"
+        }
+      ]
+    },
+    {
+      "id": "p3_desert2",
+      "when": {
+        "type": "all_of",
+        "conditions": [
+          {
+            "type": "flag",
+            "name": "resist"
+          },
+          {
+            "type": "timer_expired",
+            "id": "desert2"
+          }
+        ]
+      },
+      "do": [
+        {
+          "type": "disband",
+          "unitTag": "chengtian_b"
+        },
+        {
+          "type": "show_message",
+          "textKey": "penghu3.msg.desert2",
+          "kind": "warn"
+        }
+      ]
+    },
+    {
+      "id": "p3_fallen",
+      "when": {
+        "type": "all_of",
+        "conditions": [
+          {
+            "type": "flag",
+            "name": "resist"
+          },
+          {
+            "type": "any_of",
+            "conditions": [
+              {
+                "type": "building_hp_below",
+                "building": "provintia_fort",
+                "ratio": 0.35
+              },
+              {
+                "type": "army_pop_below",
+                "owner": "faction_tungning",
+                "pop": 4
+              }
+            ]
+          }
+        ]
+      },
+      "do": [
+        {
+          "type": "complete_objective",
+          "id": "resist",
+          "faction": "faction_tungning",
+          "failed": true
+        },
+        {
+          "type": "fail_mission",
+          "faction": "faction_tungning",
+          "reasonKey": "penghu3.end.fallen"
+        }
+      ]
+    },
+    {
+      "id": "p3_held",
+      "when": {
+        "type": "all_of",
+        "conditions": [
+          {
+            "type": "flag",
+            "name": "resist"
+          },
+          {
+            "type": "timer_expired",
+            "id": "resist"
+          }
+        ]
+      },
+      "do": [
+        {
+          "type": "complete_objective",
+          "id": "resist",
+          "faction": "faction_tungning"
+        },
+        {
+          "type": "win_mission",
+          "faction": "faction_tungning",
+          "rating": "victory",
+          "reasonKey": "penghu3.end.held"
+        }
+      ]
+    }
+  ],
+  "regions": [
+    {
+      "id": "south_sea",
+      "x": 0,
+      "y": 104,
+      "w": 10,
+      "h": 16
+    },
+    {
+      "id": "south_patrol",
+      "x": 0,
+      "y": 78,
+      "w": 14,
+      "h": 16
+    }
+  ]
+}

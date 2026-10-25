@@ -150,7 +150,7 @@ export class GameApp {
     const drawChapters = () => {
       chapters.replaceChildren();
       for (const sc of scenariosOf(cid)) {
-        const r = this.campaign(cid).ratings?.[sc.id]?.[player] as Rating | undefined;
+        const r = this.campaign(cid).ratings?.[sc.id]?.[sc.sideOf?.[player] ?? player] as Rating | undefined;
         const b = el('button', 'menu-chapter', chapters);
         el('div', 'mc-name', b, t(sc.nameKey));
         el('div', 'mc-date', b, t(sc.dateKey));
@@ -275,7 +275,10 @@ export class GameApp {
     this.clear();
     const sc = resolveScenario(o);
     const cid = campaignOf(sc);
-    const player = factionsOf(sc).includes(o.player) ? o.player : factionsOf(sc)[0];
+    // Campaign sides map onto the scenario's factions; some scenarios allow only one side.
+    const mapped = sc.sideOf?.[o.player] ?? o.player;
+    const allowed = sc.playable ?? factionsOf(sc);
+    const player = allowed.includes(mapped) ? mapped : allowed[0];
     const opts: StartOptions = { ...o, scenario: sc.id, chapter: sc.chapter, player };
     const s = (this.session = new Session(this.app, this.ui, {
       data: this.data,

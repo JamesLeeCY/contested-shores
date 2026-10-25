@@ -15,7 +15,11 @@ export function spawnGroup(world: World, spec: UnitSpec, at?: [number, number]):
   const slots = formationSlots(world, cls, p[0], p[1], spec.count);
   // Heroes are tagged with their type so triggers can follow them (e.g. 鄭成功 陣亡).
   const hero = world.data.units.get(spec.type)!.traits.includes('hero');
-  return slots.map(([x, y]) => world.spawnUnit(spec.type, spec.owner, x, y, spec.tag ?? (hero ? spec.type : undefined)));
+  return slots.map(([x, y]) => {
+    const u = world.spawnUnit(spec.type, spec.owner, x, y, spec.tag ?? (hero ? spec.type : undefined));
+    if (spec.hp !== undefined) u.hp = Math.max(1, Math.round(u.maxHp * spec.hp));
+    return u;
+  });
 }
 
 /** Ships in formation with their cargo loaded in order, filling each ship before the next. */
@@ -45,6 +49,8 @@ export function applyScenario(world: World, sc: Scenario, campaign: CampaignStat
     o[keys[keys.length - 1]] = value;
   }
   world.ext.flags.scenario = sc.id;
+  // The map object is shared between worlds: replace the list, never push into it.
+  if (sc.regions?.length) world.map.regions = [...world.map.regions, ...sc.regions];
   for (const [owner, stage] of Object.entries(sc.stage)) {
     const f = world.faction(owner);
     if (f) f.stage = stage;

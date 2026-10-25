@@ -15,9 +15,9 @@ function shade(hex: number, f: number) {
   return (r << 16) | (g << 8) | b;
 }
 
-const PAIWAN = new Set(['paiwan_hunter', 'paiwan_warrior', 'aruqu', 'paiwan_family']);
-const JAPAN = new Set(['japan_infantry', 'japan_volunteer', 'sakuma', 'jp95_guard', 'jp95_infantry', 'jp95_cavalry', 'kitashirakawa', 'nogi']);
-const RIFLES = new Set(['japan_infantry', 'jp95_guard', 'jp95_infantry']);
+const PAIWAN = new Set(['paiwan_hunter', 'paiwan_warrior', 'aruqu', 'paiwan_family', 'truku_hunter', 'truku_warrior', 'haruq_nawi']);
+const JAPAN = new Set(['japan_infantry', 'japan_volunteer', 'sakuma', 'jp95_guard', 'jp95_infantry', 'jp95_cavalry', 'kitashirakawa', 'nogi', 'jp14_police', 'jp14_infantry']);
+const RIFLES = new Set(['japan_infantry', 'jp95_guard', 'jp95_infantry', 'jp14_police', 'jp14_infantry']);
 /** 1895 臺灣 side: 黑旗軍 in black; the others in the faction colour with straw hats. */
 const BLACKFLAG = new Set(['fm_blackflag', 'wu_pengnian', 'liu_yongfu']);
 
@@ -43,10 +43,10 @@ function drawPaiwan(g: Graphics, type: string, c1: number, hero: boolean) {
     g.poly([-1, -27, -3, -36, 0.5, -28]).fill(0xf2efe6).stroke(LINE);
     g.poly([1, -27, 2.5, -35, 2.5, -27.5]).fill(0x2a2a2a);
   }
-  if (type === 'paiwan_hunter') {
+  if (type === 'paiwan_hunter' || type === 'truku_hunter') {
     g.moveTo(4, -9).lineTo(10, -29).stroke({ color: WOOD, width: 2.2 });
     g.moveTo(9.2, -26).lineTo(10.3, -29.5).stroke({ color: IRON, width: 1.4 });
-  } else if (type === 'paiwan_warrior' || type === 'aruqu') {
+  } else if (type === 'paiwan_warrior' || type === 'aruqu' || type === 'truku_warrior' || type === 'haruq_nawi') {
     g.moveTo(5, -11).lineTo(10, -20).stroke({ color: 0xcfd3d6, width: 2.2 });
     g.moveTo(4.2, -10).lineTo(5.6, -12.5).stroke({ color: WOOD, width: 2.6 });
   } else {
@@ -122,6 +122,8 @@ export function drawFigure(g: Graphics, type: string, c1: number, c2: number, he
       g.moveTo(6, -6).lineTo(10, -30).stroke({ color: WOOD, width: 1.8 });
       g.poly([9, -30, 13, -37, 11, -28]).fill(0xcfd3d6).stroke(LINE);
       break;
+    case 'tn_soldier':
+    case 'qing_soldier':
     case 'fm_regular':
     case 'fm_blackflag':
     case 'fm_militia':
