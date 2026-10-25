@@ -1378,5 +1378,18 @@
   "codex.w_numbers.history": "",
   "codex.w_numbers.design": "",
   "codex.w_numbers.dispute": "",
-  "unit.qing_gun.name": ""
+  "unit.qing_gun.name": "",
+  "hint.title": "",
+  "hint.ok": "",
+  "hint.wind": "",
+  "hint.stealth": "",
+  "hint.uphill": "",
+  "hint.occupy": "",
+  "hint.supply": "",
+  "hint.night": "",
+  "hint.disease": "",
+  "hint.rearm": "",
+  "hint.ammo": "",
+  "hint.raid": "",
+  "resource.rounds": ""
 }

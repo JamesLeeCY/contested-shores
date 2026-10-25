@@ -612,5 +612,14 @@
         }
       ]
     }
-  ]
+  ],
+  "hints": [
+    {
+      "textKey": "hint.wind"
+    }
+  ],
+  "hud": {
+    "faction_tungning": [],
+    "faction_qing": []
+  }
 }

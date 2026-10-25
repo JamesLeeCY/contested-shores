@@ -1110,8 +1110,9 @@ describe('1930 霧社事件', () => {
     expect(w.ext.raids?.length).toBe(1);
     const hp0 = open1[0].hp;
     run(w, 5 * 20);
-    expect(open1[0].hp).toBe(hp0 - 20);
-    expect(hid.hp).toBe(hid.maxHp - 20 * 0.35);
+    // 40 per run, spread over the 7 men in the ring (full damage for up to 4); ×0.35 in the forest.
+    expect(open1[0].hp).toBeCloseTo(hp0 - (40 * 4) / 7);
+    expect(hid.hp).toBeCloseTo(hid.maxHp - ((40 * 4) / 7) * 0.35);
     expect(w.ext.raids?.length).toBe(0);
     collect(w);
   });
@@ -1157,6 +1158,39 @@ describe('1930 霧社事件', () => {
     at(b, 901);
     collect(b);
     expect(b.ext.flags[`outcomeReason:${S}`]).toBe('wushe2.end.held');
+  });
+});
+
+describe('difficulty in scripted chapters', () => {
+  const open = (id: string, mul?: Record<string, number>) => {
+    const sc = scenarioById(id);
+    const w = new WorldClass(DATA, loadMap(sc.map!), { seed: 2, factions: sc.factions });
+    for (const [o, m] of Object.entries(mul ?? {})) w.ext.flags[`armyMul:${o}`] = m;
+    applyScenario(w, sc);
+    return w;
+  };
+  const n = (w: World, type: string) => [...w.all()].filter((e) => e.type === type).length;
+
+  it('scales the AI side: fighting men at the start and in reinforcements; heroes and supply carts keep their numbers', () => {
+    const J = 'faction_japan_1895';
+    const base = open('yiwei2');
+    const hard = open('yiwei2', { [J]: 1.25 });
+    const easy = open('yiwei2', { [J]: 0.75 });
+    for (const type of ['jp95_infantry', 'jp95_guard']) {
+      if (!n(base, type)) continue;
+      expect(n(hard, type)).toBeGreaterThan(n(base, type));
+      expect(n(easy, type)).toBeLessThan(n(base, type));
+    }
+    expect(n(hard, 'jp95_cart')).toBe(n(base, 'jp95_cart'));
+    expect(n(hard, 'kitashirakawa')).toBe(n(base, 'kitashirakawa'));
+    // The other side is untouched.
+    expect(n(hard, 'fm_militia')).toBe(n(base, 'fm_militia'));
+    // A reinforcement spawned by a trigger is scaled too.
+    const w = open('wushe1', { faction_sotokufu: 1.25 });
+    w.ext.flags.player = '';
+    at(w, 1);
+    at(w, 361);
+    expect(tagged(w, 'relief').length).toBe(Math.round(13 * 1.25));
   });
 });
 

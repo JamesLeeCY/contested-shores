@@ -466,5 +466,9 @@
   ],
   "rules": {
     "combat.uphillUnitDamageMul": 0.6
+  },
+  "hud": {
+    "faction_formosa": [],
+    "faction_japan_1895": []
   }
 }

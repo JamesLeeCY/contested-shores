@@ -747,5 +747,9 @@
       "w": 14,
       "h": 16
     }
-  ]
+  ],
+  "hud": {
+    "faction_tungning": [],
+    "faction_qing": []
+  }
 }

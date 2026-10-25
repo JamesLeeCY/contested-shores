@@ -64,7 +64,11 @@ export interface Scenario {
   /** Wind: compass bearing it blows from, strength 0..1, and scripted shifts. */
   wind?: { from: number; strength: number; shifts?: { atSeconds: number; from: number; strength?: number }[] };
   /** Supply line: `owner`'s soldiers farther than `radius` from a source unit/building lose morale. */
-  supply?: { owner: Owner; radius: number; drainPerSecond: number; sources: string[] };
+  /**
+   * Supply line: beyond `radius` of a source, morale drains — gently at first, at the full rate `ramp`
+   * tiles further out — but never below `floor` (hunger weakens, it does not rout on its own).
+   */
+  supply?: { owner: Owner; radius: number; drainPerSecond: number; sources: string[]; ramp?: number; floor?: number };
   /** Campaign side → this scenario's faction (e.g. the 1895 defenders play 太魯閣族 in 1914). */
   sideOf?: Record<string, Owner>;
   /** Extra regions for this scenario only (e.g. an escape zone), added to the map's own. */
@@ -84,6 +88,11 @@ export interface Scenario {
   techs?: Record<Owner, string[]>;
   /** Hands map buildings to another side; `tag` renames them (label from `place.<tag>`), e.g. 普羅民遮城 → 承天府. */
   ownership?: { type: string; owner: Owner; tag?: string }[];
+  /** Mechanic hints shown once per browser: at the start, or on the first event of type `on`. */
+  hints?: { textKey: string; on?: string }[];
+  /** Resource bar per side: which resources to show (all when absent, in 1661 and 1874), and relabels. */
+  hud?: Record<Owner, string[]>;
+  hudLabels?: Record<string, string>;
   /** Map buildings (types or tags) gone by this chapter, e.g. the police posts burned in 1930 chapter 1. */
   remove?: string[];
   buildings?: BuildingSpec[];

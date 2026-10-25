@@ -181,9 +181,10 @@ export class EntityRenderer {
     if (FORTS.has(e.type) && (e.built ?? 1) >= 1) crenellate(g, top, shade(c2, 0.9));
     if (e.type === 'battery' || e.type === 'trench') g.poly(top).fill({ color: 0x6b5a3a, alpha: 0.6 });
     v.ring.poly([nx, ny, ex, ey, sx, sy, wx, wy]).stroke({ color: 0x7CFC00, width: 2 });
-    if (w >= 3) {
-      // Named places (牡丹社, 射寮…) show their own name.
-      const name = e.tag && hasKey(`place.${e.tag}`) ? t(`place.${e.tag}`) : t(this.data.buildings.get(e.type)?.nameKey ?? e.type);
+    const named = !!e.tag && hasKey(`place.${e.tag}`);
+    if (w >= 3 || named) {
+      // Named places (牡丹社, 射寮, 馬赫坡駐在所…) show their own name, whatever their size.
+      const name = named ? t(`place.${e.tag}`) : t(this.data.buildings.get(e.type)?.nameKey ?? e.type);
       const label = new Text({ text: name, style: { fontSize: 12, fill: 0xffffff, stroke: { color: 0x000000, width: 3 } } });
       label.anchor.set(0.5);
       label.position.set(0, -H - TILE_H / 2);

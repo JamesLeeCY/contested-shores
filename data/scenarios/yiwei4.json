@@ -498,5 +498,17 @@
         }
       ]
     }
-  ]
+  ],
+  "hints": [
+    {
+      "textKey": "hint.disease"
+    },
+    {
+      "textKey": "hint.occupy"
+    }
+  ],
+  "hud": {
+    "faction_formosa": [],
+    "faction_japan_1895": []
+  }
 }

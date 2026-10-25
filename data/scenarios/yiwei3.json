@@ -498,5 +498,14 @@
         }
       ]
     }
-  ]
+  ],
+  "hints": [
+    {
+      "textKey": "hint.night"
+    }
+  ],
+  "hud": {
+    "faction_formosa": [],
+    "faction_japan_1895": []
+  }
 }

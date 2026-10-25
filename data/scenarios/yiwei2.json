@@ -27,7 +27,7 @@
   "supply": {
     "owner": "faction_japan_1895",
     "radius": 9,
-    "drainPerSecond": 3.4,
+    "drainPerSecond": 3,
     "sources": [
       "jp95_depot",
       "jp95_cart"
@@ -637,7 +637,7 @@
           {
             "type": "army_pop_below",
             "owner": "faction_japan_1895",
-            "pop": 12
+            "pop": 18
           }
         ]
       },
@@ -687,5 +687,17 @@
         }
       ]
     }
-  ]
+  ],
+  "hints": [
+    {
+      "textKey": "hint.supply"
+    },
+    {
+      "textKey": "hint.occupy"
+    }
+  ],
+  "hud": {
+    "faction_formosa": [],
+    "faction_japan_1895": []
+  }
 }

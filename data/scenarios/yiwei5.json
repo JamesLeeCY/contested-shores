@@ -545,5 +545,17 @@
         }
       ]
     }
-  ]
+  ],
+  "hints": [
+    {
+      "textKey": "hint.stealth"
+    },
+    {
+      "textKey": "hint.occupy"
+    }
+  ],
+  "hud": {
+    "faction_truku": [],
+    "faction_sotokufu": []
+  }
 }

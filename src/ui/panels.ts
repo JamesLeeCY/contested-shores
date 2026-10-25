@@ -29,7 +29,17 @@ export class ResourceBar {
   update(world: World, owner: string) {
     const f = world.faction(owner);
     if (!f) return;
-    for (const r of RES) setText(this.cells.get(r)!, String(Math.floor(f.resources[r])));
+    // Only what the chapter uses: everything in 1661 (and outside scenarios), else the scenario's list.
+    const sc = world.scenario;
+    const shown: string[] = sc?.hud?.[owner] ?? (!sc || (sc.campaign ?? 'koxinga') === 'koxinga' ? RES : []);
+    for (const r of RES) {
+      const cell = this.cells.get(r)!.parentElement!;
+      cell.style.display = shown.includes(r) ? '' : 'none';
+      const label = t(sc?.hudLabels?.[r] ?? 'resource.' + r);
+      setText(cell.querySelector('.res-name') as HTMLElement, label);
+      cell.title = label;
+      setText(this.cells.get(r)!, String(Math.floor(f.resources[r])));
+    }
     setText(this.cells.get('pop')!, `${popUsed(world, owner)}/${popCap(world, owner)}`);
     this.root.querySelector('.res-grain')!.classList.toggle('starving', f.starvingUntil > world.tick);
   }

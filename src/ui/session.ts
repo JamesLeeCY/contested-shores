@@ -30,6 +30,7 @@ import { audio } from './audio';
 import type { CampaignState, Scenario } from '../sim/scenario/types';
 import type { Difficulty } from '../sim/state';
 import { applyScenario } from '../sim/scenario/setup';
+import { installHints } from './hints';
 import { enableAi } from '../sim/ai';
 import { timerSecondsLeft } from '../sim/scenario/runtime';
 
@@ -119,9 +120,13 @@ export class Session implements ControlHost {
     if (!opts.restored) opts.setup?.(this.world);
     if (opts.scenario && !opts.restored) {
       const w = this.world;
+      const diff = opts.difficulty ?? 'normal';
+      // Scripted chapters have no economy for the AI to scale: its armies are scaled instead.
+      if (!opts.spectate)
+        for (const [owner, spec] of Object.entries(opts.scenario.ai ?? {}))
+          if (owner !== this.player && spec.scripted) w.ext.flags[`armyMul:${owner}`] = w.rules.difficulty[diff].scriptedArmyMul;
       applyScenario(w, opts.scenario, opts.campaign);
       w.ext.flags.player = opts.spectate ? '' : this.player;
-      const diff = opts.difficulty ?? 'normal';
       (w.rules.disease.playerMul as Record<string, number>)[this.player] = w.rules.difficulty[diff].playerDiseaseMul;
       for (const [owner, spec] of Object.entries(opts.scenario.ai ?? {}))
         if (opts.spectate || owner !== this.player) enableAi(w, owner, spec, diff);
@@ -177,6 +182,7 @@ export class Session implements ControlHost {
       if (m) s.messages.push(m[0], m[1]);
     });
     installCampaignUi(this);
+    installHints(this, ui);
     this.eventHooks.push((s, ev) => s.soundFor(ev));
     this.fpsEl = document.createElement('div');
     this.fpsEl.className = 'fps';

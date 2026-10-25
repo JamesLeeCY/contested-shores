@@ -670,5 +670,21 @@
         }
       ]
     }
-  ]
+  ],
+  "hints": [
+    {
+      "textKey": "hint.stealth"
+    },
+    {
+      "textKey": "hint.uphill"
+    }
+  ],
+  "hud": {
+    "faction_paiwan": [
+      "grain"
+    ],
+    "faction_japan": [
+      "grain"
+    ]
+  }
 }

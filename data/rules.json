@@ -677,7 +677,8 @@
       "armyMul": 0.7,
       "focusFire": false,
       "pullBack": false,
-      "playerDiseaseMul": 0.5
+      "playerDiseaseMul": 0.5,
+      "scriptedArmyMul": 0.75
     },
     "normal": {
       "incomeMul": 1,
@@ -685,7 +686,8 @@
       "armyMul": 1,
       "focusFire": true,
       "pullBack": false,
-      "playerDiseaseMul": 1
+      "playerDiseaseMul": 1,
+      "scriptedArmyMul": 1
     },
     "hard": {
       "incomeMul": 1.25,
@@ -693,7 +695,8 @@
       "armyMul": 1.3,
       "focusFire": true,
       "pullBack": true,
-      "playerDiseaseMul": 1
+      "playerDiseaseMul": 1,
+      "scriptedArmyMul": 1.25
     }
   },
   "ai": {

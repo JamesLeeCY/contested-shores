@@ -8,13 +8,26 @@ import { loadInto } from '../systems/transport';
 import type { CampaignState, FleetSpec, Scenario, UnitSpec } from './types';
 import { initTriggers } from './triggers';
 
+/**
+ * Difficulty in scripted chapters (1683 on): the AI side's fighting men, at the start and in every
+ * reinforcement, are scaled by `armyMul:<owner>` (set by the session from the difficulty).
+ * Heroes, civilians and non-combatants (supply carts) keep their numbers.
+ */
+function scaledCount(world: World, spec: UnitSpec): number {
+  const mul = Number(world.ext.flags[`armyMul:${spec.owner}`] ?? 1);
+  const def = world.data.units.get(spec.type)!;
+  if (mul === 1 || def.traits.includes('hero') || def.traits.includes('non_combat')) return spec.count;
+  return Math.max(1, Math.round(spec.count * mul));
+}
+
 export function spawnGroup(world: World, spec: UnitSpec, at?: [number, number]): Entity[] {
   const p = at ?? spec.at;
   if (!p) throw new Error(`scenario: no position for ${spec.type}`);
   const cls = world.moveClassOf(spec.type);
-  const slots = formationSlots(world, cls, p[0], p[1], spec.count);
+  const slots = formationSlots(world, cls, p[0], p[1], scaledCount(world, spec));
   // Heroes are tagged with their type so triggers can follow them (e.g. 鄭成功 陣亡).
-  const hero = world.data.units.get(spec.type)!.traits.includes('hero');
+  const def = world.data.units.get(spec.type)!;
+  const hero = def.traits.includes('hero');
   return slots.map(([x, y]) => {
     const u = world.spawnUnit(spec.type, spec.owner, x, y, spec.tag ?? (hero ? spec.type : undefined));
     if (spec.hp !== undefined) u.hp = Math.max(1, Math.round(u.maxHp * spec.hp));

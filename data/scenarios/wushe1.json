@@ -658,5 +658,22 @@
         }
       ]
     }
-  ]
+  ],
+  "hints": [
+    {
+      "textKey": "hint.rearm"
+    },
+    {
+      "textKey": "hint.stealth"
+    }
+  ],
+  "hud": {
+    "faction_seediq": [
+      "powder"
+    ],
+    "faction_sotokufu": []
+  },
+  "hudLabels": {
+    "powder": "resource.rounds"
+  }
 }

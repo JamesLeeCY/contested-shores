@@ -218,3 +218,9 @@ html, body { margin: 0; height: 100%; overflow: hidden; background: var(--bg); c
 .obj-status { font-size: 12px; color: var(--muted); margin-top: 4px; }
 .wind-text { font-size: 13px; color: #cfe3ff; }
 .wind-arrow { display: inline-block; color: #8fc4ff; }
+/* Mechanic hints (1683 on): cards under the clock, one per new mechanic. */
+.hints { position: absolute; top: 210px; right: 8px; width: 290px; display: flex; flex-direction: column; gap: 6px; z-index: 6; }
+.hint-card { padding: 8px 10px; font-size: 13px; line-height: 1.5; border-left: 3px solid var(--accent, #d4a24c); }
+.hint-title { font-weight: bold; color: var(--accent, #d4a24c); margin-bottom: 2px; }
+.hint-ok { margin-top: 6px; float: right; }
+@media (max-width: 700px) { .hints { top: auto; bottom: 150px; width: calc(100% - 20px); } }

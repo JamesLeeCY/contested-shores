@@ -1,6 +1,7 @@
 // 1895 scenarios: supply lines and night.
 //  - Supply line: soldiers of the scenario's supplied side lose morale every second they are farther
-//    than `radius` from a supply source (a depot building or a supply cart of their own).
+//    than `radius` from a supply source (a depot building or a supply cart of their own): the further
+//    out the faster, down to a floor above the rout line.
 //  - Night: sight is cut to `sightMul` until `untilSeconds` (dawn).
 import type { Entity } from '../types';
 import type { World } from '../world';
@@ -36,9 +37,14 @@ export function frontlineSystem(world: World) {
     if (u.kind !== 'unit' || u.owner !== s.owner || u.moveClass !== 'foot' || u.insideOf) continue;
     const def = world.data.units.get(u.type)!;
     if (s.sources.includes(u.type) || def.traits.includes('hero')) continue;
-    if (sources.some((e) => Math.hypot(e.x - u.x, e.y - u.y) <= s.radius)) continue;
-    changeMorale(world, u, -s.drainPerSecond);
+    let near = Infinity;
+    for (const e of sources) near = Math.min(near, Math.hypot(e.x - u.x, e.y - u.y));
+    if (near <= s.radius) continue;
     cut++;
+    const floor = s.floor ?? 12;
+    if ((u.morale ?? 0) <= floor) continue;
+    const share = Math.min(1, 0.3 + (0.7 * (near - s.radius)) / (s.ramp ?? 6));
+    changeMorale(world, u, -Math.min(s.drainPerSecond * share, (u.morale ?? 0) - floor));
   }
   world.ext.flags.unsupplied = cut;
 }

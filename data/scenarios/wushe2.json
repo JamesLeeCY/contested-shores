@@ -269,7 +269,7 @@
           "owner": "faction_sotokufu",
           "target": "faction_seediq",
           "radius": 3,
-          "damage": 20,
+          "damage": 40,
           "warn": 4,
           "coverMul": 0.35
         },
@@ -543,5 +543,26 @@
   ],
   "remove": [
     "sdq_post"
-  ]
+  ],
+  "hints": [
+    {
+      "textKey": "hint.ammo"
+    },
+    {
+      "textKey": "hint.occupy"
+    },
+    {
+      "textKey": "hint.raid",
+      "on": "raid_warn"
+    }
+  ],
+  "hud": {
+    "faction_seediq": [
+      "powder"
+    ],
+    "faction_sotokufu": []
+  },
+  "hudLabels": {
+    "powder": "resource.rounds"
+  }
 }

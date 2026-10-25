@@ -72,6 +72,8 @@ export function validateScenario(name: string, sc: Obj, ctx: Ctx): string[] {
     cond(t.when as Obj, where);
     for (const a of (t.do as Obj[]) ?? []) action(a, where);
   }
+  for (const h of (sc.hints as Obj[]) ?? []) key(h.textKey, 'hints');
+  for (const k of Object.values((sc.hudLabels as Record<string, string>) ?? {})) key(k, 'hudLabels');
   for (const c of (sc.choices as Obj[]) ?? []) {
     key(c.labelKey, `choice ${c.id}`);
     cond(c.while as Obj, `choice ${c.id}`);
