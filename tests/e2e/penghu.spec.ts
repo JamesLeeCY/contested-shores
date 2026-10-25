@@ -68,6 +68,6 @@ test('1683: 東寧 — the court decides; 死守 brings the Qing ashore', async 
   await expect(page.locator('.objectives')).toContainText('守住承天府');
   await expect(page.locator('.obj-choice')).toHaveCount(0);
   const landed = await page.evaluate(() => [...(window as any).__game.world.all()].filter((e: any) => e.tag === 'landing').length);
-  expect(landed).toBe(36);
+  expect(landed).toBe(37);
   expect(errors).toEqual([]);
 });

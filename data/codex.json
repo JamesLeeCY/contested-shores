@@ -872,5 +872,104 @@
       "src.truku_zh",
       "src.truku_en"
     ]
+  },
+  {
+    "id": "mona_rudao",
+    "category": "people",
+    "dispute": false,
+    "sources": [
+      "src.wushe_zh",
+      "src.wushe_en"
+    ]
+  },
+  {
+    "id": "tado_nokan",
+    "category": "people",
+    "dispute": true,
+    "sources": [
+      "src.wushe_zh",
+      "src.wushe_en"
+    ]
+  },
+  {
+    "id": "w_hanaoka",
+    "category": "people",
+    "dispute": true,
+    "sources": [
+      "src.wushe_zh",
+      "src.wushe_en"
+    ]
+  },
+  {
+    "id": "w_seediq",
+    "category": "places",
+    "dispute": false,
+    "sources": [
+      "src.wushe_zh",
+      "src.wushe_en"
+    ]
+  },
+  {
+    "id": "w_cave",
+    "category": "places",
+    "dispute": false,
+    "sources": [
+      "src.wushe_zh",
+      "src.wushe_en"
+    ]
+  },
+  {
+    "id": "w_causes",
+    "category": "disputes",
+    "dispute": false,
+    "sources": [
+      "src.wushe_zh",
+      "src.wushe_en"
+    ]
+  },
+  {
+    "id": "w_school",
+    "category": "disputes",
+    "dispute": false,
+    "sources": [
+      "src.wushe_zh",
+      "src.wushe_en"
+    ]
+  },
+  {
+    "id": "w_gas",
+    "category": "disputes",
+    "dispute": true,
+    "sources": [
+      "src.wushe_zh",
+      "src.wushe_en"
+    ]
+  },
+  {
+    "id": "w_allies",
+    "category": "disputes",
+    "dispute": true,
+    "sources": [
+      "src.wushe_zh",
+      "src.wushe_en"
+    ]
+  },
+  {
+    "id": "w_aftermath",
+    "category": "disputes",
+    "dispute": true,
+    "sources": [
+      "src.wushe_zh",
+      "src.wushe_en"
+    ]
+  },
+  {
+    "id": "w_numbers",
+    "category": "disputes",
+    "dispute": true,
+    "sources": [
+      "src.wushe_zh",
+      "src.wushe_en"
+    ]
   }
 ]

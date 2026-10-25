@@ -1,0 +1,547 @@
+{
+  "id": "wushe2",
+  "campaign": "wushe",
+  "map": "wushe",
+  "factions": [
+    "faction_seediq",
+    "faction_sotokufu"
+  ],
+  "historyKey": "history.wushe2",
+  "chapter": 2,
+  "nameKey": "scenario.wushe2.name",
+  "dateKey": "scenario.wushe2.date",
+  "timerMinutes": 15,
+  "stage": {
+    "faction_seediq": 1,
+    "faction_sotokufu": 1
+  },
+  "castleMorale": 0,
+  "rules": {
+    "combat.uphillUnitDamageMul": 0.6
+  },
+  "ai": {
+    "faction_sotokufu": {
+      "plans": [
+        "wushe2_sotokufu"
+      ],
+      "composition": {},
+      "targetArmy": 0,
+      "home": [
+        33,
+        48
+      ],
+      "scripted": true
+    },
+    "faction_seediq": {
+      "plans": [
+        "wushe2_seediq"
+      ],
+      "composition": {},
+      "targetArmy": 0,
+      "home": [
+        111,
+        6
+      ],
+      "scripted": true
+    }
+  },
+  "historicalLoser": "faction_seediq",
+  "objectives": {
+    "faction_sotokufu": [
+      "wushe2.obj.take"
+    ],
+    "faction_seediq": [
+      "wushe2.obj.hold"
+    ]
+  },
+  "status": [
+    {
+      "textKey": "wushe2.status",
+      "counts": [
+        [
+          "truwan",
+          "faction_sotokufu"
+        ],
+        [
+          "mahebu",
+          "faction_sotokufu"
+        ],
+        [
+          "cave",
+          "faction_sotokufu"
+        ]
+      ]
+    }
+  ],
+  "units": [
+    {
+      "type": "tado_nokan",
+      "owner": "faction_seediq",
+      "count": 1,
+      "at": [
+        77,
+        61
+      ]
+    },
+    {
+      "type": "sdq_rifle",
+      "owner": "faction_seediq",
+      "count": 8,
+      "at": [
+        75,
+        57
+      ]
+    },
+    {
+      "type": "sdq_warrior",
+      "owner": "faction_seediq",
+      "count": 6,
+      "at": [
+        78,
+        62
+      ]
+    },
+    {
+      "type": "mona_rudao",
+      "owner": "faction_seediq",
+      "count": 1,
+      "at": [
+        101,
+        25
+      ]
+    },
+    {
+      "type": "sdq_rifle",
+      "owner": "faction_seediq",
+      "count": 8,
+      "at": [
+        99,
+        22
+      ]
+    },
+    {
+      "type": "sdq_warrior",
+      "owner": "faction_seediq",
+      "count": 6,
+      "at": [
+        102,
+        27
+      ]
+    },
+    {
+      "type": "sdq_rifle",
+      "owner": "faction_seediq",
+      "count": 6,
+      "at": [
+        110,
+        17
+      ]
+    },
+    {
+      "type": "sdq_warrior",
+      "owner": "faction_seediq",
+      "count": 4,
+      "at": [
+        109,
+        19
+      ]
+    },
+    {
+      "type": "jp14_infantry",
+      "owner": "faction_sotokufu",
+      "count": 14,
+      "at": [
+        34,
+        48
+      ],
+      "tag": "army"
+    },
+    {
+      "type": "jp14_gun",
+      "owner": "faction_sotokufu",
+      "count": 3,
+      "at": [
+        30,
+        50
+      ],
+      "tag": "army"
+    },
+    {
+      "type": "jp14_police",
+      "owner": "faction_sotokufu",
+      "count": 12,
+      "at": [
+        40,
+        52
+      ],
+      "tag": "police"
+    },
+    {
+      "type": "toda_fighter",
+      "owner": "faction_sotokufu",
+      "count": 8,
+      "at": [
+        70,
+        2
+      ],
+      "tag": "toda"
+    }
+  ],
+  "resources": {
+    "faction_seediq": {
+      "powder": 500
+    },
+    "faction_sotokufu": {
+      "powder": 3000
+    }
+  },
+  "carry": [
+    {
+      "if": {
+        "scenario": "wushe1",
+        "faction": "faction_seediq",
+        "reasons": [
+          "wushe1.end.history",
+          "wushe1.end.repulsed"
+        ]
+      },
+      "units": [
+        {
+          "type": "sdq_rifle",
+          "owner": "faction_seediq",
+          "count": 6,
+          "at": [
+            100,
+            22
+          ]
+        }
+      ],
+      "resources": {
+        "faction_seediq": {
+          "powder": 400
+        }
+      }
+    }
+  ],
+  "triggers": [
+    {
+      "id": "w2_start",
+      "when": {
+        "type": "time_elapsed",
+        "seconds": 0
+      },
+      "do": [
+        {
+          "type": "show_cutscene",
+          "id": "wushe2_intro"
+        },
+        {
+          "type": "set_objective",
+          "id": "take",
+          "faction": "faction_sotokufu",
+          "textKey": "wushe2.obj.take",
+          "primary": true
+        },
+        {
+          "type": "set_objective",
+          "id": "hold",
+          "faction": "faction_seediq",
+          "textKey": "wushe2.obj.hold",
+          "primary": true
+        },
+        {
+          "type": "start_timer",
+          "id": "raid",
+          "seconds": 75
+        }
+      ]
+    },
+    {
+      "id": "w2_raid",
+      "once": false,
+      "when": {
+        "type": "timer_expired",
+        "id": "raid"
+      },
+      "do": [
+        {
+          "type": "air_raid",
+          "owner": "faction_sotokufu",
+          "target": "faction_seediq",
+          "radius": 3,
+          "damage": 20,
+          "warn": 4,
+          "coverMul": 0.35
+        },
+        {
+          "type": "start_timer",
+          "id": "raid",
+          "seconds": 60
+        },
+        {
+          "type": "show_message",
+          "textKey": "wushe2.msg.raid",
+          "kind": "warn"
+        }
+      ]
+    },
+    {
+      "id": "w2_occ_truwan",
+      "when": {
+        "type": "held_for",
+        "id": "occ_truwan",
+        "seconds": 45,
+        "condition": {
+          "type": "all_of",
+          "conditions": [
+            {
+              "type": "area_entered",
+              "region": "truwan",
+              "owner": "faction_sotokufu",
+              "pop": 5
+            },
+            {
+              "type": "not",
+              "condition": {
+                "type": "area_entered",
+                "region": "truwan",
+                "owner": "faction_seediq",
+                "pop": 2
+              }
+            }
+          ]
+        }
+      },
+      "do": [
+        {
+          "type": "set_flag",
+          "name": "occ_truwan",
+          "value": true
+        },
+        {
+          "type": "show_message",
+          "textKey": "wushe2.msg.truwan",
+          "kind": "warn"
+        }
+      ]
+    },
+    {
+      "id": "w2_occ_mahebu",
+      "when": {
+        "type": "held_for",
+        "id": "occ_mahebu",
+        "seconds": 45,
+        "condition": {
+          "type": "all_of",
+          "conditions": [
+            {
+              "type": "area_entered",
+              "region": "mahebu",
+              "owner": "faction_sotokufu",
+              "pop": 5
+            },
+            {
+              "type": "not",
+              "condition": {
+                "type": "area_entered",
+                "region": "mahebu",
+                "owner": "faction_seediq",
+                "pop": 2
+              }
+            }
+          ]
+        }
+      },
+      "do": [
+        {
+          "type": "set_flag",
+          "name": "occ_mahebu",
+          "value": true
+        },
+        {
+          "type": "show_message",
+          "textKey": "wushe2.msg.mahebu",
+          "kind": "warn"
+        }
+      ]
+    },
+    {
+      "id": "w2_cave",
+      "when": {
+        "type": "held_for",
+        "id": "occ_cave",
+        "seconds": 30,
+        "condition": {
+          "type": "all_of",
+          "conditions": [
+            {
+              "type": "area_entered",
+              "region": "cave",
+              "owner": "faction_sotokufu",
+              "pop": 4
+            },
+            {
+              "type": "not",
+              "condition": {
+                "type": "area_entered",
+                "region": "cave",
+                "owner": "faction_seediq",
+                "pop": 3
+              }
+            }
+          ]
+        }
+      },
+      "do": [
+        {
+          "type": "set_flag",
+          "name": "occ_cave",
+          "value": true
+        },
+        {
+          "type": "show_message",
+          "textKey": "wushe2.msg.cave",
+          "kind": "warn"
+        }
+      ]
+    },
+    {
+      "id": "w2_tado",
+      "when": {
+        "type": "unit_dead",
+        "unitTag": "tado_nokan"
+      },
+      "do": [
+        {
+          "type": "show_message",
+          "textKey": "wushe2.msg.tado",
+          "kind": "warn"
+        }
+      ]
+    },
+    {
+      "id": "w2_mona",
+      "when": {
+        "type": "unit_dead",
+        "unitTag": "mona_rudao"
+      },
+      "do": [
+        {
+          "type": "show_message",
+          "textKey": "wushe2.msg.mona",
+          "kind": "warn"
+        }
+      ]
+    },
+    {
+      "id": "w2_rout",
+      "when": {
+        "type": "all_of",
+        "conditions": [
+          {
+            "type": "flag",
+            "name": "occ_truwan"
+          },
+          {
+            "type": "flag",
+            "name": "occ_mahebu"
+          },
+          {
+            "type": "flag",
+            "name": "occ_cave"
+          },
+          {
+            "type": "army_pop_below",
+            "owner": "faction_seediq",
+            "pop": 2
+          }
+        ]
+      },
+      "do": [
+        {
+          "type": "fail_mission",
+          "faction": "faction_seediq",
+          "reasonKey": "wushe2.end.rout",
+          "keepOpen": true
+        },
+        {
+          "type": "win_mission",
+          "faction": "faction_sotokufu",
+          "rating": "victory",
+          "reasonKey": "wushe2.end.rout"
+        }
+      ]
+    },
+    {
+      "id": "w2_history",
+      "when": {
+        "type": "all_of",
+        "conditions": [
+          {
+            "type": "flag",
+            "name": "occ_truwan"
+          },
+          {
+            "type": "flag",
+            "name": "occ_mahebu"
+          },
+          {
+            "type": "flag",
+            "name": "occ_cave"
+          }
+        ]
+      },
+      "do": [
+        {
+          "type": "win_mission",
+          "faction": "faction_sotokufu",
+          "rating": "victory",
+          "reasonKey": "wushe2.end.history"
+        }
+      ]
+    },
+    {
+      "id": "w2_repulsed",
+      "when": {
+        "type": "all_of",
+        "conditions": [
+          {
+            "type": "time_elapsed",
+            "seconds": 60
+          },
+          {
+            "type": "army_pop_below",
+            "owner": "faction_sotokufu",
+            "pop": 20
+          }
+        ]
+      },
+      "do": [
+        {
+          "type": "win_mission",
+          "faction": "faction_seediq",
+          "rating": "victory",
+          "reasonKey": "wushe2.end.repulsed"
+        }
+      ]
+    },
+    {
+      "id": "w2_held",
+      "when": {
+        "type": "time_elapsed",
+        "seconds": 900
+      },
+      "do": [
+        {
+          "type": "win_mission",
+          "faction": "faction_seediq",
+          "rating": "victory",
+          "reasonKey": "wushe2.end.held"
+        }
+      ]
+    }
+  ],
+  "remove": [
+    "sdq_post"
+  ]
+}

@@ -1,0 +1,662 @@
+{
+  "id": "wushe1",
+  "campaign": "wushe",
+  "map": "wushe",
+  "factions": [
+    "faction_seediq",
+    "faction_sotokufu"
+  ],
+  "historyKey": "history.wushe1",
+  "chapter": 1,
+  "nameKey": "scenario.wushe1.name",
+  "dateKey": "scenario.wushe1.date",
+  "timerMinutes": 12,
+  "stage": {
+    "faction_seediq": 1,
+    "faction_sotokufu": 1
+  },
+  "castleMorale": 0,
+  "rules": {
+    "combat.uphillUnitDamageMul": 0.6
+  },
+  "ai": {
+    "faction_sotokufu": {
+      "plans": [
+        "wushe1_sotokufu"
+      ],
+      "composition": {},
+      "targetArmy": 0,
+      "home": [
+        33,
+        48
+      ],
+      "scripted": true
+    },
+    "faction_seediq": {
+      "plans": [
+        "wushe1_seediq"
+      ],
+      "composition": {},
+      "targetArmy": 0,
+      "home": [
+        100,
+        26
+      ],
+      "scripted": true
+    }
+  },
+  "historicalLoser": "faction_sotokufu",
+  "objectives": {
+    "faction_sotokufu": [
+      "wushe1.obj.hold"
+    ],
+    "faction_seediq": [
+      "wushe1.obj.take"
+    ]
+  },
+  "status": [
+    {
+      "textKey": "wushe1.status",
+      "counts": [
+        [
+          "wushe",
+          "faction_sotokufu"
+        ],
+        [
+          "wushe",
+          "faction_seediq"
+        ]
+      ]
+    }
+  ],
+  "units": [
+    {
+      "type": "mona_rudao",
+      "owner": "faction_seediq",
+      "count": 1,
+      "at": [
+        99,
+        28
+      ]
+    },
+    {
+      "type": "sdq_warrior",
+      "owner": "faction_seediq",
+      "count": 14,
+      "at": [
+        100,
+        29
+      ],
+      "tag": "g1"
+    },
+    {
+      "type": "sdq_rifle",
+      "owner": "faction_seediq",
+      "count": 2,
+      "at": [
+        101,
+        27
+      ],
+      "tag": "g1"
+    },
+    {
+      "type": "sdq_warrior",
+      "owner": "faction_seediq",
+      "count": 14,
+      "at": [
+        76,
+        58
+      ],
+      "tag": "g2"
+    },
+    {
+      "type": "sdq_rifle",
+      "owner": "faction_seediq",
+      "count": 2,
+      "at": [
+        77,
+        60
+      ],
+      "tag": "g2"
+    },
+    {
+      "type": "sdq_warrior",
+      "owner": "faction_seediq",
+      "count": 12,
+      "at": [
+        52,
+        31
+      ],
+      "tag": "g3"
+    },
+    {
+      "type": "sdq_rifle",
+      "owner": "faction_seediq",
+      "count": 2,
+      "at": [
+        50,
+        29
+      ],
+      "tag": "g3"
+    },
+    {
+      "type": "jp14_police",
+      "owner": "faction_sotokufu",
+      "count": 8,
+      "at": [
+        33,
+        50
+      ],
+      "tag": "wushe_police"
+    }
+  ],
+  "resources": {
+    "faction_seediq": {
+      "powder": 40
+    },
+    "faction_sotokufu": {
+      "powder": 3000
+    }
+  },
+  "triggers": [
+    {
+      "id": "w1_start",
+      "when": {
+        "type": "time_elapsed",
+        "seconds": 0
+      },
+      "do": [
+        {
+          "type": "show_cutscene",
+          "id": "wushe1_intro"
+        },
+        {
+          "type": "set_objective",
+          "id": "take",
+          "faction": "faction_seediq",
+          "textKey": "wushe1.obj.take",
+          "primary": true
+        },
+        {
+          "type": "set_objective",
+          "id": "hold",
+          "faction": "faction_sotokufu",
+          "textKey": "wushe1.obj.hold",
+          "primary": true
+        }
+      ]
+    },
+    {
+      "id": "w1_post_mahebu",
+      "when": {
+        "type": "building_dead",
+        "building": "post_mahebu"
+      },
+      "do": [
+        {
+          "type": "add_resource",
+          "faction": "faction_seediq",
+          "resource": "powder",
+          "amount": 120
+        },
+        {
+          "type": "convert_units",
+          "owner": "faction_seediq",
+          "from": "sdq_warrior",
+          "to": "sdq_rifle",
+          "count": 3,
+          "near": [
+            98,
+            33
+          ],
+          "radius": 12
+        },
+        {
+          "type": "show_message",
+          "textKey": "wushe1.msg.post_mahebu",
+          "kind": "warn"
+        }
+      ]
+    },
+    {
+      "id": "w1_post_gungu",
+      "when": {
+        "type": "building_dead",
+        "building": "post_gungu"
+      },
+      "do": [
+        {
+          "type": "add_resource",
+          "faction": "faction_seediq",
+          "resource": "powder",
+          "amount": 120
+        },
+        {
+          "type": "convert_units",
+          "owner": "faction_seediq",
+          "from": "sdq_warrior",
+          "to": "sdq_rifle",
+          "count": 3,
+          "near": [
+            64,
+            43
+          ],
+          "radius": 12
+        },
+        {
+          "type": "show_message",
+          "textKey": "wushe1.msg.post_gungu",
+          "kind": "warn"
+        }
+      ]
+    },
+    {
+      "id": "w1_post_sakura",
+      "when": {
+        "type": "building_dead",
+        "building": "post_sakura"
+      },
+      "do": [
+        {
+          "type": "add_resource",
+          "faction": "faction_seediq",
+          "resource": "powder",
+          "amount": 120
+        },
+        {
+          "type": "convert_units",
+          "owner": "faction_seediq",
+          "from": "sdq_warrior",
+          "to": "sdq_rifle",
+          "count": 3,
+          "near": [
+            46,
+            40
+          ],
+          "radius": 12
+        },
+        {
+          "type": "show_message",
+          "textKey": "wushe1.msg.post_sakura",
+          "kind": "warn"
+        }
+      ]
+    },
+    {
+      "id": "w1_post_boarung",
+      "when": {
+        "type": "building_dead",
+        "building": "post_boarung"
+      },
+      "do": [
+        {
+          "type": "add_resource",
+          "faction": "faction_seediq",
+          "resource": "powder",
+          "amount": 120
+        },
+        {
+          "type": "convert_units",
+          "owner": "faction_seediq",
+          "from": "sdq_warrior",
+          "to": "sdq_rifle",
+          "count": 3,
+          "near": [
+            57,
+            63
+          ],
+          "radius": 12
+        },
+        {
+          "type": "show_message",
+          "textKey": "wushe1.msg.post_boarung",
+          "kind": "warn"
+        }
+      ]
+    },
+    {
+      "id": "w1_post_nengao",
+      "when": {
+        "type": "building_dead",
+        "building": "post_nengao"
+      },
+      "do": [
+        {
+          "type": "add_resource",
+          "faction": "faction_seediq",
+          "resource": "powder",
+          "amount": 120
+        },
+        {
+          "type": "convert_units",
+          "owner": "faction_seediq",
+          "from": "sdq_warrior",
+          "to": "sdq_rifle",
+          "count": 3,
+          "near": [
+            82,
+            66
+          ],
+          "radius": 12
+        },
+        {
+          "type": "show_message",
+          "textKey": "wushe1.msg.post_nengao",
+          "kind": "warn"
+        }
+      ]
+    },
+    {
+      "id": "w1_post_tunbara",
+      "when": {
+        "type": "building_dead",
+        "building": "post_tunbara"
+      },
+      "do": [
+        {
+          "type": "add_resource",
+          "faction": "faction_seediq",
+          "resource": "powder",
+          "amount": 120
+        },
+        {
+          "type": "convert_units",
+          "owner": "faction_seediq",
+          "from": "sdq_warrior",
+          "to": "sdq_rifle",
+          "count": 3,
+          "near": [
+            22,
+            66
+          ],
+          "radius": 12
+        },
+        {
+          "type": "show_message",
+          "textKey": "wushe1.msg.post_tunbara",
+          "kind": "warn"
+        }
+      ]
+    },
+    {
+      "id": "w1_branch",
+      "when": {
+        "type": "building_dead",
+        "building": "wushe_branch"
+      },
+      "do": [
+        {
+          "type": "add_resource",
+          "faction": "faction_seediq",
+          "resource": "powder",
+          "amount": 400
+        },
+        {
+          "type": "convert_units",
+          "owner": "faction_seediq",
+          "from": "sdq_warrior",
+          "to": "sdq_rifle",
+          "count": 6,
+          "near": [
+            33,
+            46
+          ],
+          "radius": 14
+        },
+        {
+          "type": "show_message",
+          "textKey": "wushe1.msg.branch",
+          "kind": "warn"
+        }
+      ]
+    },
+    {
+      "id": "w1_relief1",
+      "when": {
+        "type": "time_elapsed",
+        "seconds": 360
+      },
+      "do": [
+        {
+          "type": "spawn_units",
+          "units": [
+            {
+              "type": "jp14_police",
+              "owner": "faction_sotokufu",
+              "count": 13,
+              "at": [
+                3,
+                48
+              ],
+              "tag": "relief"
+            }
+          ]
+        },
+        {
+          "type": "show_message",
+          "textKey": "wushe1.msg.relief1",
+          "kind": "warn"
+        }
+      ]
+    },
+    {
+      "id": "w1_relief2",
+      "when": {
+        "type": "time_elapsed",
+        "seconds": 570
+      },
+      "do": [
+        {
+          "type": "spawn_units",
+          "units": [
+            {
+              "type": "jp14_infantry",
+              "owner": "faction_sotokufu",
+              "count": 11,
+              "at": [
+                3,
+                47
+              ],
+              "tag": "relief2"
+            },
+            {
+              "type": "jp14_gun",
+              "owner": "faction_sotokufu",
+              "count": 1,
+              "at": [
+                2,
+                50
+              ],
+              "tag": "relief2"
+            }
+          ]
+        },
+        {
+          "type": "show_message",
+          "textKey": "wushe1.msg.relief2",
+          "kind": "warn"
+        }
+      ]
+    },
+    {
+      "id": "w1_taken",
+      "when": {
+        "type": "all_of",
+        "conditions": [
+          {
+            "type": "building_dead",
+            "building": "wushe_branch"
+          },
+          {
+            "type": "buildings_below",
+            "building": "sdq_post",
+            "count": 3
+          }
+        ]
+      },
+      "do": [
+        {
+          "type": "set_flag",
+          "name": "taken",
+          "value": true
+        },
+        {
+          "type": "show_message",
+          "textKey": "wushe1.msg.taken",
+          "kind": "warn"
+        }
+      ]
+    },
+    {
+      "id": "w1_retaken",
+      "when": {
+        "type": "all_of",
+        "conditions": [
+          {
+            "type": "flag",
+            "name": "taken"
+          },
+          {
+            "type": "held_for",
+            "id": "retake",
+            "seconds": 60,
+            "condition": {
+              "type": "all_of",
+              "conditions": [
+                {
+                  "type": "area_entered",
+                  "region": "wushe",
+                  "owner": "faction_sotokufu",
+                  "pop": 6
+                },
+                {
+                  "type": "not",
+                  "condition": {
+                    "type": "area_entered",
+                    "region": "wushe",
+                    "owner": "faction_seediq",
+                    "pop": 1
+                  }
+                }
+              ]
+            }
+          }
+        ]
+      },
+      "do": [
+        {
+          "type": "win_mission",
+          "faction": "faction_sotokufu",
+          "rating": "victory",
+          "reasonKey": "wushe1.end.retaken"
+        }
+      ]
+    },
+    {
+      "id": "w1_repulsed",
+      "when": {
+        "type": "all_of",
+        "conditions": [
+          {
+            "type": "time_elapsed",
+            "seconds": 650
+          },
+          {
+            "type": "army_pop_below",
+            "owner": "faction_sotokufu",
+            "pop": 5
+          }
+        ]
+      },
+      "do": [
+        {
+          "type": "fail_mission",
+          "faction": "faction_sotokufu",
+          "reasonKey": "wushe1.end.repulsed",
+          "keepOpen": true
+        },
+        {
+          "type": "win_mission",
+          "faction": "faction_seediq",
+          "rating": "victory",
+          "reasonKey": "wushe1.end.repulsed"
+        }
+      ]
+    },
+    {
+      "id": "w1_rout",
+      "when": {
+        "type": "all_of",
+        "conditions": [
+          {
+            "type": "time_elapsed",
+            "seconds": 10
+          },
+          {
+            "type": "army_pop_below",
+            "owner": "faction_seediq",
+            "pop": 4
+          }
+        ]
+      },
+      "do": [
+        {
+          "type": "fail_mission",
+          "faction": "faction_seediq",
+          "reasonKey": "wushe1.end.rout"
+        }
+      ]
+    },
+    {
+      "id": "w1_end_taken",
+      "when": {
+        "type": "all_of",
+        "conditions": [
+          {
+            "type": "time_elapsed",
+            "seconds": 720
+          },
+          {
+            "type": "flag",
+            "name": "taken"
+          }
+        ]
+      },
+      "do": [
+        {
+          "type": "win_mission",
+          "faction": "faction_seediq",
+          "rating": "victory",
+          "reasonKey": "wushe1.end.history"
+        }
+      ]
+    },
+    {
+      "id": "w1_end_held",
+      "when": {
+        "type": "all_of",
+        "conditions": [
+          {
+            "type": "time_elapsed",
+            "seconds": 720
+          },
+          {
+            "type": "not",
+            "condition": {
+              "type": "flag",
+              "name": "taken"
+            }
+          }
+        ]
+      },
+      "do": [
+        {
+          "type": "win_mission",
+          "faction": "faction_sotokufu",
+          "rating": "victory",
+          "reasonKey": "wushe1.end.held"
+        }
+      ]
+    }
+  ]
+}

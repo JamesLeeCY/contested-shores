@@ -3,10 +3,11 @@ import penghu from '../../data/maps/penghu.json';
 import tainan from '../../data/maps/tainan.json';
 import taipei from '../../data/maps/taipei.json';
 import taroko from '../../data/maps/taroko.json';
+import wushe from '../../data/maps/wushe.json';
 import taijiang from '../../data/maps/taijiang.json';
 import { mapFromTiled, type GameMap, type TiledMap } from '../sim/map';
 
-const MAPS: Record<string, unknown> = { taijiang, hengchun, penghu, taipei, tainan, taroko };
+const MAPS: Record<string, unknown> = { taijiang, hengchun, penghu, taipei, tainan, taroko, wushe };
 const cache = new Map<string, GameMap>();
 
 export function loadMap(id = 'taijiang'): GameMap {

@@ -55,7 +55,9 @@
     "workerPerDay": 0.5,
     "factionMul": {
       "faction_zheng": 1,
-      "faction_voc": 1
+      "faction_voc": 1,
+      "faction_paiwan": 1,
+      "faction_japan": 1
     },
     "starvation": {
       "grainPerStep": 10,

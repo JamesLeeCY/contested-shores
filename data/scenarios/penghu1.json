@@ -439,7 +439,7 @@
       "when": {
         "type": "ships_lost",
         "owner": "faction_qing",
-        "count": 14
+        "count": 15
       },
       "do": [
         {

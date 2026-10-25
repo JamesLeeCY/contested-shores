@@ -33,6 +33,15 @@ const results = [
     ['gorge', 'kalapau', '峽谷可上到卡拉寶'],
     ['kalapau', 'refuge_t', '各社族人能退入北方深山'],
   ]),
+  ...checkRoutes(mapFromTiled('wushe', read('data/maps/wushe.json')), rules, [
+    ['meixi', 'wushe', '眉溪可上到霧社'],
+    ['wushe', 'truwan', '霧社可沿濁水溪到塔羅灣'],
+    ['wushe', 'mahebu', '霧社可到馬赫坡'],
+    ['mahebu', 'cave', '馬赫坡可上到岩窟'],
+    ['truwan', 'cave', '塔羅灣可退到岩窟'],
+    ['north_edge', 'east_valley', '北方的道澤群可下到濁水溪'],
+    ['meixi_n', 'meixi', '眉溪北側高地可下到山路'],
+  ]),
 ];
 
 let failed = 0;

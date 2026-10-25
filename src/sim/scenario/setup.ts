@@ -65,6 +65,7 @@ export function applyScenario(world: World, sc: Scenario, campaign: CampaignStat
     if (sc.castleMoraleMin !== undefined) m = Math.max(sc.castleMoraleMin, m);
     voc.castleMorale = m;
   }
+  for (const b of world.buildings()) if (sc.remove?.includes(b.type) || (b.tag && sc.remove?.includes(b.tag))) world.remove(b.id);
   for (const o of sc.ownership ?? [])
     for (const b of world.buildings())
       if (b.type === o.type) {
@@ -83,8 +84,15 @@ export function applyScenario(world: World, sc: Scenario, campaign: CampaignStat
     } else if (b.at) world.spawnBuilding(b.type, b.owner, b.at[0], b.at[1], b.built ?? 1, b.tag);
   }
   for (const u of sc.units ?? []) spawnGroup(world, u);
-  for (const c of sc.carry ?? [])
-    if (c.if.reasons.includes(campaign.reasons?.[c.if.scenario]?.[c.if.faction] ?? '')) for (const u of c.units) spawnGroup(world, u);
+  for (const c of sc.carry ?? []) {
+    if (!c.if.reasons.includes(campaign.reasons?.[c.if.scenario]?.[c.if.faction] ?? '')) continue;
+    for (const u of c.units) spawnGroup(world, u);
+    // e.g. the rifles and rounds taken in 1930 chapter 1 go on into chapter 2.
+    for (const [owner, res] of Object.entries(c.resources ?? {})) {
+      const have = world.faction(owner)?.resources as Record<string, number> | undefined;
+      if (have) for (const [k, v] of Object.entries(res)) have[k] = (have[k] ?? 0) + v;
+    }
+  }
   for (const f of sc.fleets ?? []) spawnFleet(world, f);
   for (const g of sc.garrisons ?? []) {
     const host = world.buildings().find((b) => b.type === g.in);

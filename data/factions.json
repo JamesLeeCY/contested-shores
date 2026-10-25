@@ -188,6 +188,25 @@
         "powder": 0,
         "deerskin": 0
       }
+    },
+    {
+      "id": "faction_seediq",
+      "nameKey": "faction.faction_seediq.name",
+      "basePopCap": 200,
+      "colors": {
+        "primary": "#b5482a",
+        "secondary": "#f2ead8"
+      },
+      "heroes": [
+        "mona_rudao",
+        "tado_nokan"
+      ],
+      "startResources": {
+        "grain": 0,
+        "wood": 0,
+        "powder": 0,
+        "deerskin": 0
+      }
     }
   ],
   "villages": [

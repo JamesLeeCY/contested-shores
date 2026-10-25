@@ -448,7 +448,7 @@
           {
             "type": "army_pop_below",
             "owner": "faction_japan_1895",
-            "pop": 20
+            "pop": 12
           }
         ]
       },

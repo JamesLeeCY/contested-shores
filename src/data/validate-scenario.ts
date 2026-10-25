@@ -4,12 +4,13 @@ const CONDITIONS = new Set([
   'time_elapsed', 'game_day', 'unit_hp_below', 'unit_dead', 'building_captured', 'area_entered', 'favor_reached',
   'tide_state', 'resource_below', 'all_of', 'any_of', 'not', 'castle_morale_below', 'army_pop_below', 'losses_since',
   'units_lost', 'building_hp_below', 'flag', 'timer_expired', 'stranded_in_range', 'outcome', 'is_ai', 'building_dead',
-  'building_built', 'held_for', 'ships_lost', 'fleet_below',
+  'building_built', 'held_for', 'ships_lost', 'fleet_below', 'buildings_below',
 ]);
 const ACTIONS = new Set([
   'show_message', 'show_cutscene', 'spawn_units', 'kill_unit', 'set_objective', 'complete_objective', 'fail_mission',
   'win_mission', 'modify_morale', 'modify_favor', 'set_stage', 'start_timer', 'trigger_weather', 'reveal_area',
-  'set_ai_plan', 'set_flag', 'mark_army', 'move_units', 'disband', 'spawn_building',
+  'set_ai_plan', 'set_flag', 'mark_army', 'move_units', 'disband', 'spawn_building', 'add_resource', 'convert_units',
+  'air_raid',
 ]);
 /** Spec §7.1: types every MVP scenario engine must support. */
 export const REQUIRED_WHEN = ['time_elapsed', 'game_day', 'unit_hp_below', 'unit_dead', 'building_captured', 'area_entered', 'favor_reached', 'tide_state', 'resource_below', 'all_of', 'any_of'];
@@ -61,6 +62,7 @@ export function validateScenario(name: string, sc: Obj, ctx: Ctx): string[] {
     if (a.type === 'set_ai_plan') for (const p of (a.plans as string[]) ?? []) if (!ctx.plans.has(p)) e(`${where}: unknown plan "${p}"`);
     for (const k of ['textKey', 'reasonKey']) key(a[k], where);
     if (a.region && !ctx.regions.has(a.region as string)) e(`${where}: unknown region "${a.region}"`);
+    if (a.type === 'convert_units') for (const u of [a.from, a.to]) if (!ctx.units.has(u as string)) e(`${where}: unknown unit "${u}"`);
   };
   const ids = new Set<string>();
   for (const t of (sc.triggers as Obj[]) ?? []) {

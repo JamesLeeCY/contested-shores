@@ -27,7 +27,7 @@
   "supply": {
     "owner": "faction_japan_1895",
     "radius": 9,
-    "drainPerSecond": 2.4,
+    "drainPerSecond": 3.4,
     "sources": [
       "jp95_depot",
       "jp95_cart"

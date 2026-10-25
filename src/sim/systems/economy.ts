@@ -279,7 +279,9 @@ function dailyUpkeep(world: World) {
     let need = 0;
     for (const e of world.all())
       if (e.kind === 'unit' && e.owner === f.id) need += isGatherer(world, e) ? r.workerPerDay : r.combatPerDay;
-    need *= (r.factionMul as Record<string, number>)[f.id] ?? 1;
+    // Only campaigns with an economy (1661, 1874) list their sides; the others carry no grain at all.
+    need *= (r.factionMul as Record<string, number>)[f.id] ?? 0;
+    if (!need) continue;
     if (f.resources.grain >= need) {
       f.resources.grain -= need;
       continue;

@@ -1,5 +1,6 @@
 // Serializable state owned by the campaign systems (diplomacy, supply, weather, events).
 import type { Owner } from './types';
+import type { Raid } from './systems/air';
 
 export interface FavorLogEntry {
   faction: Owner;
@@ -72,6 +73,8 @@ export interface ExtState {
   flags: Record<string, number | boolean | string>;
   /** Wind (1683 scenarios); absent elsewhere. */
   wind?: { from: number; strength: number };
+  /** Pending air raids (1930 scenarios). */
+  raids?: Raid[];
 }
 
 export function initialExt(): ExtState {

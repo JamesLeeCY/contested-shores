@@ -60,7 +60,7 @@ export interface Scenario {
   /** Live counts shown under the objectives (both sides see them): text params n0, n1… */
   status?: { textKey: string; counts: [region: string, owner: Owner, unit?: 'units'][] }[];
   /** Units that appear only if an earlier scenario ended a certain way (e.g. 阿祿古 survived). */
-  carry?: { if: { scenario: string; faction: Owner; reasons: string[] }; units: UnitSpec[] }[];
+  carry?: { if: { scenario: string; faction: Owner; reasons: string[] }; units: UnitSpec[]; resources?: Record<Owner, Record<string, number>> }[];
   /** Wind: compass bearing it blows from, strength 0..1, and scripted shifts. */
   wind?: { from: number; strength: number; shifts?: { atSeconds: number; from: number; strength?: number }[] };
   /** Supply line: `owner`'s soldiers farther than `radius` from a source unit/building lose morale. */
@@ -84,6 +84,8 @@ export interface Scenario {
   techs?: Record<Owner, string[]>;
   /** Hands map buildings to another side; `tag` renames them (label from `place.<tag>`), e.g. 普羅民遮城 → 承天府. */
   ownership?: { type: string; owner: Owner; tag?: string }[];
+  /** Map buildings (types or tags) gone by this chapter, e.g. the police posts burned in 1930 chapter 1. */
+  remove?: string[];
   buildings?: BuildingSpec[];
   units?: UnitSpec[];
   fleets?: FleetSpec[];

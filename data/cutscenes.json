@@ -150,5 +150,24 @@
       "cut.yiwei5_intro.3",
       "cut.yiwei5_intro.4"
     ]
+  },
+  "wushe1_intro": {
+    "titleKey": "cut.wushe1_intro.title",
+    "art": "mountain",
+    "lines": [
+      "cut.wushe1_intro.1",
+      "cut.wushe1_intro.2",
+      "cut.wushe1_intro.3",
+      "cut.wushe1_intro.4"
+    ]
+  },
+  "wushe2_intro": {
+    "titleKey": "cut.wushe2_intro.title",
+    "art": "mountain",
+    "lines": [
+      "cut.wushe2_intro.1",
+      "cut.wushe2_intro.2",
+      "cut.wushe2_intro.3"
+    ]
   }
 }

@@ -9,6 +9,7 @@ import { changeFavor, ensureParties } from '../systems/diplomacy';
 import { fogOf } from '../systems/fog';
 import { changeCastleMorale } from '../systems/morale';
 import { scheduleTyphoon } from '../systems/weather';
+import { callRaid } from '../systems/air';
 import { moveGroup } from '../systems/movement';
 import { spawnFleet, spawnGroup, spawnRelief } from './setup';
 import type { FleetSpec, UnitSpec } from './types';
@@ -42,7 +43,9 @@ export type Condition =
   | { type: 'building_built'; building: string; owner: Owner; region?: string }
   | { type: 'held_for'; id: string; seconds: number; condition: Condition }
   | { type: 'ships_lost'; owner: Owner; count: number }
-  | { type: 'fleet_below'; owner: Owner; fraction: number };
+  | { type: 'fleet_below'; owner: Owner; fraction: number }
+  /** Fewer than `count` buildings of this type (or tag) still standing. */
+  | { type: 'buildings_below'; building: string; count: number };
 
 export type Action =
   | { type: 'show_message'; textKey: string; kind?: 'info' | 'warn' | 'good'; to?: Owner; params?: Record<string, string | number> }
@@ -64,7 +67,10 @@ export type Action =
   | { type: 'mark_army'; owner: Owner; mark: string }
   | { type: 'move_units'; unitTag: string; region: string }
   | { type: 'disband'; unitTag: string }
-  | { type: 'spawn_building'; building: string; owner: Owner; at: [number, number]; tag?: string };
+  | { type: 'spawn_building'; building: string; owner: Owner; at: [number, number]; tag?: string }
+  | { type: 'add_resource'; faction: Owner; resource: string; amount: number }
+  | { type: 'convert_units'; owner: Owner; from: string; to: string; count: number; near: [number, number]; radius?: number }
+  | { type: 'air_raid'; owner: Owner; target: Owner; region?: string; radius?: number; damage?: number; warn?: number; coverMul?: number };
 
 export interface Trigger {
   id: string;
@@ -250,6 +256,8 @@ export function evaluate(world: World, c: Condition): boolean {
       const existed = Number(flags(world)[`spawnedB:${c.building}`] ?? 0);
       return existed > 0 && !world.buildings().some((b) => b.tag === c.building || b.type === c.building);
     }
+    case 'buildings_below':
+      return world.buildings().filter((b) => b.type === c.building || b.tag === c.building).length < c.count;
     case 'building_built': {
       const r = c.region ? findRegion(world.map, c.region) : null;
       return world.buildings().some((b) => b.type === c.building && b.owner === c.owner && (b.built ?? 1) >= 1 && (!r || regionContains(r, Math.floor(b.x), Math.floor(b.y))));
@@ -349,6 +357,30 @@ export function act(world: World, a: Action) {
       } else if (world.scenario?.ai?.[a.faction] && world.ext.flags.player !== a.faction) {
         enableAi(world, a.faction, { ...world.scenario.ai[a.faction], plans: a.plans });
       }
+      break;
+    }
+    case 'add_resource': {
+      const res = world.faction(a.faction)?.resources as Record<string, number> | undefined;
+      if (res) res[a.resource] = (res[a.resource] ?? 0) + a.amount;
+      break;
+    }
+    case 'convert_units': {
+      // Men re-armed on the spot (warriors who took the rifles of a police post).
+      const R = a.radius ?? 12;
+      const pick = [...world.all()]
+        .filter((e) => e.kind === 'unit' && e.owner === a.owner && e.type === a.from && !e.insideOf && Math.hypot(e.x - a.near[0], e.y - a.near[1]) <= R)
+        .sort((p, q) => Math.hypot(p.x - a.near[0], p.y - a.near[1]) - Math.hypot(q.x - a.near[0], q.y - a.near[1]) || p.id - q.id)
+        .slice(0, a.count);
+      for (const e of pick) {
+        const n = world.spawnUnit(a.to, a.owner, e.x, e.y, e.tag);
+        n.hp = Math.max(1, Math.round(n.maxHp * (e.hp / e.maxHp)));
+        world.remove(e.id);
+      }
+      break;
+    }
+    case 'air_raid': {
+      const r = a.region ? findRegion(world.map, a.region) : undefined;
+      callRaid(world, a.owner, a.target, { r: a.radius ?? 3, dmg: a.damage ?? 60, warn: a.warn ?? 4, coverMul: a.coverMul ?? 0.35, region: r });
       break;
     }
     case 'spawn_building': {

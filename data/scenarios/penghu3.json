@@ -417,7 +417,7 @@
             {
               "type": "qing_soldier",
               "owner": "faction_qing",
-              "count": 34,
+              "count": 36,
               "at": [
                 112,
                 36
@@ -427,7 +427,7 @@
             {
               "type": "light_cannon",
               "owner": "faction_qing",
-              "count": 2,
+              "count": 1,
               "at": [
                 110,
                 37

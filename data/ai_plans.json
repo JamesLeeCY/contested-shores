@@ -496,5 +496,75 @@
       "harbor:luermen_watch/luermen",
       "harbor:south_patrol/south_patrol"
     ]
+  },
+  {
+    "id": "wushe1_seediq",
+    "faction": "faction_seediq",
+    "chapters": [
+      1
+    ],
+    "steps": [
+      "strike:g1/post_mahebu,post_gungu,post_sakura/wushe_e",
+      "strike:g2/post_nengao,post_boarung,post_tunbara/wushe_e",
+      "strike:g3/post_sakura/wushe_e",
+      "strike:mona_rudao/post_gungu/wushe_e",
+      "wait:210",
+      "drop:strike/g1",
+      "drop:strike/g2",
+      "drop:strike/g3",
+      "storm:wushe_branch",
+      "wait_flag:taken",
+      "drop:storm/wushe_branch",
+      "skirmish:meixi_n/5/wushe",
+      "hold_region:wushe"
+    ]
+  },
+  {
+    "id": "wushe1_sotokufu",
+    "faction": "faction_sotokufu",
+    "chapters": [
+      1
+    ],
+    "steps": [
+      "defend:sdq_branch/12",
+      "column:relief/wushe",
+      "column:relief2/wushe"
+    ]
+  },
+  {
+    "id": "wushe2_sotokufu",
+    "faction": "faction_sotokufu",
+    "chapters": [
+      2
+    ],
+    "steps": [
+      "column:army/truwan",
+      "column:police/mahebu",
+      "column:toda/mahebu_t",
+      "wait_flag:occ_truwan",
+      "drop:column/army",
+      "column:army/mahebu",
+      "wait_flag:occ_mahebu",
+      "drop:column/army",
+      "drop:column/police",
+      "drop:column/toda",
+      "push:cave",
+      "flank:cave/14",
+      "hold_region:cave"
+    ]
+  },
+  {
+    "id": "wushe2_seediq",
+    "faction": "faction_seediq",
+    "chapters": [
+      2
+    ],
+    "steps": [
+      "skirmish:truwan_t/12/cave",
+      "skirmish:mahebu_t/12/cave",
+      "hold_line:cave/10",
+      "harass:truwan/3",
+      "harass:mahebu/3"
+    ]
   }
 ]

@@ -12,9 +12,11 @@ import yiwei2 from '../../data/scenarios/yiwei2.json';
 import yiwei3 from '../../data/scenarios/yiwei3.json';
 import yiwei4 from '../../data/scenarios/yiwei4.json';
 import yiwei5 from '../../data/scenarios/yiwei5.json';
+import wushe1 from '../../data/scenarios/wushe1.json';
+import wushe2 from '../../data/scenarios/wushe2.json';
 import type { Scenario } from '../sim/scenario/types';
 
-export const SCENARIOS: Scenario[] = [ch1, ch2, ch3, ch4, penghu1, penghu2, penghu3, mudan1, mudan2, yiwei1, yiwei2, yiwei3, yiwei4, yiwei5] as unknown as Scenario[];
+export const SCENARIOS: Scenario[] = [ch1, ch2, ch3, ch4, penghu1, penghu2, penghu3, mudan1, mudan2, yiwei1, yiwei2, yiwei3, yiwei4, yiwei5, wushe1, wushe2] as unknown as Scenario[];
 
 /** Campaigns in menu order; each lists its playable sides and scenarios. */
 export const CAMPAIGNS = [
@@ -22,6 +24,7 @@ export const CAMPAIGNS = [
   { id: 'penghu', factions: ['faction_tungning', 'faction_qing'] },
   { id: 'mudan', factions: ['faction_paiwan', 'faction_japan'] },
   { id: 'yiwei', factions: ['faction_formosa', 'faction_japan_1895'] },
+  { id: 'wushe', factions: ['faction_seediq', 'faction_sotokufu'] },
 ] as const;
 
 export const campaignOf = (sc: Scenario) => sc.campaign ?? 'koxinga';

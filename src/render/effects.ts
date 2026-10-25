@@ -53,12 +53,34 @@ export class Effects {
       const big = e.size === 'large';
       this.burst(e.x as number, e.y as number, 0xff7020, big ? 34 : 14, big ? 1.0 : 0.5);
       this.puff(e.x as number, e.y as number, 0x555555, big ? 30 : 12, big ? 2.5 : 1.2);
+    } else if (e.type === 'raid_warn') {
+      this.raidRing(world, e.id as number, e.x as number, e.y as number, e.r as number);
     } else if (e.type === 'death' && e.kind === 'unit') {
       this.fallen(e.x as number, e.y as number);
     } else if (e.type === 'death' && e.kind === 'building') {
       this.burst(e.x as number, e.y as number, 0xff8030, 24, 0.8);
       this.puff(e.x as number, e.y as number, 0x5a5048, 36, 3);
     }
+  }
+
+  /** Air-raid warning: a pulsing ring on the ground until the bombs fall (shown through fog: the planes are heard). */
+  private raidRing(world: World, id: number, x: number, y: number, r: number) {
+    const g = new Graphics();
+    // Iso footprint of a circle of radius r tiles (see toScreen: one tile is 64×32).
+    g.ellipse(0, 0, r * 45, r * 22.5).stroke({ color: 0xff3020, width: 3, alpha: 0.9 });
+    g.ellipse(0, 0, r * 45, r * 22.5).fill({ color: 0xff3020, alpha: 0.12 });
+    const p = toScreen(x, y);
+    g.position.set(p.x, p.y);
+    this.layer.addChild(g);
+    this.fx.push({
+      g,
+      age: 0,
+      life: 60,
+      update: (fx) => {
+        if (!world.ext.raids?.some((q) => q.id === id)) fx.age = fx.life;
+        fx.g.alpha = 0.55 + 0.45 * Math.sin(fx.age * 10);
+      },
+    });
   }
 
   private puff(x: number, y: number, color: number, size: number, life: number) {

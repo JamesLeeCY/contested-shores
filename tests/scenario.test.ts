@@ -10,6 +10,9 @@ import type { World } from '../src/sim/world';
 import { loadMap } from '../src/data/map';
 import { DATA, makeWorld, run } from './helpers';
 import { World as WorldClass } from '../src/sim/world';
+import { T as TERRAIN } from '../src/sim/map';
+
+const T_FOREST = TERRAIN.forest;
 
 const Z = 'faction_zheng';
 const V = 'faction_voc';
@@ -562,7 +565,7 @@ describe('1683 澎湖海戰', () => {
     expect(outcomeOf(a, Q)).toBe('victory');
     expect(outcomeOf(a, N)).toBe('defeat');
     const b = sea('penghu1');
-    sink(b, Q, 14);
+    sink(b, Q, 15);
     collect(b);
     expect(b.ext.flags[`outcomeReason:${N}`]).toBe('penghu1.end.repulsed');
     const c = sea('penghu1');
@@ -891,7 +894,7 @@ describe('1683 東寧 (epilogue)', () => {
   it('死守承天府: the Qing land, the garrisons desert; holding 8 minutes wins, the fort battered loses', () => {
     const a = court();
     choose(a, 'resist');
-    expect(tagged(a, 'landing').length).toBe(36);
+    expect(tagged(a, 'landing').length).toBe(37);
     at(a, 152);
     expect(tagged(a, 'anping')).toHaveLength(0);
     at(a, 302);
@@ -995,6 +998,165 @@ describe('1914 太魯閣', () => {
     at(b, 901);
     collect(b);
     expect(b.ext.flags[`outcomeReason:${T}`]).toBe('yiwei5.end.held');
+  });
+});
+
+describe('1930 霧社事件', () => {
+  const S = 'faction_seediq';
+  const J = 'faction_sotokufu';
+  const open = (id: string, campaign = {}) => {
+    const sc = scenarioById(id);
+    const w = new WorldClass(DATA, loadMap(sc.map!), { seed: 6, factions: sc.factions });
+    applyScenario(w, sc, campaign);
+    w.ext.flags.player = '';
+    at(w, 1);
+    return w;
+  };
+  const byTag = (w: World, tag: string) => w.buildings().find((b) => b.tag === tag)!;
+  const raze = (w: World, tag: string) => {
+    w.rebuildSpatial();
+    killEntity(w, byTag(w, tag));
+    run(w, 5);
+  };
+  const count = (w: World, owner: string, type: string) => [...w.all()].filter((e) => e.owner === owner && e.type === type).length;
+  const killSide = (w: World, owner: string, keep = 0) => {
+    w.rebuildSpatial();
+    for (const e of [...w.all()].filter((u) => u.owner === owner && u.kind === 'unit').slice(keep)) killEntity(w, e);
+  };
+  /** n invulnerable men of `owner` standing in a region; the other side cleared out of it. */
+  const hold = (w: World, owner: string, type: string, id: string, n: number) => {
+    const r = w.map.regions.find((x) => x.id === id)!;
+    w.rebuildSpatial();
+    for (const e of [...w.all()]) if (e.kind === 'unit' && e.owner !== owner && e.x >= r.x - 1 && e.y >= r.y - 1 && e.x <= r.x + r.w + 1 && e.y <= r.y + r.h + 1) killEntity(w, e);
+    spawnIn(w, owner, type, n, r.x + 2, r.y + 2);
+    for (const e of w.all())
+      if (e.owner === owner && e.type === type && e.x >= r.x && e.y >= r.y && e.x < r.x + r.w && e.y < r.y + r.h) {
+        e.hp = e.maxHp = 1e9;
+        e.holdFire = true;
+      }
+  };
+
+  it('起事: each post taken re-arms warriors and adds rounds; 霧社 taken and held to 12:00 (historical for Japan)', () => {
+    const w = open('wushe1');
+    killTag(w, 'wushe_police');
+    const powder = w.faction(S)!.resources.powder;
+    const rifles = count(w, S, 'sdq_rifle');
+    // Warriors next to the post when it falls take its rifles.
+    spawnIn(w, S, 'sdq_warrior', 4, 97, 36);
+    raze(w, 'post_mahebu');
+    expect(w.faction(S)!.resources.powder).toBe(powder + 120);
+    expect(count(w, S, 'sdq_rifle')).toBe(rifles + 3);
+    for (const p of ['post_gungu', 'post_sakura', 'post_boarung']) raze(w, p);
+    expect(w.ext.flags.taken).toBeFalsy();
+    raze(w, 'wushe_branch');
+    expect(w.ext.flags.taken).toBe(true);
+    at(w, 361);
+    expect(tagged(w, 'relief').length).toBe(13);
+    at(w, 571);
+    expect(tagged(w, 'relief2').length).toBe(12);
+    at(w, 721);
+    collect(w);
+    expect(w.ext.flags[`outcomeReason:${S}`]).toBe('wushe1.end.history');
+    expect(outcomeOf(w, S)).toBe('victory');
+    expect(outcomeOf(w, J)).toBe('historical');
+  });
+
+  it('起事: the relief retakes 霧社, the branch holds, the fighters are lost, or the relief is broken', () => {
+    const a = open('wushe1');
+    for (const p of ['post_mahebu', 'post_gungu', 'post_sakura', 'post_boarung', 'wushe_branch']) raze(a, p);
+    hold(a, J, 'jp14_police', 'wushe', 6);
+    run(a, 62 * 20);
+    collect(a);
+    expect(a.ext.flags[`outcomeReason:${J}`]).toBe('wushe1.end.retaken');
+    expect(outcomeOf(a, S)).toBe('defeat');
+    const b = open('wushe1');
+    raze(b, 'post_nengao');
+    raze(b, 'post_tunbara');
+    at(b, 721);
+    collect(b);
+    expect(b.ext.flags[`outcomeReason:${J}`]).toBe('wushe1.end.held');
+    const c = open('wushe1');
+    at(c, 12);
+    killSide(c, S, 2);
+    run(c, 10);
+    collect(c);
+    expect(c.ext.flags[`outcomeReason:${S}`]).toBe('wushe1.end.rout');
+    const d = open('wushe1');
+    at(d, 651);
+    killSide(d, J, 3);
+    run(d, 10);
+    collect(d);
+    expect(d.ext.flags[`outcomeReason:${S}`]).toBe('wushe1.end.repulsed');
+    expect(outcomeOf(d, J)).toBe('defeat');
+  });
+
+  it('馬赫坡: the posts are gone; rifles and rounds carried over from 起事; air raids warn, then hit (less in forest)', () => {
+    const plain = open('wushe2');
+    expect(plain.buildings().some((b) => b.type === 'sdq_post')).toBe(false);
+    const carried = open('wushe2', { reasons: { wushe1: { [S]: 'wushe1.end.history' } } });
+    expect(carried.faction(S)!.resources.powder).toBe(plain.faction(S)!.resources.powder + 400);
+    expect(count(carried, S, 'sdq_rifle')).toBe(count(plain, S, 'sdq_rifle') + 6);
+    // A knot of men in the open and one in the forest, far from anyone else.
+    const w = open('wushe2');
+    killSide(w, S);
+    // Open ground (cleared for the test) far from the Japanese.
+    for (let y = 70; y < 80; y++) for (let x = 25; x < 35; x++) w.map.terrain[y * w.map.width + x] = TERRAIN.plain;
+    spawnIn(w, S, 'sdq_warrior', 6, 30.5, 75.5);
+    const open1 = [...w.all()].filter((e) => e.owner === S && e.kind === 'unit');
+    // One more man in the forest beside them: cover cuts the damage.
+    w.map.terrain[75 * w.map.width + 33] = T_FOREST;
+    const hid = w.spawnUnit('sdq_warrior', S, 33.5, 75.5);
+    at(w, 76);
+    expect(w.ext.raids?.length).toBe(1);
+    const hp0 = open1[0].hp;
+    run(w, 5 * 20);
+    expect(open1[0].hp).toBe(hp0 - 20);
+    expect(hid.hp).toBe(hid.maxHp - 20 * 0.35);
+    expect(w.ext.raids?.length).toBe(0);
+    collect(w);
+  });
+
+  it('馬赫坡: 塔羅灣, 馬赫坡 and the cave taken → Japan wins (historical for the Seediq); wiped out is worse', () => {
+    const w = open('wushe2');
+    // The fighters slip away north into the mountains.
+    for (const e of [...w.all()]) if (e.owner === S && e.kind === 'unit') {
+      e.x = e.px = 70 + (e.id % 10);
+      e.y = e.py = 8 + (e.id % 3);
+      e.order = { type: 'idle' };
+      e.path = null;
+    }
+    killTag(w, 'tado_nokan');
+    killTag(w, 'mona_rudao');
+    hold(w, J, 'jp14_infantry', 'truwan', 5);
+    hold(w, J, 'jp14_infantry', 'mahebu', 5);
+    hold(w, J, 'jp14_infantry', 'cave', 5);
+    run(w, 47 * 20);
+    collect(w);
+    expect(w.ext.flags[`outcomeReason:${S}`]).toBe('wushe2.end.history');
+    expect(outcomeOf(w, S)).toBe('historical');
+    const b = open('wushe2');
+    killSide(b, S, 1);
+    hold(b, J, 'jp14_infantry', 'truwan', 5);
+    hold(b, J, 'jp14_infantry', 'mahebu', 5);
+    hold(b, J, 'jp14_infantry', 'cave', 5);
+    run(b, 47 * 20);
+    collect(b);
+    expect(b.ext.flags[`outcomeReason:${S}`]).toBe('wushe2.end.rout');
+    expect(outcomeOf(b, S)).toBe('defeat');
+  });
+
+  it('馬赫坡: the Japanese worn down, or 15 minutes held', () => {
+    const a = open('wushe2');
+    at(a, 61);
+    killSide(a, J, 15);
+    run(a, 10);
+    collect(a);
+    expect(a.ext.flags[`outcomeReason:${S}`]).toBe('wushe2.end.repulsed');
+    expect(outcomeOf(a, J)).toBe('defeat');
+    const b = open('wushe2');
+    at(b, 901);
+    collect(b);
+    expect(b.ext.flags[`outcomeReason:${S}`]).toBe('wushe2.end.held');
   });
 });
 
