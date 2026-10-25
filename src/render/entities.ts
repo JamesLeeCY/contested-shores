@@ -8,6 +8,10 @@ import { TILE_H, toScreen } from './iso';
 import { crenellate, drawFigure, drawGun, drawShipArt } from './art';
 
 const FORTS = new Set(['zeelandia_castle', 'bastion', 'utrecht_redoubt', 'provintia_fort', 'lower_town_wall']);
+/** Indigenous villages: a thatched pyramid roof over low walls. */
+const HUTS = new Set(['paiwan_village', 'truku_village', 'sdq_village']);
+/** Japanese police posts and offices: white walls under a grey tiled hip roof. */
+const POSTS = new Set(['jp14_post', 'jp14_camp', 'sdq_post', 'sdq_branch', 'wushe_school']);
 
 interface View {
   root: Container;
@@ -175,9 +179,20 @@ export class EntityRenderer {
     const top = [lerp(nx, sx), lerp(ny, sy) - H, lerp(ex, wx), lerp(ey, wy) - H, lerp(sx, nx), lerp(sy, ny) - H, lerp(wx, ex), lerp(wy, ey) - H];
     const base = [lerp(nx, sx), lerp(ny, sy), lerp(ex, wx), lerp(ey, wy), lerp(sx, nx), lerp(sy, ny), lerp(wx, ex), lerp(wy, ey)];
     // Left and right visible walls, then roof.
-    g.poly([base[6], base[7], base[4], base[5], top[4], top[5], top[6], top[7]]).fill(shade(c2, 1.1));
-    g.poly([base[4], base[5], base[2], base[3], top[2], top[3], top[4], top[5]]).fill(shade(c2, 0.8));
-    g.poly(top).fill(e.built !== undefined && e.built < 1 ? 0x9a8a6a : c1).stroke({ color: 0x1a1a1a, width: 1 });
+    const wall = POSTS.has(e.type) ? 0xe8e2d4 : HUTS.has(e.type) ? 0x8a6a42 : c2;
+    g.poly([base[6], base[7], base[4], base[5], top[4], top[5], top[6], top[7]]).fill(shade(wall, 1.1));
+    g.poly([base[4], base[5], base[2], base[3], top[2], top[3], top[4], top[5]]).fill(shade(wall, 0.8));
+    if (HUTS.has(e.type) || POSTS.has(e.type)) {
+      // Pyramid (thatch) or hip (tile) roof rising from the wall tops; a strip of the side colour on the eaves.
+      const ax = (top[0] + top[4]) / 2;
+      const ay = (top[1] + top[5]) / 2 - H * (HUTS.has(e.type) ? 1.1 : 0.7);
+      const roof = HUTS.has(e.type) ? 0xb08a4a : 0x55595e;
+      g.poly([top[0], top[1], top[2], top[3], ax, ay]).fill(shade(roof, 0.75));
+      g.poly([top[6], top[7], top[0], top[1], ax, ay]).fill(shade(roof, 0.9));
+      g.poly([top[6], top[7], top[4], top[5], ax, ay]).fill(shade(roof, 1.1)).stroke({ color: 0x1a1a1a, width: 1 });
+      g.poly([top[4], top[5], top[2], top[3], ax, ay]).fill(shade(roof, 0.85)).stroke({ color: 0x1a1a1a, width: 1 });
+      g.moveTo(top[6], top[7]).lineTo(top[4], top[5]).lineTo(top[2], top[3]).stroke({ color: c1, width: 2 });
+    } else g.poly(top).fill(e.built !== undefined && e.built < 1 ? 0x9a8a6a : c1).stroke({ color: 0x1a1a1a, width: 1 });
     if (FORTS.has(e.type) && (e.built ?? 1) >= 1) crenellate(g, top, shade(c2, 0.9));
     if (e.type === 'battery' || e.type === 'trench') g.poly(top).fill({ color: 0x6b5a3a, alpha: 0.6 });
     v.ring.poly([nx, ny, ex, ey, sx, sy, wx, wy]).stroke({ color: 0x7CFC00, width: 2 });

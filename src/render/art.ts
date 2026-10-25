@@ -15,7 +15,9 @@ function shade(hex: number, f: number) {
   return (r << 16) | (g << 8) | b;
 }
 
-const PAIWAN = new Set(['paiwan_hunter', 'paiwan_warrior', 'aruqu', 'paiwan_family', 'truku_hunter', 'truku_warrior', 'haruq_nawi', 'sdq_warrior', 'sdq_rifle', 'mona_rudao', 'tado_nokan', 'toda_fighter']);
+const PAIWAN = new Set(['paiwan_hunter', 'paiwan_warrior', 'aruqu', 'paiwan_family']);
+/** Truku, Seediq and Toda: woven cream-and-red cloth and facial tattoos (ptasan), not the Paiwan black. */
+const GAYA = new Set(['truku_hunter', 'truku_warrior', 'haruq_nawi', 'sdq_warrior', 'sdq_rifle', 'mona_rudao', 'tado_nokan', 'toda_fighter']);
 const JAPAN = new Set(['japan_infantry', 'japan_volunteer', 'sakuma', 'jp95_guard', 'jp95_infantry', 'jp95_cavalry', 'kitashirakawa', 'nogi', 'jp14_police', 'jp14_infantry']);
 const RIFLES = new Set(['japan_infantry', 'jp95_guard', 'jp95_infantry', 'jp14_police', 'jp14_infantry']);
 /** 1895 臺灣 side: 黑旗軍 in black; the others in the faction colour with straw hats. */
@@ -43,15 +45,43 @@ function drawPaiwan(g: Graphics, type: string, c1: number, hero: boolean) {
     g.poly([-1, -27, -3, -36, 0.5, -28]).fill(0xf2efe6).stroke(LINE);
     g.poly([1, -27, 2.5, -35, 2.5, -27.5]).fill(0x2a2a2a);
   }
-  if (type === 'paiwan_hunter' || type === 'truku_hunter' || type === 'sdq_rifle' || type === 'mona_rudao' || type === 'toda_fighter') {
+  if (type === 'paiwan_hunter') {
     g.moveTo(4, -9).lineTo(10, -29).stroke({ color: WOOD, width: 2.2 });
     g.moveTo(9.2, -26).lineTo(10.3, -29.5).stroke({ color: IRON, width: 1.4 });
-  } else if (type === 'paiwan_warrior' || type === 'aruqu' || type === 'truku_warrior' || type === 'haruq_nawi' || type === 'sdq_warrior' || type === 'tado_nokan') {
+  } else if (type === 'paiwan_warrior' || type === 'aruqu') {
     g.moveTo(5, -11).lineTo(10, -20).stroke({ color: 0xcfd3d6, width: 2.2 });
     g.moveTo(4.2, -10).lineTo(5.6, -12.5).stroke({ color: WOOD, width: 2.6 });
   } else {
     // Carrying basket on the back.
     g.roundRect(-8 * s, -20 * s, 5 * s, 8 * s, 2).fill(0x9a7a45).stroke(LINE);
+  }
+  if (hero) heroBanner(g, c1);
+}
+
+/** 太魯閣族・賽德克族・道澤群: cream woven tunic with red bands, a sash in the faction colour, tattooed face. */
+function drawGaya(g: Graphics, type: string, c1: number, hero: boolean) {
+  const CLOTH = 0xeee3c8;
+  const RED = 0xa8322a;
+  g.rect(-3.2, -9, 2.4, 9).fill(SKIN);
+  g.rect(0.8, -9, 2.4, 9).fill(SKIN);
+  g.rect(-4.5, -11, 9, 4).fill(RED);
+  g.roundRect(-5.5, -21, 11, 11, 3).fill(CLOTH).stroke(LINE);
+  // Woven red bands with a diamond, and the side's sash across the chest.
+  g.rect(-5.5, -19, 11, 1.4).fill(RED);
+  g.rect(-5.5, -13, 11, 1.4).fill(RED);
+  g.poly([0, -17.6, 1.6, -16, 0, -14.4, -1.6, -16]).fill(RED);
+  g.moveTo(-5, -20).lineTo(5, -12).stroke({ color: c1, width: 1.8 });
+  g.circle(0, -24.5, 3.6).fill(SKIN).stroke(LINE);
+  // Facial tattoos: a forehead line, and the chin band of a proven man.
+  g.moveTo(0, -27.6).lineTo(0, -25.6).stroke({ color: 0x2b3a55, width: 1 });
+  g.moveTo(-2.2, -22.6).lineTo(2.2, -22.6).stroke({ color: 0x2b3a55, width: 1.2 });
+  if (type === 'truku_hunter' || type === 'sdq_rifle' || type === 'mona_rudao' || type === 'toda_fighter' || type === 'haruq_nawi') {
+    g.moveTo(4, -9).lineTo(10, -29).stroke({ color: WOOD, width: 2.2 });
+    g.moveTo(9.2, -26).lineTo(10.3, -29.5).stroke({ color: IRON, width: 1.4 });
+  } else {
+    // The long knife worn at the hip, drawn.
+    g.moveTo(5, -11).lineTo(10, -20).stroke({ color: 0xcfd3d6, width: 2.2 });
+    g.moveTo(4.2, -10).lineTo(5.6, -12.5).stroke({ color: WOOD, width: 2.6 });
   }
   if (hero) heroBanner(g, c1);
 }
@@ -82,6 +112,7 @@ function drawJapanese(g: Graphics, type: string, c1: number, hero: boolean) {
 export function drawFigure(g: Graphics, type: string, c1: number, c2: number, hero: boolean) {
   g.ellipse(0, 0, 8, 3.5).fill({ color: 0x000000, alpha: 0.25 });
   if (PAIWAN.has(type)) return drawPaiwan(g, type, c1, hero);
+  if (GAYA.has(type)) return drawGaya(g, type, c1, hero);
   if (JAPAN.has(type)) return drawJapanese(g, type, c1, hero);
   if (type === 'jp95_cart') {
     // A two-wheeled supply cart with its load.

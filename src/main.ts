@@ -9,10 +9,11 @@ import { openCodex } from './ui/codex';
 import { openSettings } from './ui/settings';
 import { installAudio } from './ui/audio';
 import { el } from './ui/dom';
-import { lang, t } from './ui/i18n';
+import { lang, loadLang, t } from './ui/i18n';
 import type { Session } from './ui/session';
 
 async function main() {
+  await loadLang();
   document.documentElement.lang = lang === 'en' ? 'en' : 'zh-Hant-TW';
   document.title = t('game.title');
   const data = loadGameData();

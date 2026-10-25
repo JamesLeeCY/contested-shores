@@ -1,8 +1,8 @@
 // Display strings: Traditional Chinese (the original) and English. The language follows the
 // player's choice (settings, stored separately so this module has no dependencies), else the
 // browser: Chinese browsers get Chinese, everyone else English. A missing English text falls back
-// to the Chinese one.
-import en from '../../i18n/en.json';
+// to the Chinese one. The English table is a separate download, fetched only when needed
+// (`loadLang` before the first screen).
 import zhTW from '../../i18n/zh-TW.json';
 
 export type Lang = 'zh-TW' | 'en';
@@ -21,7 +21,12 @@ function initialLang(): Lang {
 
 export const lang: Lang = initialLang();
 const zh: Record<string, string> = zhTW;
-const table: Record<string, string> = lang === 'en' ? en : zh;
+let table: Record<string, string> = zh;
+
+/** Fetches the English table when English is chosen; Chinese is built in. */
+export async function loadLang() {
+  if (lang === 'en') table = (await import('../../i18n/en.json')).default;
+}
 
 /** Stores the choice; the page reloads to rebuild every screen in the new language. */
 export function setLang(next: Lang) {
