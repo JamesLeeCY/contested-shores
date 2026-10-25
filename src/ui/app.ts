@@ -1,6 +1,6 @@
 // Game flow: title menu → campaign / side / difficulty → scenario (cutscenes, objectives) → result
 // screen → next scenario of the campaign, carrying the campaign state; the 1661 campaign ends with
-// one of six endings (spec §7, §11 stage 7). Campaigns: 大員之圍 1661, 牡丹社事件 1874.
+// one of six endings (spec §7, §11 stage 7). Campaigns: 大員之圍 1661, 施琅攻臺 1683, 牡丹社事件 1874, 乙未戰爭 1895.
 import type { Application } from 'pixi.js';
 import { loadMap } from '../data/map';
 import { CAMPAIGNS, SCENARIOS, campaignOf, scenarioById, scenariosOf } from '../data/scenarios';
@@ -99,6 +99,7 @@ export class GameApp {
     const camp = CAMPAIGNS.find((c) => c.id === cid)!;
     const stored = this.campaign(cid);
 
+    el('div', 'menu-game', card, t('game.title'));
     const tabs = el('div', 'menu-tabs', card);
     for (const c of CAMPAIGNS) {
       const b = el('button', 'menu-tab' + (c.id === cid ? ' on' : ''), tabs, t(`campaign.${c.id}.name`));

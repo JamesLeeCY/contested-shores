@@ -1,7 +1,7 @@
 /* global process, window, document, setTimeout, console */
 // Plays the whole campaign on a deployed build (AI on both sides, fast-forwarded with the game's own
 // step function), clicking through each result screen to the campaign ending.
-//   node scripts/dev/playthrough.mjs https://jamesleecy.github.io/siege-of-tayouan-1661/
+//   node scripts/dev/playthrough.mjs https://jamesleecy.github.io/contested-shores/
 import { chromium } from '@playwright/test';
 
 const url = process.argv[2] ?? 'http://localhost:4173/';
