@@ -425,7 +425,7 @@
               "tag": "landing"
             },
             {
-              "type": "light_cannon",
+              "type": "qing_gun",
               "owner": "faction_qing",
               "count": 1,
               "at": [

@@ -300,3 +300,15 @@ describe('morale (spec §4.6)', () => {
     expect(moraleSpeedMul(w, u)).toBe(1);
   });
 });
+
+describe('field guns and musket fire', () => {
+  it('the Qing field gun (東寧) loses its crew to muskets; the 1661 guns keep their building armour', () => {
+    const w = world();
+    const shooter = w.spawnUnit('tn_soldier', Z, X, Y);
+    const qing = w.spawnUnit('qing_gun', V, X + 3, Y);
+    const zheng = w.spawnUnit('light_cannon', V, X + 3, Y + 2);
+    // musket 14 × 1.2 (none) vs 14 × 0.1 − 2 → min 1 (building).
+    expect(dmg(w, shooter, qing)).toBeCloseTo(14 * 1.2 * 1.1);
+    expect(dmg(w, shooter, zheng)).toBeCloseTo(1 * 1.1);
+  });
+});

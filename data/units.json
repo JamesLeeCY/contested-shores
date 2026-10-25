@@ -2479,5 +2479,38 @@
     ],
     "naval": false,
     "smallCraft": false
+  },
+  {
+    "id": "qing_gun",
+    "faction": "faction_qing",
+    "nameKey": "unit.qing_gun.name",
+    "class": "siege",
+    "hp": 140,
+    "atk": 40,
+    "atkType": "cannon",
+    "atkInterval": 6,
+    "armor": 0,
+    "armorType": "none",
+    "range": 8,
+    "sight": 8,
+    "speed": 0.5,
+    "hitChance": 0.5,
+    "powderPerShot": 0,
+    "producible": false,
+    "cost": {
+      "grain": 0,
+      "wood": 0,
+      "powder": 0,
+      "deerskin": 0
+    },
+    "buildTime": 0,
+    "pop": 3,
+    "stage": 1,
+    "producedAt": [],
+    "traits": [
+      "must_deploy"
+    ],
+    "naval": false,
+    "smallCraft": false
   }
 ]

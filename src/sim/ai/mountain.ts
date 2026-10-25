@@ -453,7 +453,7 @@ const defend: Handler = (ctx, arg) => {
   const foes = visibleEnemies(w, ctx.owner, (e) => e.kind === 'unit' && Math.hypot(e.x - b.x, e.y - b.y) <= r);
   if (!foes.length) return 'persist';
   // Only a few attackers left (e.g. guns battering the walls): the garrison sallies out to finish them.
-  const sally = foes.length <= 4 && (b.garrisoned?.length ?? 0) >= foes.length * 2;
+  const sally = foes.length <= 4 && (b.garrisoned?.length ?? 0) >= Math.max(3, foes.length);
   if (sally) {
     issue(ctx, { type: 'ungarrison', building: b.id });
     ctx.ai.mem.sallyUntil = w.tick + 30 * w.ticksPerSecond;
