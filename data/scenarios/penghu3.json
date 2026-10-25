@@ -30,7 +30,8 @@
   "ownership": [
     {
       "type": "zeelandia_castle",
-      "owner": "faction_tungning"
+      "owner": "faction_tungning",
+      "tag": "tn_anping_city"
     },
     {
       "type": "bastion",
@@ -42,7 +43,8 @@
     },
     {
       "type": "provintia_fort",
-      "owner": "faction_tungning"
+      "owner": "faction_tungning",
+      "tag": "tn_chengtianfu"
     },
     {
       "type": "dock_voc",

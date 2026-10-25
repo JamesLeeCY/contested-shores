@@ -65,7 +65,12 @@ export function applyScenario(world: World, sc: Scenario, campaign: CampaignStat
     if (sc.castleMoraleMin !== undefined) m = Math.max(sc.castleMoraleMin, m);
     voc.castleMorale = m;
   }
-  for (const o of sc.ownership ?? []) for (const b of world.buildings()) if (b.type === o.type) b.owner = o.owner;
+  for (const o of sc.ownership ?? [])
+    for (const b of world.buildings())
+      if (b.type === o.type) {
+        b.owner = o.owner;
+        if (o.tag) b.tag = o.tag;
+      }
   for (const b of sc.buildings ?? []) {
     if (b.line) {
       const [[x0, y0], [x1, y1]] = b.line;

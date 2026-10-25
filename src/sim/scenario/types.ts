@@ -82,7 +82,8 @@ export interface Scenario {
   castleMorale: number | 'carry';
   castleMoraleMin?: number;
   techs?: Record<Owner, string[]>;
-  ownership?: { type: string; owner: Owner }[];
+  /** Hands map buildings to another side; `tag` renames them (label from `place.<tag>`), e.g. 普羅民遮城 → 承天府. */
+  ownership?: { type: string; owner: Owner; tag?: string }[];
   buildings?: BuildingSpec[];
   units?: UnitSpec[];
   fleets?: FleetSpec[];
