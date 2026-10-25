@@ -6,7 +6,7 @@ test('menu → chapter 1 → cutscene → 60 s of play without errors', async ({
   page.on('pageerror', (e) => errors.push(e.message));
   page.on('console', (m) => m.type() === 'error' && errors.push(m.text()));
   await page.goto('./');
-  await expect(page.locator('.menu-game')).toHaveText('島嶼烽火：臺灣 1661–1914');
+  await expect(page.locator('.menu-game')).toHaveText('島嶼烽火：臺灣 1661–1930');
   await expect(page.locator('.menu-title')).toHaveText('大員之圍 1661');
   await page.locator('.menu-chapter').first().click();
   await expect(page.locator('.cutscene')).toBeVisible();
