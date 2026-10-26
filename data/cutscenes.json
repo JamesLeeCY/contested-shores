@@ -197,5 +197,32 @@
       "cut.sf3_intro.2",
       "cut.sf3_intro.3"
     ]
+  },
+  "ls1_intro": {
+    "titleKey": "cut.ls1_intro.title",
+    "art": "fort",
+    "lines": [
+      "cut.ls1_intro.1",
+      "cut.ls1_intro.2",
+      "cut.ls1_intro.3"
+    ]
+  },
+  "ls2_intro": {
+    "titleKey": "cut.ls2_intro.title",
+    "art": "fort",
+    "lines": [
+      "cut.ls2_intro.1",
+      "cut.ls2_intro.2",
+      "cut.ls2_intro.3"
+    ]
+  },
+  "ls3_intro": {
+    "titleKey": "cut.ls3_intro.title",
+    "art": "fort",
+    "lines": [
+      "cut.ls3_intro.1",
+      "cut.ls3_intro.2",
+      "cut.ls3_intro.3"
+    ]
   }
 }

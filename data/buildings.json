@@ -1145,5 +1145,39 @@
     "diseaseShelter": false,
     "attack": null,
     "capturable": false
+  },
+  {
+    "id": "q87_tower",
+    "faction": "faction_qing1787",
+    "nameKey": "building.q87_tower.name",
+    "hp": 800,
+    "armor": 3,
+    "armorType": "building",
+    "preset": true,
+    "cost": {
+      "grain": 0,
+      "wood": 0,
+      "powder": 0,
+      "deerskin": 0
+    },
+    "buildTime": 0,
+    "popCap": 0,
+    "size": 2,
+    "sight": 10,
+    "dropoff": false,
+    "produces": [],
+    "researches": [],
+    "garrison": 0,
+    "diseaseShelter": false,
+    "attack": {
+      "guns": 1,
+      "atk": 20,
+      "atkType": "musket",
+      "range": 6,
+      "atkInterval": 3,
+      "hitChance": 0.6
+    },
+    "crossfire": true,
+    "capturable": false
   }
 ]

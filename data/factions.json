@@ -247,6 +247,44 @@
         "powder": 0,
         "deerskin": 0
       }
+    },
+    {
+      "id": "faction_tiandihui",
+      "nameKey": "faction.faction_tiandihui.name",
+      "basePopCap": 200,
+      "colors": {
+        "primary": "#8a4b2a",
+        "secondary": "#efe3c8"
+      },
+      "heroes": [
+        "lin_shuangwen"
+      ],
+      "startResources": {
+        "grain": 0,
+        "wood": 0,
+        "powder": 0,
+        "deerskin": 0
+      }
+    },
+    {
+      "id": "faction_qing1787",
+      "nameKey": "faction.faction_qing1787.name",
+      "basePopCap": 200,
+      "colors": {
+        "primary": "#c9a227",
+        "secondary": "#1f2a44"
+      },
+      "heroes": [
+        "chai_daji",
+        "fukangan",
+        "hailancha"
+      ],
+      "startResources": {
+        "grain": 0,
+        "wood": 0,
+        "powder": 0,
+        "deerskin": 0
+      }
     }
   ],
   "villages": [

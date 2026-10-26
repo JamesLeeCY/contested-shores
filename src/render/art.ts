@@ -162,6 +162,7 @@ export function drawFigure(g: Graphics, type: string, c1: number, c2: number, he
       g.circle(-6, -14, 2).fill(c1);
       break;
     case 'archer_zheng':
+    case 'q87_pingpu':
     case 'village_warrior':
     case 'village_hunter':
       g.arc(7, -16, 8, -1.3, 1.3).stroke({ color: WOOD, width: 1.8 });
@@ -169,10 +170,19 @@ export function drawFigure(g: Graphics, type: string, c1: number, c2: number, he
       break;
     case 'iron_man':
     case 'koxinga':
+    case 'td_brave':
+    case 'q87_quanzhou':
+    case 'lin_shuangwen':
+    case 'hailancha':
       g.moveTo(6, -6).lineTo(10, -30).stroke({ color: WOOD, width: 1.8 });
       g.poly([9, -30, 13, -37, 11, -28]).fill(0xcfd3d6).stroke(LINE);
       break;
     case 'tn_soldier':
+    case 'td_musket':
+    case 'q87_soldier':
+    case 'q87_hakka':
+    case 'chai_daji':
+    case 'fukangan':
     case 'q84_brave':
     case 'q84_militia':
     case 'q84_dongjun':

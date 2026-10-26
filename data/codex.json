@@ -1092,5 +1092,95 @@
       "src.sf_penghu_en",
       "src.sf_war_zh"
     ]
+  },
+  {
+    "id": "lin_shuangwen",
+    "category": "people",
+    "dispute": false,
+    "sources": [
+      "src.ls_zh",
+      "src.ls_en"
+    ]
+  },
+  {
+    "id": "chai_daji",
+    "category": "people",
+    "dispute": false,
+    "sources": [
+      "src.ls_zh",
+      "src.ls_en"
+    ]
+  },
+  {
+    "id": "fukangan",
+    "category": "people",
+    "dispute": false,
+    "sources": [
+      "src.ls_zh",
+      "src.ls_en"
+    ]
+  },
+  {
+    "id": "ls_tiandihui",
+    "category": "units",
+    "dispute": false,
+    "sources": [
+      "src.ls_zh",
+      "src.ls_en"
+    ]
+  },
+  {
+    "id": "ls_yimin",
+    "category": "units",
+    "dispute": true,
+    "sources": [
+      "src.ls_zh",
+      "src.ls_en"
+    ]
+  },
+  {
+    "id": "ls_pingpu",
+    "category": "units",
+    "dispute": false,
+    "sources": [
+      "src.ls_zh",
+      "src.ls_en"
+    ]
+  },
+  {
+    "id": "ls_chiayi",
+    "category": "places",
+    "dispute": false,
+    "sources": [
+      "src.ls_zh",
+      "src.ls_en"
+    ]
+  },
+  {
+    "id": "ls_ethnic",
+    "category": "disputes",
+    "dispute": true,
+    "sources": [
+      "src.ls_zh",
+      "src.ls_en"
+    ]
+  },
+  {
+    "id": "ls_aftermath",
+    "category": "disputes",
+    "dispute": false,
+    "sources": [
+      "src.ls_zh",
+      "src.ls_en"
+    ]
+  },
+  {
+    "id": "ls_numbers",
+    "category": "disputes",
+    "dispute": true,
+    "sources": [
+      "src.ls_zh",
+      "src.ls_en"
+    ]
   }
 ]

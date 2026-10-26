@@ -1,0 +1,477 @@
+{
+  "id": "ls1",
+  "campaign": "linshuangwen",
+  "map": "tainan",
+  "factions": [
+    "faction_tiandihui",
+    "faction_qing1787"
+  ],
+  "historyKey": "history.ls1",
+  "chapter": 1,
+  "nameKey": "scenario.ls1.name",
+  "dateKey": "scenario.ls1.date",
+  "timerMinutes": 10,
+  "stage": {
+    "faction_tiandihui": 1,
+    "faction_qing1787": 1
+  },
+  "castleMorale": 0,
+  "ai": {
+    "faction_tiandihui": {
+      "plans": [
+        "ls1_lin"
+      ],
+      "composition": {},
+      "targetArmy": 0,
+      "home": [
+        78,
+        5
+      ],
+      "scripted": true
+    },
+    "faction_qing1787": {
+      "plans": [
+        "ls1_qing"
+      ],
+      "composition": {},
+      "targetArmy": 0,
+      "home": [
+        56,
+        24
+      ],
+      "scripted": true
+    }
+  },
+  "historicalLoser": "faction_qing1787",
+  "objectives": {
+    "faction_tiandihui": [
+      "ls1.obj.take"
+    ],
+    "faction_qing1787": [
+      "ls1.obj.hold"
+    ]
+  },
+  "status": [
+    {
+      "textKey": "ls1.status",
+      "counts": [
+        [
+          "changhua",
+          "faction_tiandihui"
+        ],
+        [
+          "changhua",
+          "faction_qing1787"
+        ]
+      ]
+    }
+  ],
+  "units": [
+    {
+      "type": "lin_shuangwen",
+      "owner": "faction_tiandihui",
+      "count": 1,
+      "at": [
+        77,
+        5
+      ]
+    },
+    {
+      "type": "td_brave",
+      "owner": "faction_tiandihui",
+      "count": 17,
+      "at": [
+        78,
+        6
+      ],
+      "tag": "main"
+    },
+    {
+      "type": "td_musket",
+      "owner": "faction_tiandihui",
+      "count": 8,
+      "at": [
+        80,
+        4
+      ],
+      "tag": "main"
+    },
+    {
+      "type": "q87_soldier",
+      "owner": "faction_qing1787",
+      "count": 14,
+      "at": [
+        56,
+        24
+      ],
+      "tag": "garrison"
+    },
+    {
+      "type": "q87_quanzhou",
+      "owner": "faction_qing1787",
+      "count": 6,
+      "at": [
+        54,
+        21
+      ],
+      "tag": "garrison"
+    }
+  ],
+  "resources": {
+    "faction_tiandihui": {
+      "powder": 3000
+    },
+    "faction_qing1787": {
+      "powder": 3000
+    }
+  },
+  "regions": [
+    {
+      "id": "dalijie",
+      "x": 72,
+      "y": 1,
+      "w": 14,
+      "h": 9
+    },
+    {
+      "id": "refuge_e",
+      "x": 88,
+      "y": 14,
+      "w": 14,
+      "h": 22
+    },
+    {
+      "id": "lukang",
+      "x": 14,
+      "y": 20,
+      "w": 10,
+      "h": 10
+    },
+    {
+      "id": "chiayi_n",
+      "x": 52,
+      "y": 40,
+      "w": 16,
+      "h": 11
+    }
+  ],
+  "remove": [
+    "baguashan",
+    "anping"
+  ],
+  "ownership": [
+    {
+      "type": "walled_city",
+      "from": "changhua",
+      "owner": "faction_neutral",
+      "tag": "changhua_1787"
+    },
+    {
+      "type": "walled_city",
+      "from": "chiayi",
+      "owner": "faction_neutral",
+      "tag": "zhuluo"
+    }
+  ],
+  "hud": {
+    "faction_tiandihui": [],
+    "faction_qing1787": []
+  },
+  "hints": [
+    {
+      "textKey": "hint.occupy"
+    }
+  ],
+  "triggers": [
+    {
+      "id": "ls1_start",
+      "when": {
+        "type": "time_elapsed",
+        "seconds": 0
+      },
+      "do": [
+        {
+          "type": "show_cutscene",
+          "id": "ls1_intro"
+        },
+        {
+          "type": "set_objective",
+          "id": "take",
+          "faction": "faction_tiandihui",
+          "textKey": "ls1.obj.take",
+          "primary": true
+        },
+        {
+          "type": "set_objective",
+          "id": "hold",
+          "faction": "faction_qing1787",
+          "textKey": "ls1.obj.hold",
+          "primary": true
+        }
+      ]
+    },
+    {
+      "id": "ls1_relief",
+      "when": {
+        "type": "time_elapsed",
+        "seconds": 140
+      },
+      "do": [
+        {
+          "type": "spawn_units",
+          "units": [
+            {
+              "type": "q87_soldier",
+              "owner": "faction_qing1787",
+              "count": 8,
+              "at": [
+                20,
+                25
+              ],
+              "tag": "relief"
+            },
+            {
+              "type": "q87_quanzhou",
+              "owner": "faction_qing1787",
+              "count": 6,
+              "at": [
+                20,
+                27
+              ],
+              "tag": "relief"
+            }
+          ]
+        },
+        {
+          "type": "show_message",
+          "textKey": "ls1.msg.relief",
+          "kind": "warn"
+        }
+      ]
+    },
+    {
+      "id": "ls1_lin",
+      "when": {
+        "type": "unit_dead",
+        "unitTag": "lin_shuangwen"
+      },
+      "do": [
+        {
+          "type": "show_message",
+          "textKey": "ls1.msg.lin",
+          "kind": "warn"
+        }
+      ]
+    },
+    {
+      "id": "ls1_crushed",
+      "when": {
+        "type": "all_of",
+        "conditions": [
+          {
+            "type": "held_for",
+            "id": "changhua_c",
+            "seconds": 60,
+            "condition": {
+              "type": "all_of",
+              "conditions": [
+                {
+                  "type": "area_entered",
+                  "region": "changhua",
+                  "owner": "faction_tiandihui",
+                  "pop": 8
+                },
+                {
+                  "type": "not",
+                  "condition": {
+                    "type": "area_entered",
+                    "region": "changhua",
+                    "owner": "faction_qing1787",
+                    "pop": 2
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "type": "time_elapsed",
+            "seconds": 250
+          },
+          {
+            "type": "army_pop_below",
+            "owner": "faction_qing1787",
+            "pop": 3
+          }
+        ]
+      },
+      "do": [
+        {
+          "type": "fail_mission",
+          "faction": "faction_qing1787",
+          "reasonKey": "ls1.end.crushed",
+          "keepOpen": true
+        },
+        {
+          "type": "win_mission",
+          "faction": "faction_tiandihui",
+          "rating": "victory",
+          "reasonKey": "ls1.end.crushed"
+        }
+      ]
+    },
+    {
+      "id": "ls1_taken",
+      "when": {
+        "type": "held_for",
+        "id": "changhua",
+        "seconds": 60,
+        "condition": {
+          "type": "all_of",
+          "conditions": [
+            {
+              "type": "area_entered",
+              "region": "changhua",
+              "owner": "faction_tiandihui",
+              "pop": 8
+            },
+            {
+              "type": "not",
+              "condition": {
+                "type": "area_entered",
+                "region": "changhua",
+                "owner": "faction_qing1787",
+                "pop": 2
+              }
+            }
+          ]
+        }
+      },
+      "do": [
+        {
+          "type": "win_mission",
+          "faction": "faction_tiandihui",
+          "rating": "victory",
+          "reasonKey": "ls1.end.history"
+        }
+      ]
+    },
+    {
+      "id": "ls1_rout",
+      "when": {
+        "type": "all_of",
+        "conditions": [
+          {
+            "type": "time_elapsed",
+            "seconds": 30
+          },
+          {
+            "type": "army_pop_below",
+            "owner": "faction_tiandihui",
+            "pop": 6
+          }
+        ]
+      },
+      "do": [
+        {
+          "type": "fail_mission",
+          "faction": "faction_tiandihui",
+          "reasonKey": "ls1.end.rout"
+        }
+      ]
+    },
+    {
+      "id": "ls1_held",
+      "when": {
+        "type": "time_elapsed",
+        "seconds": 600
+      },
+      "do": [
+        {
+          "type": "win_mission",
+          "faction": "faction_qing1787",
+          "rating": "victory",
+          "reasonKey": "ls1.end.held"
+        },
+        {
+          "type": "fail_mission",
+          "faction": "faction_tiandihui",
+          "reasonKey": "ls1.end.held"
+        }
+      ]
+    }
+  ],
+  "buildings": [
+    {
+      "type": "trench",
+      "owner": "faction_qing1787",
+      "line": [
+        [
+          52,
+          19
+        ],
+        [
+          62,
+          19
+        ]
+      ]
+    },
+    {
+      "type": "trench",
+      "owner": "faction_qing1787",
+      "line": [
+        [
+          52,
+          29
+        ],
+        [
+          62,
+          29
+        ]
+      ]
+    },
+    {
+      "type": "trench",
+      "owner": "faction_qing1787",
+      "line": [
+        [
+          52,
+          20
+        ],
+        [
+          52,
+          28
+        ]
+      ]
+    },
+    {
+      "type": "trench",
+      "owner": "faction_qing1787",
+      "line": [
+        [
+          62,
+          20
+        ],
+        [
+          62,
+          28
+        ]
+      ]
+    },
+    {
+      "type": "q87_tower",
+      "owner": "faction_qing1787",
+      "at": [
+        60,
+        20
+      ]
+    },
+    {
+      "type": "q87_tower",
+      "owner": "faction_qing1787",
+      "at": [
+        53,
+        26
+      ]
+    }
+  ]
+}

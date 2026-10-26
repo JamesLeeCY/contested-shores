@@ -657,5 +657,87 @@
       "hold_line:makung/16",
       "fallback:retreat/makung/99/0.25"
     ]
+  },
+  {
+    "id": "ls1_lin",
+    "faction": "faction_tiandihui",
+    "chapters": [
+      1
+    ],
+    "steps": [
+      "push:changhua",
+      "hold_region:changhua"
+    ]
+  },
+  {
+    "id": "ls1_qing",
+    "faction": "faction_qing1787",
+    "chapters": [
+      1
+    ],
+    "steps": [
+      "hold_line:changhua/14",
+      "column:relief/changhua"
+    ]
+  },
+  {
+    "id": "ls2_lin",
+    "faction": "faction_tiandihui",
+    "chapters": [
+      2
+    ],
+    "steps": [
+      "column:raiders/amb_north",
+      "push:chiayi",
+      "hold_region:chiayi"
+    ]
+  },
+  {
+    "id": "ls2_qing",
+    "faction": "faction_qing1787",
+    "chapters": [
+      2
+    ],
+    "steps": [
+      "hold_line:chiayi/20",
+      "column:relief/chiayi",
+      "column:carts/chiayi",
+      "column:relief2/chiayi"
+    ]
+  },
+  {
+    "id": "ls3_qing",
+    "faction": "faction_qing1787",
+    "chapters": [
+      3
+    ],
+    "steps": [
+      "column:army/baguashan",
+      "column:militia/changhua",
+      "column:pingpu/baguashan",
+      "wait_flag:occ_baguashan",
+      "drop:column/army",
+      "drop:column/pingpu",
+      "column:army/changhua",
+      "column:pingpu/changhua",
+      "wait_flag:occ_changhua",
+      "drop:column/army",
+      "drop:column/militia",
+      "drop:column/pingpu",
+      "push:refuge_e"
+    ]
+  },
+  {
+    "id": "ls3_lin",
+    "faction": "faction_tiandihui",
+    "chapters": [
+      3
+    ],
+    "steps": [
+      "guard:baguashan/16",
+      "hold_line:baguashan/12",
+      "hold_region:changhua",
+      "fallback:refuge_e/changhua/99/0.25"
+    ]
   }
 ]

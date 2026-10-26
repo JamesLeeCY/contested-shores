@@ -1323,6 +1323,143 @@ describe('1884–85 清法戰爭', () => {
   });
 });
 
+describe('1786–88 林爽文事件', () => {
+  const L = 'faction_tiandihui';
+  const Q = 'faction_qing1787';
+  const open = (id: string) => {
+    const sc = scenarioById(id);
+    const w = new WorldClass(DATA, loadMap(sc.map!), { seed: 9, factions: sc.factions });
+    applyScenario(w, sc);
+    w.ext.flags.player = '';
+    at(w, 1);
+    return w;
+  };
+  const men = (w: World, owner: string) => [...w.all()].filter((u) => u.owner === owner && u.kind === 'unit' && !w.data.units.get(u.type)!.traits.includes('non_combat'));
+  const keep = (w: World, owner: string, n: number) => {
+    w.rebuildSpatial();
+    for (const e of men(w, owner).slice(n)) killEntity(w, e);
+  };
+  /** n invulnerable men of `owner` in a region (holding fire); the other side cleared from it. */
+  const hold = (w: World, owner: string, type: string, id: string, n: number) => {
+    const r = w.map.regions.find((x) => x.id === id)!;
+    w.rebuildSpatial();
+    for (const e of [...w.all()]) if (e.kind === 'unit' && e.owner !== owner && e.x >= r.x - 1 && e.y >= r.y - 1 && e.x <= r.x + r.w + 1 && e.y <= r.y + r.h + 1) killEntity(w, e);
+    spawnIn(w, owner, type, n, r.x + 2, r.y + 2);
+    for (const e of w.all())
+      if (e.owner === owner && e.type === type && e.x >= r.x && e.y >= r.y && e.x < r.x + r.w && e.y < r.y + r.h) {
+        e.hp = e.maxHp = 1e9;
+        e.holdFire = true;
+      }
+  };
+  const tagOf = (w: World, tag: string) => w.buildings().find((b) => b.tag === tag);
+
+  it('彰化起事: the 1787 town (renamed), help from Lukang at 2:20; Changhua taken (historical for the Qing) or crushed', () => {
+    const w = open('ls1');
+    expect(tagOf(w, 'changhua_1787')).toBeTruthy();
+    expect(w.buildings().some((b) => b.type === 'fm_fort')).toBe(false);
+    at(w, 141);
+    expect(tagged(w, 'relief').length).toBe(14);
+    killTag(w, 'lin_shuangwen');
+    hold(w, Q, 'q87_soldier', 'lukang', 4);
+    hold(w, L, 'td_brave', 'changhua', 8);
+    run(w, 62 * 20);
+    collect(w);
+    expect(w.ext.flags[`outcomeReason:${L}`]).toBe('ls1.end.history');
+    expect(outcomeOf(w, Q)).toBe('historical');
+    const b = open('ls1');
+    at(b, 251);
+    keep(b, Q, 2);
+    hold(b, L, 'td_brave', 'changhua', 8);
+    run(b, 62 * 20);
+    collect(b);
+    expect(b.ext.flags[`outcomeReason:${Q}`]).toBe('ls1.end.crushed');
+    expect(outcomeOf(b, Q)).toBe('defeat');
+  });
+
+  it('彰化起事: the rising breaks up, or the town holds for 10 minutes', () => {
+    const a = open('ls1');
+    at(a, 31);
+    keep(a, L, 4);
+    run(a, 10);
+    collect(a);
+    expect(a.ext.flags[`outcomeReason:${L}`]).toBe('ls1.end.rout');
+    const b = open('ls1');
+    at(b, 601);
+    collect(b);
+    expect(outcomeOf(b, Q)).toBe('victory');
+    expect(outcomeOf(b, L)).toBe('defeat');
+  });
+
+  it('諸羅之圍: relief with grain carts at 5:00 brings out the townspeople; the second relief at 10:00; held (historical) or fallen', () => {
+    const w = open('ls2');
+    expect(tagOf(w, 'zhuluo')).toBeTruthy();
+    at(w, 301);
+    const carts = tagged(w, 'carts');
+    expect(carts.length).toBe(3);
+    const r = w.map.regions.find((x) => x.id === 'chiayi')!;
+    for (const c of carts) {
+      c.x = c.px = r.x + 6;
+      c.y = c.py = r.y + 6;
+      c.order = { type: 'idle' };
+      c.path = null;
+    }
+    run(w, 10);
+    expect(tagged(w, 'carts').length).toBe(0);
+    expect(tagged(w, 'citizens').length).toBe(6);
+    at(w, 601);
+    expect(tagged(w, 'relief2').length).toBe(14);
+    killTag(w, 'chai_daji');
+    at(w, 901);
+    collect(w);
+    expect(w.ext.flags[`outcomeReason:${Q}`]).toBe('ls2.end.history');
+    expect(outcomeOf(w, L)).toBe('historical');
+    const b = open('ls2');
+    hold(b, L, 'td_brave', 'chiayi', 8);
+    run(b, 62 * 20);
+    collect(b);
+    expect(b.ext.flags[`outcomeReason:${L}`]).toBe('ls2.end.fallen');
+    expect(outcomeOf(b, Q)).toBe('defeat');
+    const c = open('ls2');
+    at(c, 61);
+    keep(c, L, 6);
+    run(c, 10);
+    collect(c);
+    expect(c.ext.flags[`outcomeReason:${L}`]).toBe('ls2.end.rout');
+    expect(outcomeOf(c, L)).toBe('defeat');
+  });
+
+  it('福康安渡臺: Baguashan and Changhua taken (historical, or a rout); or the Qing worn down, or 15 minutes held', () => {
+    const w = open('ls3');
+    killTag(w, 'lin_shuangwen');
+    hold(w, L, 'td_brave', 'refuge_e', 4);
+    hold(w, Q, 'q87_soldier', 'baguashan', 6);
+    hold(w, Q, 'q87_soldier', 'changhua', 6);
+    run(w, 47 * 20);
+    collect(w);
+    expect(w.ext.flags[`outcomeReason:${L}`]).toBe('ls3.end.history');
+    expect(outcomeOf(w, L)).toBe('historical');
+    const b = open('ls3');
+    keep(b, L, 2);
+    hold(b, Q, 'q87_soldier', 'baguashan', 6);
+    hold(b, Q, 'q87_soldier', 'changhua', 6);
+    run(b, 47 * 20);
+    collect(b);
+    expect(b.ext.flags[`outcomeReason:${L}`]).toBe('ls3.end.rout');
+    expect(outcomeOf(b, L)).toBe('defeat');
+    const c = open('ls3');
+    at(c, 61);
+    keep(c, Q, 8);
+    run(c, 10);
+    collect(c);
+    expect(c.ext.flags[`outcomeReason:${L}`]).toBe('ls3.end.repulsed');
+    expect(outcomeOf(c, Q)).toBe('defeat');
+    const d = open('ls3');
+    at(d, 901);
+    collect(d);
+    expect(d.ext.flags[`outcomeReason:${L}`]).toBe('ls3.end.held');
+  });
+});
+
 describe('difficulty in scripted chapters', () => {
   const open = (id: string, mul?: Record<string, number>) => {
     const sc = scenarioById(id);

@@ -1,0 +1,514 @@
+{
+  "id": "ls3",
+  "campaign": "linshuangwen",
+  "map": "tainan",
+  "factions": [
+    "faction_tiandihui",
+    "faction_qing1787"
+  ],
+  "historyKey": "history.ls3",
+  "chapter": 3,
+  "nameKey": "scenario.ls3.name",
+  "dateKey": "scenario.ls3.date",
+  "timerMinutes": 15,
+  "stage": {
+    "faction_tiandihui": 1,
+    "faction_qing1787": 1
+  },
+  "castleMorale": 0,
+  "ai": {
+    "faction_qing1787": {
+      "plans": [
+        "ls3_qing"
+      ],
+      "composition": {},
+      "targetArmy": 0,
+      "home": [
+        20,
+        25
+      ],
+      "scripted": true
+    },
+    "faction_tiandihui": {
+      "plans": [
+        "ls3_lin"
+      ],
+      "composition": {},
+      "targetArmy": 0,
+      "home": [
+        94,
+        24
+      ],
+      "scripted": true
+    }
+  },
+  "historicalLoser": "faction_tiandihui",
+  "objectives": {
+    "faction_qing1787": [
+      "ls3.obj.take"
+    ],
+    "faction_tiandihui": [
+      "ls3.obj.hold"
+    ]
+  },
+  "status": [
+    {
+      "textKey": "ls3.status",
+      "counts": [
+        [
+          "baguashan",
+          "faction_qing1787"
+        ],
+        [
+          "changhua",
+          "faction_qing1787"
+        ]
+      ]
+    }
+  ],
+  "units": [
+    {
+      "type": "fukangan",
+      "owner": "faction_qing1787",
+      "count": 1,
+      "at": [
+        19,
+        25
+      ]
+    },
+    {
+      "type": "hailancha",
+      "owner": "faction_qing1787",
+      "count": 1,
+      "at": [
+        21,
+        23
+      ]
+    },
+    {
+      "type": "q87_soldier",
+      "owner": "faction_qing1787",
+      "count": 18,
+      "at": [
+        22,
+        26
+      ],
+      "tag": "army"
+    },
+    {
+      "type": "q87_gun",
+      "owner": "faction_qing1787",
+      "count": 2,
+      "at": [
+        20,
+        28
+      ],
+      "tag": "army"
+    },
+    {
+      "type": "q87_quanzhou",
+      "owner": "faction_qing1787",
+      "count": 8,
+      "at": [
+        22,
+        22
+      ],
+      "tag": "militia"
+    },
+    {
+      "type": "q87_hakka",
+      "owner": "faction_qing1787",
+      "count": 8,
+      "at": [
+        24,
+        28
+      ],
+      "tag": "militia"
+    },
+    {
+      "type": "q87_pingpu",
+      "owner": "faction_qing1787",
+      "count": 8,
+      "at": [
+        24,
+        22
+      ],
+      "tag": "pingpu"
+    },
+    {
+      "type": "lin_shuangwen",
+      "owner": "faction_tiandihui",
+      "count": 1,
+      "at": [
+        70,
+        22
+      ]
+    },
+    {
+      "type": "td_brave",
+      "owner": "faction_tiandihui",
+      "count": 30,
+      "at": [
+        68,
+        20
+      ],
+      "tag": "bgs"
+    },
+    {
+      "type": "td_musket",
+      "owner": "faction_tiandihui",
+      "count": 22,
+      "at": [
+        70,
+        24
+      ],
+      "tag": "bgs"
+    },
+    {
+      "type": "td_brave",
+      "owner": "faction_tiandihui",
+      "count": 22,
+      "at": [
+        56,
+        23
+      ],
+      "tag": "city"
+    },
+    {
+      "type": "td_musket",
+      "owner": "faction_tiandihui",
+      "count": 11,
+      "at": [
+        55,
+        25
+      ],
+      "tag": "city"
+    }
+  ],
+  "resources": {
+    "faction_tiandihui": {
+      "powder": 3000
+    },
+    "faction_qing1787": {
+      "powder": 3000
+    }
+  },
+  "regions": [
+    {
+      "id": "dalijie",
+      "x": 72,
+      "y": 1,
+      "w": 14,
+      "h": 9
+    },
+    {
+      "id": "refuge_e",
+      "x": 88,
+      "y": 14,
+      "w": 14,
+      "h": 22
+    },
+    {
+      "id": "lukang",
+      "x": 14,
+      "y": 20,
+      "w": 10,
+      "h": 10
+    },
+    {
+      "id": "chiayi_n",
+      "x": 52,
+      "y": 40,
+      "w": 16,
+      "h": 11
+    }
+  ],
+  "remove": [
+    "baguashan",
+    "anping"
+  ],
+  "ownership": [
+    {
+      "type": "walled_city",
+      "from": "changhua",
+      "owner": "faction_neutral",
+      "tag": "changhua_1787"
+    },
+    {
+      "type": "walled_city",
+      "from": "chiayi",
+      "owner": "faction_neutral",
+      "tag": "zhuluo"
+    }
+  ],
+  "hud": {
+    "faction_tiandihui": [],
+    "faction_qing1787": []
+  },
+  "rules": {
+    "combat.uphillUnitDamageMul": 0.7
+  },
+  "buildings": [
+    {
+      "type": "trench",
+      "owner": "faction_tiandihui",
+      "line": [
+        [
+          63,
+          17
+        ],
+        [
+          63,
+          27
+        ]
+      ]
+    },
+    {
+      "type": "trench",
+      "owner": "faction_tiandihui",
+      "line": [
+        [
+          64,
+          16
+        ],
+        [
+          74,
+          16
+        ]
+      ]
+    }
+  ],
+  "hints": [
+    {
+      "textKey": "hint.occupy"
+    },
+    {
+      "textKey": "hint.pingpu"
+    },
+    {
+      "textKey": "hint.uphill"
+    }
+  ],
+  "triggers": [
+    {
+      "id": "ls3_start",
+      "when": {
+        "type": "time_elapsed",
+        "seconds": 0
+      },
+      "do": [
+        {
+          "type": "show_cutscene",
+          "id": "ls3_intro"
+        },
+        {
+          "type": "set_objective",
+          "id": "take",
+          "faction": "faction_qing1787",
+          "textKey": "ls3.obj.take",
+          "primary": true
+        },
+        {
+          "type": "set_objective",
+          "id": "hold",
+          "faction": "faction_tiandihui",
+          "textKey": "ls3.obj.hold",
+          "primary": true
+        }
+      ]
+    },
+    {
+      "id": "ls3_occ_bgs",
+      "when": {
+        "type": "held_for",
+        "id": "occ_baguashan",
+        "seconds": 45,
+        "condition": {
+          "type": "all_of",
+          "conditions": [
+            {
+              "type": "area_entered",
+              "region": "baguashan",
+              "owner": "faction_qing1787",
+              "pop": 6
+            },
+            {
+              "type": "not",
+              "condition": {
+                "type": "area_entered",
+                "region": "baguashan",
+                "owner": "faction_tiandihui",
+                "pop": 2
+              }
+            }
+          ]
+        }
+      },
+      "do": [
+        {
+          "type": "set_flag",
+          "name": "occ_baguashan",
+          "value": true
+        },
+        {
+          "type": "show_message",
+          "textKey": "ls3.msg.baguashan",
+          "kind": "warn"
+        }
+      ]
+    },
+    {
+      "id": "ls3_occ_ch",
+      "when": {
+        "type": "held_for",
+        "id": "occ_changhua",
+        "seconds": 45,
+        "condition": {
+          "type": "all_of",
+          "conditions": [
+            {
+              "type": "area_entered",
+              "region": "changhua",
+              "owner": "faction_qing1787",
+              "pop": 6
+            },
+            {
+              "type": "not",
+              "condition": {
+                "type": "area_entered",
+                "region": "changhua",
+                "owner": "faction_tiandihui",
+                "pop": 2
+              }
+            }
+          ]
+        }
+      },
+      "do": [
+        {
+          "type": "set_flag",
+          "name": "occ_changhua",
+          "value": true
+        },
+        {
+          "type": "show_message",
+          "textKey": "ls3.msg.changhua",
+          "kind": "warn"
+        }
+      ]
+    },
+    {
+      "id": "ls3_lin",
+      "when": {
+        "type": "unit_dead",
+        "unitTag": "lin_shuangwen"
+      },
+      "do": [
+        {
+          "type": "show_message",
+          "textKey": "ls3.msg.lin",
+          "kind": "warn"
+        }
+      ]
+    },
+    {
+      "id": "ls3_rout",
+      "when": {
+        "type": "all_of",
+        "conditions": [
+          {
+            "type": "flag",
+            "name": "occ_baguashan"
+          },
+          {
+            "type": "flag",
+            "name": "occ_changhua"
+          },
+          {
+            "type": "army_pop_below",
+            "owner": "faction_tiandihui",
+            "pop": 3
+          }
+        ]
+      },
+      "do": [
+        {
+          "type": "fail_mission",
+          "faction": "faction_tiandihui",
+          "reasonKey": "ls3.end.rout",
+          "keepOpen": true
+        },
+        {
+          "type": "win_mission",
+          "faction": "faction_qing1787",
+          "rating": "victory",
+          "reasonKey": "ls3.end.rout"
+        }
+      ]
+    },
+    {
+      "id": "ls3_history",
+      "when": {
+        "type": "all_of",
+        "conditions": [
+          {
+            "type": "flag",
+            "name": "occ_baguashan"
+          },
+          {
+            "type": "flag",
+            "name": "occ_changhua"
+          }
+        ]
+      },
+      "do": [
+        {
+          "type": "win_mission",
+          "faction": "faction_qing1787",
+          "rating": "victory",
+          "reasonKey": "ls3.end.history"
+        }
+      ]
+    },
+    {
+      "id": "ls3_repulsed",
+      "when": {
+        "type": "all_of",
+        "conditions": [
+          {
+            "type": "time_elapsed",
+            "seconds": 60
+          },
+          {
+            "type": "army_pop_below",
+            "owner": "faction_qing1787",
+            "pop": 10
+          }
+        ]
+      },
+      "do": [
+        {
+          "type": "win_mission",
+          "faction": "faction_tiandihui",
+          "rating": "victory",
+          "reasonKey": "ls3.end.repulsed"
+        }
+      ]
+    },
+    {
+      "id": "ls3_held",
+      "when": {
+        "type": "time_elapsed",
+        "seconds": 900
+      },
+      "do": [
+        {
+          "type": "win_mission",
+          "faction": "faction_tiandihui",
+          "rating": "victory",
+          "reasonKey": "ls3.end.held"
+        }
+      ]
+    }
+  ]
+}
