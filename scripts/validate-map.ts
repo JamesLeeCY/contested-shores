@@ -42,6 +42,18 @@ const results = [
     ['north_edge', 'east_valley', '北方的道澤群可下到濁水溪'],
     ['meixi_n', 'meixi', '眉溪北側高地可下到山路'],
   ]),
+  ...checkRoutes(mapFromTiled('tamsui', read('data/maps/tamsui.json')), rules, [
+    ['beach', 'heights', '登陸灘頭可上到紅毛城高地'],
+    ['qing_camp', 'heights', '清軍營地可沿河岸到高地'],
+    ['north_hills', 'fields_n', '北方丘陵可下到田地'],
+  ]),
+  ...checkRoutes(mapFromTiled('keelung', read('data/maps/keelung.json')), rules, [
+    ['keelung', 'hongdan', '基隆街可上到紅淡山'],
+    ['hongdan', 'yuemei', '紅淡山可沿山脊到月眉山'],
+    ['east_coast', 'yuemei', '東岸小路可迂迴到月眉山'],
+    ['yuemei', 'nuannuan', '月眉山可退過基隆河到暖暖'],
+    ['shiqiuling', 'nuannuan', '獅球嶺可下到暖暖'],
+  ]),
 ];
 
 let failed = 0;

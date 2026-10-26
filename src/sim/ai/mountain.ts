@@ -270,17 +270,18 @@ const guard: Handler = (ctx, arg) => {
 };
 
 /**
- * Waits until the enemy has `pop` soldiers in a region (or our fighters are down to a third), then
+ * Waits until the enemy has `pop` soldiers in a region (or our fighters are down to `share` of the start,
+ * a third by default), then
  * breaks off every post and falls back to a new line.
  */
 const fallback: Handler = (ctx, arg) => {
   const w = ctx.world;
-  const [region, enemyRegion, popArg] = arg.split('/');
+  const [region, enemyRegion, popArg, shareArg] = arg.split('/');
   const m = ctx.ai.mem;
   const mine = army(w, ctx.owner);
   m.initArmy ??= mine.length;
   const enemy = army(w, w.enemyOf(ctx.owner)).filter((u) => inRegion(w, enemyRegion, u)).length;
-  if (enemy < Number(popArg ?? 5) && mine.length > (m.initArmy as number) / 3) return 'running';
+  if (enemy < Number(popArg ?? 5) && mine.length > (m.initArmy as number) * Number(shareArg ?? 1 / 3)) return 'running';
   ctx.ai.background = ctx.ai.background.filter((b) => !b.startsWith('ambush:') && !b.startsWith('guard:') && !b.startsWith('hold_line:'));
   ctx.ai.mem.groups = {};
   ctx.ai.mem.slots = {};

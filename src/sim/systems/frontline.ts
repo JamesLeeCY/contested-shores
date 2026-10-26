@@ -3,6 +3,7 @@
 //    than `radius` from a supply source (a depot building or a supply cart of their own): the further
 //    out the faster, down to a floor above the rout line.
 //  - Night: sight is cut to `sightMul` until `untilSeconds` (dawn).
+//  - Rain (1885): spells when firearms miss more and sight is cut.
 import type { Entity } from '../types';
 import type { World } from '../world';
 import { changeMorale } from './morale';
@@ -28,6 +29,17 @@ export function frontlineSystem(world: World) {
       world.weather.sightMul = mul;
       if (!night) world.emit({ type: 'dawn' });
     }
+  }
+  // Rain (1885): muskets and rifles miss more, sight shrinks; the typhoon, if any, keeps its own.
+  if (sc.rain && !world.weather.active) {
+    const t = world.tick / hz;
+    const spell = sc.rain.find((r) => t >= r.fromSeconds && t < r.untilSeconds);
+    const pen = spell?.hitPenalty ?? 0;
+    if (world.weather.rangedHitPenalty !== pen) {
+      world.weather.rangedHitPenalty = pen;
+      world.emit({ type: spell ? 'rain_start' : 'rain_end' });
+    }
+    if (!sc.night || t >= sc.night.untilSeconds) world.weather.sightMul = spell?.sightMul ?? 1;
   }
   const s = sc.supply;
   if (!s || world.tick % hz !== 0) return;

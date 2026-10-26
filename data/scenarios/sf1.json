@@ -1,0 +1,504 @@
+{
+  "id": "sf1",
+  "campaign": "sinofrench",
+  "map": "tamsui",
+  "factions": [
+    "faction_qing84",
+    "faction_france"
+  ],
+  "historyKey": "history.sf1",
+  "chapter": 1,
+  "nameKey": "scenario.sf1.name",
+  "dateKey": "scenario.sf1.date",
+  "timerMinutes": 12,
+  "stage": {
+    "faction_qing84": 1,
+    "faction_france": 1
+  },
+  "castleMorale": 0,
+  "ai": {
+    "faction_france": {
+      "plans": [
+        "sf1_france"
+      ],
+      "composition": {},
+      "targetArmy": 0,
+      "home": [
+        12,
+        40
+      ],
+      "scripted": true
+    },
+    "faction_qing84": {
+      "plans": [
+        "sf1_qing"
+      ],
+      "composition": {},
+      "targetArmy": 0,
+      "home": [
+        92,
+        46
+      ],
+      "scripted": true
+    }
+  },
+  "historicalLoser": "faction_france",
+  "objectives": {
+    "faction_france": [
+      "sf1.obj.take"
+    ],
+    "faction_qing84": [
+      "sf1.obj.hold"
+    ]
+  },
+  "status": [
+    {
+      "textKey": "sf1.status",
+      "counts": [
+        [
+          "heights",
+          "faction_france"
+        ],
+        [
+          "heights",
+          "faction_qing84"
+        ]
+      ]
+    }
+  ],
+  "units": [
+    {
+      "type": "lespes",
+      "owner": "faction_france",
+      "count": 1,
+      "at": [
+        16,
+        40
+      ]
+    },
+    {
+      "type": "fr_ironclad",
+      "owner": "faction_france",
+      "count": 2,
+      "at": [
+        14,
+        32
+      ],
+      "tag": "fleet"
+    },
+    {
+      "type": "fr_cruiser",
+      "owner": "faction_france",
+      "count": 2,
+      "at": [
+        12,
+        48
+      ],
+      "tag": "fleet"
+    },
+    {
+      "type": "fr_gunboat",
+      "owner": "faction_france",
+      "count": 1,
+      "at": [
+        19,
+        44
+      ],
+      "tag": "fleet"
+    },
+    {
+      "type": "sun_kaihua",
+      "owner": "faction_qing84",
+      "count": 1,
+      "at": [
+        46,
+        38
+      ]
+    },
+    {
+      "type": "q84_brave",
+      "owner": "faction_qing84",
+      "count": 12,
+      "at": [
+        44,
+        40
+      ],
+      "tag": "line"
+    },
+    {
+      "type": "q84_tuyong",
+      "owner": "faction_qing84",
+      "count": 10,
+      "at": [
+        46,
+        22
+      ],
+      "tag": "tuyong"
+    },
+    {
+      "type": "q84_militia",
+      "owner": "faction_qing84",
+      "count": 8,
+      "at": [
+        40,
+        28
+      ],
+      "tag": "militia"
+    },
+    {
+      "type": "q84_brave",
+      "owner": "faction_qing84",
+      "count": 6,
+      "at": [
+        53,
+        48
+      ],
+      "tag": "heights_guard"
+    },
+    {
+      "type": "q84_gun",
+      "owner": "faction_qing84",
+      "count": 2,
+      "at": [
+        55,
+        44
+      ],
+      "tag": "heights_guard"
+    }
+  ],
+  "resources": {
+    "faction_qing84": {
+      "powder": 3000
+    },
+    "faction_france": {
+      "powder": 900
+    }
+  },
+  "remove": [
+    "krupp_battery"
+  ],
+  "rules": {
+    "combat.uphillUnitDamageMul": 0.72
+  },
+  "regions": [
+    {
+      "id": "gun_range",
+      "x": 26,
+      "y": 10,
+      "w": 34,
+      "h": 46
+    }
+  ],
+  "hud": {
+    "faction_france": [
+      "powder"
+    ],
+    "faction_qing84": []
+  },
+  "hudLabels": {
+    "powder": "resource.rounds"
+  },
+  "hints": [
+    {
+      "textKey": "hint.sailor_rounds"
+    },
+    {
+      "textKey": "hint.hedges"
+    },
+    {
+      "textKey": "hint.navalfire",
+      "on": "raid_warn"
+    }
+  ],
+  "triggers": [
+    {
+      "id": "sf1_start",
+      "when": {
+        "type": "time_elapsed",
+        "seconds": 0
+      },
+      "do": [
+        {
+          "type": "show_cutscene",
+          "id": "sf1_intro"
+        },
+        {
+          "type": "set_objective",
+          "id": "take",
+          "faction": "faction_france",
+          "textKey": "sf1.obj.take",
+          "primary": true
+        },
+        {
+          "type": "set_objective",
+          "id": "hold",
+          "faction": "faction_qing84",
+          "textKey": "sf1.obj.hold",
+          "primary": true
+        },
+        {
+          "type": "show_message",
+          "textKey": "sf1.msg.bombard",
+          "kind": "warn"
+        }
+      ]
+    },
+    {
+      "id": "sf1_land",
+      "when": {
+        "type": "time_elapsed",
+        "seconds": 150
+      },
+      "do": [
+        {
+          "type": "spawn_units",
+          "units": [
+            {
+              "type": "fr_sailor",
+              "owner": "faction_france",
+              "count": 28,
+              "at": [
+                30,
+                28
+              ],
+              "tag": "landing"
+            }
+          ]
+        },
+        {
+          "type": "set_flag",
+          "name": "landed",
+          "value": true
+        },
+        {
+          "type": "start_timer",
+          "id": "gunfire",
+          "seconds": 30
+        },
+        {
+          "type": "show_message",
+          "textKey": "sf1.msg.land",
+          "kind": "warn"
+        }
+      ]
+    },
+    {
+      "id": "sf1_reserve",
+      "when": {
+        "type": "time_elapsed",
+        "seconds": 170
+      },
+      "do": [
+        {
+          "type": "spawn_units",
+          "units": [
+            {
+              "type": "q84_brave",
+              "owner": "faction_qing84",
+              "count": 12,
+              "at": [
+                70,
+                50
+              ],
+              "tag": "reserve"
+            }
+          ]
+        },
+        {
+          "type": "show_message",
+          "textKey": "sf1.msg.reserve",
+          "kind": "warn"
+        }
+      ]
+    },
+    {
+      "id": "sf1_rounds",
+      "when": {
+        "type": "all_of",
+        "conditions": [
+          {
+            "type": "flag",
+            "name": "landed"
+          },
+          {
+            "type": "resource_below",
+            "owner": "faction_france",
+            "resource": "powder",
+            "value": 200
+          }
+        ]
+      },
+      "do": [
+        {
+          "type": "show_message",
+          "textKey": "sf1.msg.rounds",
+          "kind": "warn"
+        }
+      ]
+    },
+    {
+      "id": "sf1_sun",
+      "when": {
+        "type": "unit_dead",
+        "unitTag": "sun_kaihua"
+      },
+      "do": [
+        {
+          "type": "show_message",
+          "textKey": "sf1.msg.sun",
+          "kind": "warn"
+        }
+      ]
+    },
+    {
+      "id": "sf1_taken",
+      "when": {
+        "type": "held_for",
+        "id": "heights",
+        "seconds": 60,
+        "condition": {
+          "type": "all_of",
+          "conditions": [
+            {
+              "type": "area_entered",
+              "region": "heights",
+              "owner": "faction_france",
+              "pop": 8
+            },
+            {
+              "type": "not",
+              "condition": {
+                "type": "area_entered",
+                "region": "heights",
+                "owner": "faction_qing84",
+                "pop": 2
+              }
+            }
+          ]
+        }
+      },
+      "do": [
+        {
+          "type": "win_mission",
+          "faction": "faction_france",
+          "rating": "victory",
+          "reasonKey": "sf1.end.taken"
+        }
+      ]
+    },
+    {
+      "id": "sf1_rout",
+      "when": {
+        "type": "all_of",
+        "conditions": [
+          {
+            "type": "time_elapsed",
+            "seconds": 170
+          },
+          {
+            "type": "army_pop_below",
+            "owner": "faction_france",
+            "pop": 2
+          }
+        ]
+      },
+      "do": [
+        {
+          "type": "fail_mission",
+          "faction": "faction_france",
+          "reasonKey": "sf1.end.rout",
+          "keepOpen": true
+        },
+        {
+          "type": "win_mission",
+          "faction": "faction_qing84",
+          "rating": "victory",
+          "reasonKey": "sf1.end.rout"
+        }
+      ]
+    },
+    {
+      "id": "sf1_repulsed",
+      "when": {
+        "type": "all_of",
+        "conditions": [
+          {
+            "type": "time_elapsed",
+            "seconds": 170
+          },
+          {
+            "type": "army_pop_below",
+            "owner": "faction_france",
+            "pop": 8
+          }
+        ]
+      },
+      "do": [
+        {
+          "type": "win_mission",
+          "faction": "faction_qing84",
+          "rating": "victory",
+          "reasonKey": "sf1.end.history"
+        }
+      ]
+    },
+    {
+      "id": "sf1_held",
+      "when": {
+        "type": "time_elapsed",
+        "seconds": 720
+      },
+      "do": [
+        {
+          "type": "win_mission",
+          "faction": "faction_qing84",
+          "rating": "victory",
+          "reasonKey": "sf1.end.held"
+        }
+      ]
+    },
+    {
+      "id": "gunfire",
+      "once": false,
+      "when": {
+        "type": "all_of",
+        "conditions": [
+          {
+            "type": "timer_expired",
+            "id": "gunfire"
+          },
+          {
+            "type": "not",
+            "condition": {
+              "type": "fleet_below",
+              "owner": "faction_france",
+              "fraction": 0.01
+            }
+          }
+        ]
+      },
+      "do": [
+        {
+          "type": "air_raid",
+          "owner": "faction_france",
+          "target": "faction_qing84",
+          "region": "gun_range",
+          "radius": 3,
+          "damage": 20,
+          "warn": 4,
+          "coverMul": 0.35
+        },
+        {
+          "type": "start_timer",
+          "id": "gunfire",
+          "seconds": 55
+        },
+        {
+          "type": "show_message",
+          "textKey": "sf.msg.gunfire",
+          "kind": "warn"
+        }
+      ]
+    }
+  ]
+}

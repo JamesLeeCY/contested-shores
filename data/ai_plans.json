@@ -566,5 +566,93 @@
       "harass:truwan/3",
       "harass:mahebu/3"
     ]
+  },
+  {
+    "id": "sf1_france",
+    "faction": "faction_france",
+    "chapters": [
+      1
+    ],
+    "steps": [
+      "sail:fleet+lespes/offshore",
+      "push:fields_s",
+      "hold_region:heights"
+    ]
+  },
+  {
+    "id": "sf1_qing",
+    "faction": "faction_qing84",
+    "chapters": [
+      1
+    ],
+    "steps": [
+      "skirmish:fields_s/12/heights",
+      "hold_line:heights/14",
+      "wait_flag:landed",
+      "column:tuyong/fields_s",
+      "column:militia/fields_s",
+      "column:reserve/heights"
+    ]
+  },
+  {
+    "id": "sf2_france",
+    "faction": "faction_france",
+    "chapters": [
+      2
+    ],
+    "steps": [
+      "column:main/hongdan",
+      "column:flank/yuemei",
+      "column:flank2/yuemei",
+      "column:dent/hongdan",
+      "wait_flag:occ_hongdan",
+      "drop:column/main",
+      "drop:column/dent",
+      "column:main/yuemei",
+      "column:dent/yuemei",
+      "wait_flag:heights",
+      "drop:column/main",
+      "drop:column/dent",
+      "drop:column/flank",
+      "drop:column/flank2",
+      "push:nuannuan"
+    ]
+  },
+  {
+    "id": "sf2_qing",
+    "faction": "faction_qing84",
+    "chapters": [
+      2
+    ],
+    "steps": [
+      "hold_line:hongdan/16",
+      "hold_line:yuemei/18",
+      "harass:niaozui/6",
+      "wait_flag:heights",
+      "hold_region:nuannuan"
+    ]
+  },
+  {
+    "id": "sf3_france",
+    "faction": "faction_france",
+    "chapters": [
+      3
+    ],
+    "steps": [
+      "sail:fleet+courbet/bay_mouth",
+      "push:makung",
+      "hold_region:makung"
+    ]
+  },
+  {
+    "id": "sf3_qing",
+    "faction": "faction_qing84",
+    "chapters": [
+      3
+    ],
+    "steps": [
+      "hold_line:landing/10",
+      "hold_line:makung/16"
+    ]
   }
 ]

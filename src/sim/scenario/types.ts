@@ -77,6 +77,8 @@ export interface Scenario {
   playable?: Owner[];
   /** Night until dawn: sight multiplied by `sightMul`. */
   night?: { untilSeconds: number; sightMul: number };
+  /** Spells of heavy rain (1885 月眉山): firearms miss more and sight shrinks while they last. */
+  rain?: { fromSeconds: number; untilSeconds: number; hitPenalty: number; sightMul: number }[];
   chapter: number;
   nameKey: string;
   dateKey: string;
@@ -86,8 +88,11 @@ export interface Scenario {
   castleMorale: number | 'carry';
   castleMoraleMin?: number;
   techs?: Record<Owner, string[]>;
-  /** Hands map buildings to another side; `tag` renames them (label from `place.<tag>`), e.g. 普羅民遮城 → 承天府. */
-  ownership?: { type: string; owner: Owner; tag?: string }[];
+  /**
+   * Hands map buildings to another side; `tag` renames them (label from `place.<tag>`), e.g. 普羅民遮城 → 承天府;
+   * `from` limits it to the building with that map tag (the same map in another century).
+   */
+  ownership?: { type: string; owner: Owner; tag?: string; from?: string }[];
   /** Mechanic hints shown once per browser: at the start, or on the first event of type `on`. */
   hints?: { textKey: string; on?: string }[];
   /** Resource bar per side: which resources to show (all when absent, in 1661 and 1874), and relabels. */

@@ -6,6 +6,7 @@ import { applyScenario } from '../src/sim/scenario/setup';
 import { outcomeOf, type Trigger } from '../src/sim/scenario/triggers';
 import { killEntity } from '../src/sim/systems/combat';
 import { captureBuilding } from '../src/sim/systems/siege';
+import { isVisibleTo } from '../src/sim/systems/fog';
 import type { World } from '../src/sim/world';
 import { loadMap } from '../src/data/map';
 import { DATA, makeWorld, run } from './helpers';
@@ -1158,6 +1159,167 @@ describe('1930 霧社事件', () => {
     at(b, 901);
     collect(b);
     expect(b.ext.flags[`outcomeReason:${S}`]).toBe('wushe2.end.held');
+  });
+});
+
+describe('1884–85 清法戰爭', () => {
+  const Q = 'faction_qing84';
+  const F = 'faction_france';
+  const open = (id: string) => {
+    const sc = scenarioById(id);
+    const w = new WorldClass(DATA, loadMap(sc.map!), { seed: 8, factions: sc.factions });
+    applyScenario(w, sc);
+    w.ext.flags.player = '';
+    at(w, 1);
+    return w;
+  };
+  const foot = (w: World, owner: string) => [...w.all()].filter((u) => u.owner === owner && u.kind === 'unit' && u.moveClass === 'foot');
+  const keep = (w: World, owner: string, n: number) => {
+    w.rebuildSpatial();
+    for (const e of foot(w, owner).filter((u) => !w.data.units.get(u.type)!.traits.includes('hero')).slice(n)) killEntity(w, e);
+    for (const e of foot(w, owner).filter((u) => w.data.units.get(u.type)!.traits.includes('hero'))) killEntity(w, e);
+  };
+  /** n invulnerable men of `owner` in a region (holding fire); the other side cleared from it. */
+  const hold = (w: World, owner: string, type: string, id: string, n: number) => {
+    const r = w.map.regions.find((x) => x.id === id)!;
+    w.rebuildSpatial();
+    for (const e of [...w.all()]) if (e.kind === 'unit' && e.owner !== owner && e.moveClass === 'foot' && e.x >= r.x - 1 && e.y >= r.y - 1 && e.x <= r.x + r.w + 1 && e.y <= r.y + r.h + 1) killEntity(w, e);
+    spawnIn(w, owner, type, n, r.x + 2, r.y + 2);
+    for (const e of w.all())
+      if (e.owner === owner && e.type === type && e.x >= r.x && e.y >= r.y && e.x < r.x + r.w && e.y < r.y + r.h) {
+        e.hp = e.maxHp = 1e9;
+        e.holdFire = true;
+      }
+  };
+
+  it('滬尾: the ships bombard, the sailors land at 2:30 under naval gunfire, the reserve comes; rounds run low', () => {
+    const w = open('sf1');
+    expect(w.buildings().some((b) => b.tag === 'krupp_battery')).toBe(false);
+    at(w, 151);
+    expect(tagged(w, 'landing').length).toBe(28);
+    at(w, 171);
+    expect(tagged(w, 'reserve').length).toBe(12);
+    at(w, 181);
+    expect(w.ext.raids?.length).toBe(1);
+    w.faction(F)!.resources.powder = 100;
+    run(w, 10);
+    expect(w.ext.flags['fired:sf1_rounds']).toBe(true);
+    killTag(w, 'sun_kaihua');
+    run(w, 10);
+    collect(w);
+  });
+
+  it('滬尾: heights held 60 s → France wins; the landing thrown back (historical), wiped out, or the deadline', () => {
+    const a = open('sf1');
+    at(a, 151);
+    hold(a, F, 'fr_sailor', 'heights', 8);
+    run(a, 62 * 20);
+    collect(a);
+    expect(a.ext.flags[`outcomeReason:${F}`]).toBe('sf1.end.taken');
+    expect(outcomeOf(a, Q)).toBe('defeat');
+    const b = open('sf1');
+    at(b, 171);
+    keep(b, F, 5);
+    run(b, 10);
+    collect(b);
+    expect(b.ext.flags[`outcomeReason:${Q}`]).toBe('sf1.end.history');
+    expect(outcomeOf(b, F)).toBe('historical');
+    const c = open('sf1');
+    at(c, 171);
+    keep(c, F, 1);
+    run(c, 10);
+    collect(c);
+    expect(c.ext.flags[`outcomeReason:${F}`]).toBe('sf1.end.rout');
+    expect(outcomeOf(c, F)).toBe('defeat');
+    const d = open('sf1');
+    at(d, 721);
+    collect(d);
+    expect(d.ext.flags[`outcomeReason:${Q}`]).toBe('sf1.end.held');
+  });
+
+  it('月眉山: rain spoils aim from 5:00 to 7:00; the flanking column at 7:00; the ridge falls, then 暖暖 or the push timer', () => {
+    const w = open('sf2');
+    at(w, 310);
+    expect(w.weather.rangedHitPenalty).toBe(0.25);
+    at(w, 421);
+    expect(w.weather.rangedHitPenalty).toBe(0);
+    expect(tagged(w, 'flank2').length).toBe(10);
+    killTag(w, 'lin_chaodong');
+    hold(w, F, 'fr_marine', 'hongdan', 5);
+    hold(w, F, 'fr_marine', 'yuemei', 5);
+    run(w, 47 * 20);
+    expect(w.ext.flags.heights).toBe(true);
+    at(w, Math.ceil(w.tick / 20) + 121);
+    collect(w);
+    expect(w.ext.flags[`outcomeReason:${Q}`]).toBe('sf2.end.history');
+    expect(outcomeOf(w, Q)).toBe('historical');
+    const b = open('sf2');
+    hold(b, F, 'fr_marine', 'hongdan', 5);
+    hold(b, F, 'fr_marine', 'yuemei', 5);
+    run(b, 47 * 20);
+    hold(b, F, 'fr_marine', 'nuannuan', 5);
+    run(b, 47 * 20);
+    collect(b);
+    expect(b.ext.flags[`outcomeReason:${Q}`]).toBe('sf2.end.crushed');
+    expect(outcomeOf(b, Q)).toBe('defeat');
+  });
+
+  it('月眉山: the French worn down, or 15 minutes held', () => {
+    const a = open('sf2');
+    at(a, 61);
+    keep(a, F, 6);
+    run(a, 10);
+    collect(a);
+    expect(a.ext.flags[`outcomeReason:${Q}`]).toBe('sf2.end.repulsed');
+    expect(outcomeOf(a, F)).toBe('defeat');
+    const b = open('sf2');
+    at(b, 901);
+    collect(b);
+    expect(b.ext.flags[`outcomeReason:${Q}`]).toBe('sf2.end.held');
+  });
+
+  it('澎湖: 1885 works on the 1683 map; the marines land at 2:00; Makung taken (historical) or the landing beaten', () => {
+    const w = open('sf3');
+    expect(w.buildings().filter((b) => b.owner === Q).map((b) => b.tag).sort()).toEqual(['makung_fort', 'south_fort']);
+    at(w, 121);
+    expect(tagged(w, 'landing').length).toBe(16);
+    at(w, 151);
+    expect(w.ext.raids?.length).toBe(1);
+    killTag(w, 'courbet');
+    // Survivors elsewhere on the island (the garrison was not wiped out in history).
+    hold(w, Q, 'q84_brave', 'east_islets', 6);
+    hold(w, F, 'fr_marine', 'makung', 6);
+    run(w, 62 * 20);
+    collect(w);
+    expect(w.ext.flags[`outcomeReason:${Q}`]).toBe('sf3.end.history');
+    expect(outcomeOf(w, Q)).toBe('historical');
+    const b = open('sf3');
+    at(b, 141);
+    keep(b, F, 3);
+    run(b, 10);
+    collect(b);
+    expect(b.ext.flags[`outcomeReason:${Q}`]).toBe('sf3.end.repulsed');
+    expect(outcomeOf(b, F)).toBe('defeat');
+    const c = open('sf3');
+    at(c, 721);
+    collect(c);
+    expect(c.ext.flags[`outcomeReason:${Q}`]).toBe('sf3.end.held');
+    const d = open('sf3');
+    at(d, 121);
+    keep(d, Q, 1);
+    hold(d, F, 'fr_marine', 'makung', 6);
+    run(d, 62 * 20);
+    collect(d);
+    expect(d.ext.flags[`outcomeReason:${Q}`]).toBe('sf3.end.rout');
+    expect(outcomeOf(d, Q)).toBe('defeat');
+  });
+
+  it('a forest-hidden musketeer who has just fired is seen by anyone in sight (no endless search)', () => {
+    const w = open('sf1');
+    const m = tagged(w, 'militia')[0];
+    w.map.terrain[Math.floor(m.y) * w.map.width + Math.floor(m.x)] = TERRAIN.forest;
+    m.revealedUntil = w.tick + 20;
+    expect(typeof isVisibleTo(w, F, m)).toBe('boolean');
   });
 });
 

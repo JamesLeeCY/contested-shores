@@ -81,7 +81,7 @@ export function applyScenario(world: World, sc: Scenario, campaign: CampaignStat
   for (const b of world.buildings()) if (sc.remove?.includes(b.type) || (b.tag && sc.remove?.includes(b.tag))) world.remove(b.id);
   for (const o of sc.ownership ?? [])
     for (const b of world.buildings())
-      if (b.type === o.type) {
+      if (b.type === o.type && (!o.from || b.tag === o.from)) {
         b.owner = o.owner;
         if (o.tag) b.tag = o.tag;
       }

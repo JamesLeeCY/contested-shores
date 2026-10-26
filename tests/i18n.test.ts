@@ -52,7 +52,8 @@ describe('content principles (spec §2.4)', () => {
     // 番／生番／野人 are banned outright (quotations from sources would need an annotation);
     // 賊／匪／紅毛／夷 would cast one side as villains.
     const banned = ['番', '野人', '蠻', '賊', '匪', '紅毛', '夷'];
-    const hits = Object.entries(zh).flatMap(([k, v]) => banned.filter((b) => v.includes(b)).map((b) => `${k}: ${b}`));
+    // 紅毛城 (Fort San Domingo) is the monument's official name, not a label for the Dutch.
+    const hits = Object.entries(zh).flatMap(([k, v]) => banned.filter((b) => v.replaceAll('紅毛城', '').includes(b)).map((b) => `${k}: ${b}`));
     expect(hits).toEqual([]);
   });
 });

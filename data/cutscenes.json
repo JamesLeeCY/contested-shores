@@ -169,5 +169,33 @@
       "cut.wushe2_intro.2",
       "cut.wushe2_intro.3"
     ]
+  },
+  "sf1_intro": {
+    "titleKey": "cut.sf1_intro.title",
+    "art": "fort",
+    "lines": [
+      "cut.sf1_intro.1",
+      "cut.sf1_intro.2",
+      "cut.sf1_intro.3",
+      "cut.sf1_intro.4"
+    ]
+  },
+  "sf2_intro": {
+    "titleKey": "cut.sf2_intro.title",
+    "art": "mountain",
+    "lines": [
+      "cut.sf2_intro.1",
+      "cut.sf2_intro.2",
+      "cut.sf2_intro.3"
+    ]
+  },
+  "sf3_intro": {
+    "titleKey": "cut.sf3_intro.title",
+    "art": "fort",
+    "lines": [
+      "cut.sf3_intro.1",
+      "cut.sf3_intro.2",
+      "cut.sf3_intro.3"
+    ]
   }
 }

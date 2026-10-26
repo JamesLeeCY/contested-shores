@@ -18,6 +18,8 @@ function shade(hex: number, f: number) {
 const PAIWAN = new Set(['paiwan_hunter', 'paiwan_warrior', 'aruqu', 'paiwan_family']);
 /** Truku, Seediq and Toda: woven cream-and-red cloth and facial tattoos (ptasan), not the Paiwan black. */
 const GAYA = new Set(['truku_hunter', 'truku_warrior', 'haruq_nawi', 'sdq_warrior', 'sdq_rifle', 'mona_rudao', 'tado_nokan', 'toda_fighter']);
+/** 1884–85 French expeditionary corps: marines in sun helmets, sailors in flat caps; rifles. */
+const FRENCH = new Set(['fr_marine', 'fr_sailor', 'duchesne']);
 const JAPAN = new Set(['japan_infantry', 'japan_volunteer', 'sakuma', 'jp95_guard', 'jp95_infantry', 'jp95_cavalry', 'kitashirakawa', 'nogi', 'jp14_police', 'jp14_infantry']);
 const RIFLES = new Set(['japan_infantry', 'jp95_guard', 'jp95_infantry', 'jp14_police', 'jp14_infantry']);
 /** 1895 臺灣 side: 黑旗軍 in black; the others in the faction colour with straw hats. */
@@ -108,12 +110,29 @@ function drawJapanese(g: Graphics, type: string, c1: number, hero: boolean) {
   if (hero) heroBanner(g, c1);
 }
 
+/** 法軍: navy tunics and light trousers; marines (and their commander) in white sun helmets, sailors in caps with a red pompom. */
+function drawFrench(g: Graphics, type: string, c1: number, hero: boolean) {
+  g.rect(-3.5, -9, 2.6, 9).fill(0xe8e6de);
+  g.rect(0.9, -9, 2.6, 9).fill(0xe8e6de);
+  g.roundRect(-6, -21, 12, 12, 3).fill(0x26304f).stroke(LINE);
+  g.rect(-6, -13, 12, 1.6).fill(c1);
+  g.circle(0, -24.5, 3.6).fill(SKIN).stroke(LINE);
+  if (type === 'fr_sailor') {
+    g.ellipse(0, -28, 4.6, 1.8).fill(0x26304f).stroke(LINE);
+    g.circle(0, -29.6, 1.2).fill(0xc0392b);
+  } else g.ellipse(0, -28.4, 4.8, 3.2).fill(0xf4f1e8).stroke(LINE);
+  g.moveTo(4, -9).lineTo(10, -29).stroke({ color: WOOD, width: 2 });
+  g.moveTo(9.7, -28).lineTo(11, -34).stroke({ color: 0xcfd3d6, width: 1 });
+  if (hero) heroBanner(g, c1);
+}
+
 /** A foot soldier standing at (0,0) feet, facing the viewer. */
 export function drawFigure(g: Graphics, type: string, c1: number, c2: number, hero: boolean) {
   g.ellipse(0, 0, 8, 3.5).fill({ color: 0x000000, alpha: 0.25 });
   if (PAIWAN.has(type)) return drawPaiwan(g, type, c1, hero);
   if (GAYA.has(type)) return drawGaya(g, type, c1, hero);
   if (JAPAN.has(type)) return drawJapanese(g, type, c1, hero);
+  if (FRENCH.has(type)) return drawFrench(g, type, c1, hero);
   if (type === 'jp95_cart') {
     // A two-wheeled supply cart with its load.
     g.roundRect(-9, -12, 18, 7, 2).fill(0x8a6a3a).stroke(LINE);
@@ -154,6 +173,13 @@ export function drawFigure(g: Graphics, type: string, c1: number, c2: number, he
       g.poly([9, -30, 13, -37, 11, -28]).fill(0xcfd3d6).stroke(LINE);
       break;
     case 'tn_soldier':
+    case 'q84_brave':
+    case 'q84_militia':
+    case 'q84_dongjun':
+    case 'q84_tuyong':
+    case 'liu_mingchuan':
+    case 'sun_kaihua':
+    case 'lin_chaodong':
     case 'qing_soldier':
     case 'fm_regular':
     case 'fm_blackflag':
@@ -214,6 +240,7 @@ const JUNKS = /^(junk|fire_ship|qing_|tn_|shi_lang|lan_li|liu_guoxuan|lin_sheng|
 export function drawShipArt(g: Graphics, type: string, a: number, len: number, c1: number, c2: number, stranded: boolean) {
   const wid = len * 0.32;
   const junk = JUNKS.test(type);
+  const steam = type.startsWith('fr_') || type === 'courbet' || type === 'lespes';
   const fire = type.endsWith('fire_ship');
   const proj = (px: number, py: number): [number, number] => {
     const rx = px * Math.cos(a) - py * Math.sin(a);
@@ -222,7 +249,19 @@ export function drawShipArt(g: Graphics, type: string, a: number, len: number, c
   };
   const pts = [[len * 0.55, 0], [len * 0.25, wid * 0.5], [-len * 0.45, wid * 0.45], [-len * 0.5, 0], [-len * 0.45, -wid * 0.45], [len * 0.25, -wid * 0.5]] as const;
   g.ellipse(0, 2, len * 0.5, len * 0.18).fill({ color: 0x0a2030, alpha: 0.25 });
-  g.poly(pts.flatMap(([x, y]) => proj(x, y))).fill(stranded ? 0x6d5a3a : junk ? 0x6b3f1f : 0x4a3322).stroke({ color: c2, width: 1.5 });
+  g.poly(pts.flatMap(([x, y]) => proj(x, y))).fill(stranded ? 0x6d5a3a : steam ? 0x2e3236 : junk ? 0x6b3f1f : 0x4a3322).stroke({ color: c2, width: 1.5 });
+  if (steam) {
+    // 1880s steam warship: a funnel with smoke amidships, one light mast, the ensign aft.
+    const [fx, fy] = proj(0, 0);
+    g.rect(fx - 3, fy - len * 0.32, 6, len * 0.32).fill(0x1b1b1b).stroke(LINE);
+    g.circle(fx + 2, fy - len * 0.4, len * 0.07).fill({ color: 0x777777, alpha: 0.6 });
+    const [mx, my] = proj(len * 0.25, 0);
+    g.moveTo(mx, my).lineTo(mx, my - len * 0.55).stroke({ color: DARK, width: 1.4 });
+    const [ax, ay] = proj(-len * 0.42, 0);
+    g.moveTo(ax, ay).lineTo(ax, ay - len * 0.2).stroke({ color: DARK, width: 1 });
+    g.poly([ax, ay - len * 0.2, ax + 7, ay - len * 0.2 + 2.5, ax, ay - len * 0.2 + 5]).fill(c1);
+    return;
+  }
   const masts = len > 30 ? [-0.2, 0.15] : [0];
   for (const m of masts) {
     const [mx, my] = proj(len * m, 0);

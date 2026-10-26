@@ -971,5 +971,126 @@
       "src.wushe_zh",
       "src.wushe_en"
     ]
+  },
+  {
+    "id": "liu_mingchuan",
+    "category": "people",
+    "dispute": false,
+    "sources": [
+      "src.sf_tamsui_en",
+      "src.sf_keelung_en",
+      "src.sf_penghu_en",
+      "src.sf_war_zh"
+    ]
+  },
+  {
+    "id": "sun_kaihua",
+    "category": "people",
+    "dispute": false,
+    "sources": [
+      "src.sf_tamsui_en",
+      "src.sf_keelung_en",
+      "src.sf_penghu_en",
+      "src.sf_war_zh"
+    ]
+  },
+  {
+    "id": "lin_chaodong",
+    "category": "people",
+    "dispute": false,
+    "sources": [
+      "src.sf_tamsui_en",
+      "src.sf_keelung_en",
+      "src.sf_penghu_en",
+      "src.sf_war_zh"
+    ]
+  },
+  {
+    "id": "courbet",
+    "category": "people",
+    "dispute": false,
+    "sources": [
+      "src.sf_tamsui_en",
+      "src.sf_keelung_en",
+      "src.sf_penghu_en",
+      "src.sf_war_zh"
+    ]
+  },
+  {
+    "id": "sf_locals",
+    "category": "units",
+    "dispute": false,
+    "sources": [
+      "src.sf_tamsui_en",
+      "src.sf_keelung_en",
+      "src.sf_penghu_en",
+      "src.sf_war_zh"
+    ]
+  },
+  {
+    "id": "sf_fleet",
+    "category": "units",
+    "dispute": false,
+    "sources": [
+      "src.sf_tamsui_en",
+      "src.sf_keelung_en",
+      "src.sf_penghu_en",
+      "src.sf_war_zh"
+    ]
+  },
+  {
+    "id": "sf_tamsui",
+    "category": "places",
+    "dispute": false,
+    "sources": [
+      "src.sf_tamsui_en",
+      "src.sf_keelung_en",
+      "src.sf_penghu_en",
+      "src.sf_war_zh"
+    ]
+  },
+  {
+    "id": "sf_keelung",
+    "category": "places",
+    "dispute": false,
+    "sources": [
+      "src.sf_tamsui_en",
+      "src.sf_keelung_en",
+      "src.sf_penghu_en",
+      "src.sf_war_zh"
+    ]
+  },
+  {
+    "id": "sf_war",
+    "category": "disputes",
+    "dispute": true,
+    "sources": [
+      "src.sf_tamsui_en",
+      "src.sf_keelung_en",
+      "src.sf_penghu_en",
+      "src.sf_war_zh"
+    ]
+  },
+  {
+    "id": "sf_aftermath",
+    "category": "disputes",
+    "dispute": false,
+    "sources": [
+      "src.sf_tamsui_en",
+      "src.sf_keelung_en",
+      "src.sf_penghu_en",
+      "src.sf_war_zh"
+    ]
+  },
+  {
+    "id": "sf_numbers",
+    "category": "disputes",
+    "dispute": true,
+    "sources": [
+      "src.sf_tamsui_en",
+      "src.sf_keelung_en",
+      "src.sf_penghu_en",
+      "src.sf_war_zh"
+    ]
   }
 ]

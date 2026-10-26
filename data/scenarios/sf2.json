@@ -1,0 +1,626 @@
+{
+  "id": "sf2",
+  "campaign": "sinofrench",
+  "map": "keelung",
+  "factions": [
+    "faction_qing84",
+    "faction_france"
+  ],
+  "historyKey": "history.sf2",
+  "chapter": 2,
+  "nameKey": "scenario.sf2.name",
+  "dateKey": "scenario.sf2.date",
+  "timerMinutes": 15,
+  "stage": {
+    "faction_qing84": 1,
+    "faction_france": 1
+  },
+  "castleMorale": 0,
+  "ai": {
+    "faction_france": {
+      "plans": [
+        "sf2_france"
+      ],
+      "composition": {},
+      "targetArmy": 0,
+      "home": [
+        50,
+        24
+      ],
+      "scripted": true
+    },
+    "faction_qing84": {
+      "plans": [
+        "sf2_qing"
+      ],
+      "composition": {},
+      "targetArmy": 0,
+      "home": [
+        62,
+        74
+      ],
+      "scripted": true
+    }
+  },
+  "historicalLoser": "faction_qing84",
+  "objectives": {
+    "faction_france": [
+      "sf2.obj.take"
+    ],
+    "faction_qing84": [
+      "sf2.obj.hold"
+    ]
+  },
+  "status": [
+    {
+      "textKey": "sf2.status",
+      "counts": [
+        [
+          "hongdan",
+          "faction_france"
+        ],
+        [
+          "yuemei",
+          "faction_france"
+        ],
+        [
+          "nuannuan",
+          "faction_france"
+        ]
+      ]
+    }
+  ],
+  "units": [
+    {
+      "type": "duchesne",
+      "owner": "faction_france",
+      "count": 1,
+      "at": [
+        48,
+        26
+      ]
+    },
+    {
+      "type": "fr_marine",
+      "owner": "faction_france",
+      "count": 14,
+      "at": [
+        50,
+        26
+      ],
+      "tag": "main"
+    },
+    {
+      "type": "fr_gun",
+      "owner": "faction_france",
+      "count": 2,
+      "at": [
+        46,
+        24
+      ],
+      "tag": "main"
+    },
+    {
+      "type": "fr_marine",
+      "owner": "faction_france",
+      "count": 8,
+      "at": [
+        104,
+        20
+      ],
+      "tag": "flank"
+    },
+    {
+      "type": "fr_marine",
+      "owner": "faction_france",
+      "count": 6,
+      "at": [
+        30,
+        40
+      ],
+      "tag": "dent"
+    },
+    {
+      "type": "q84_brave",
+      "owner": "faction_qing84",
+      "count": 16,
+      "at": [
+        64,
+        42
+      ],
+      "tag": "hd"
+    },
+    {
+      "type": "lin_chaodong",
+      "owner": "faction_qing84",
+      "count": 1,
+      "at": [
+        89,
+        39
+      ]
+    },
+    {
+      "type": "q84_dongjun",
+      "owner": "faction_qing84",
+      "count": 16,
+      "at": [
+        88,
+        38
+      ],
+      "tag": "ym"
+    },
+    {
+      "type": "q84_gun",
+      "owner": "faction_qing84",
+      "count": 2,
+      "at": [
+        90,
+        40
+      ],
+      "tag": "ym"
+    },
+    {
+      "type": "q84_militia",
+      "owner": "faction_qing84",
+      "count": 10,
+      "at": [
+        76,
+        46
+      ],
+      "tag": "nz"
+    },
+    {
+      "type": "liu_mingchuan",
+      "owner": "faction_qing84",
+      "count": 1,
+      "at": [
+        60,
+        73
+      ]
+    },
+    {
+      "type": "q84_brave",
+      "owner": "faction_qing84",
+      "count": 12,
+      "at": [
+        62,
+        73
+      ],
+      "tag": "nn"
+    }
+  ],
+  "resources": {
+    "faction_qing84": {
+      "powder": 3000
+    },
+    "faction_france": {
+      "powder": 3000
+    }
+  },
+  "rules": {
+    "combat.uphillUnitDamageMul": 0.6,
+    "disease.chance.faction_france": 0.03
+  },
+  "rain": [
+    {
+      "fromSeconds": 300,
+      "untilSeconds": 420,
+      "hitPenalty": 0.25,
+      "sightMul": 0.7
+    }
+  ],
+  "buildings": [
+    {
+      "type": "trench",
+      "owner": "faction_qing84",
+      "line": [
+        [
+          61,
+          37
+        ],
+        [
+          67,
+          37
+        ]
+      ]
+    },
+    {
+      "type": "trench",
+      "owner": "faction_qing84",
+      "line": [
+        [
+          59,
+          39
+        ],
+        [
+          59,
+          44
+        ]
+      ]
+    },
+    {
+      "type": "trench",
+      "owner": "faction_qing84",
+      "line": [
+        [
+          84,
+          32
+        ],
+        [
+          91,
+          32
+        ]
+      ]
+    },
+    {
+      "type": "trench",
+      "owner": "faction_qing84",
+      "line": [
+        [
+          82,
+          34
+        ],
+        [
+          82,
+          40
+        ]
+      ]
+    },
+    {
+      "type": "q84_camp",
+      "owner": "faction_qing84",
+      "at": [
+        55,
+        73
+      ],
+      "tag": "nuannuan_camp"
+    }
+  ],
+  "hud": {
+    "faction_france": [],
+    "faction_qing84": []
+  },
+  "hints": [
+    {
+      "textKey": "hint.uphill"
+    },
+    {
+      "textKey": "hint.disease_fr"
+    },
+    {
+      "textKey": "hint.rain",
+      "on": "rain_start"
+    },
+    {
+      "textKey": "hint.occupy"
+    }
+  ],
+  "triggers": [
+    {
+      "id": "sf2_start",
+      "when": {
+        "type": "time_elapsed",
+        "seconds": 0
+      },
+      "do": [
+        {
+          "type": "show_cutscene",
+          "id": "sf2_intro"
+        },
+        {
+          "type": "set_objective",
+          "id": "take",
+          "faction": "faction_france",
+          "textKey": "sf2.obj.take",
+          "primary": true
+        },
+        {
+          "type": "set_objective",
+          "id": "hold",
+          "faction": "faction_qing84",
+          "textKey": "sf2.obj.hold",
+          "primary": true
+        }
+      ]
+    },
+    {
+      "id": "sf2_rain",
+      "when": {
+        "type": "time_elapsed",
+        "seconds": 300
+      },
+      "do": [
+        {
+          "type": "show_message",
+          "textKey": "sf2.msg.rain",
+          "kind": "warn"
+        }
+      ]
+    },
+    {
+      "id": "sf2_rain_end",
+      "when": {
+        "type": "time_elapsed",
+        "seconds": 420
+      },
+      "do": [
+        {
+          "type": "show_message",
+          "textKey": "sf2.msg.rain_end",
+          "kind": "info"
+        }
+      ]
+    },
+    {
+      "id": "sf2_flank",
+      "when": {
+        "type": "time_elapsed",
+        "seconds": 420
+      },
+      "do": [
+        {
+          "type": "spawn_units",
+          "units": [
+            {
+              "type": "fr_marine",
+              "owner": "faction_france",
+              "count": 10,
+              "at": [
+                110,
+                20
+              ],
+              "tag": "flank2"
+            }
+          ]
+        },
+        {
+          "type": "show_message",
+          "textKey": "sf2.msg.flank",
+          "kind": "warn"
+        }
+      ]
+    },
+    {
+      "id": "sf2_occ_hongdan",
+      "when": {
+        "type": "held_for",
+        "id": "occ_hongdan",
+        "seconds": 45,
+        "condition": {
+          "type": "all_of",
+          "conditions": [
+            {
+              "type": "area_entered",
+              "region": "hongdan",
+              "owner": "faction_france",
+              "pop": 5
+            },
+            {
+              "type": "not",
+              "condition": {
+                "type": "area_entered",
+                "region": "hongdan",
+                "owner": "faction_qing84",
+                "pop": 2
+              }
+            }
+          ]
+        }
+      },
+      "do": [
+        {
+          "type": "set_flag",
+          "name": "occ_hongdan",
+          "value": true
+        },
+        {
+          "type": "show_message",
+          "textKey": "sf2.msg.hongdan",
+          "kind": "warn"
+        }
+      ]
+    },
+    {
+      "id": "sf2_occ_yuemei",
+      "when": {
+        "type": "held_for",
+        "id": "occ_yuemei",
+        "seconds": 45,
+        "condition": {
+          "type": "all_of",
+          "conditions": [
+            {
+              "type": "area_entered",
+              "region": "yuemei",
+              "owner": "faction_france",
+              "pop": 5
+            },
+            {
+              "type": "not",
+              "condition": {
+                "type": "area_entered",
+                "region": "yuemei",
+                "owner": "faction_qing84",
+                "pop": 2
+              }
+            }
+          ]
+        }
+      },
+      "do": [
+        {
+          "type": "set_flag",
+          "name": "occ_yuemei",
+          "value": true
+        },
+        {
+          "type": "show_message",
+          "textKey": "sf2.msg.yuemei",
+          "kind": "warn"
+        }
+      ]
+    },
+    {
+      "id": "sf2_heights",
+      "when": {
+        "type": "all_of",
+        "conditions": [
+          {
+            "type": "flag",
+            "name": "occ_hongdan"
+          },
+          {
+            "type": "flag",
+            "name": "occ_yuemei"
+          }
+        ]
+      },
+      "do": [
+        {
+          "type": "set_flag",
+          "name": "heights",
+          "value": true
+        },
+        {
+          "type": "start_timer",
+          "id": "push",
+          "seconds": 120
+        },
+        {
+          "type": "show_message",
+          "textKey": "sf2.msg.heights",
+          "kind": "warn"
+        }
+      ]
+    },
+    {
+      "id": "sf2_crushed",
+      "when": {
+        "type": "all_of",
+        "conditions": [
+          {
+            "type": "flag",
+            "name": "heights"
+          },
+          {
+            "type": "held_for",
+            "id": "occ_nuannuan",
+            "seconds": 45,
+            "condition": {
+              "type": "all_of",
+              "conditions": [
+                {
+                  "type": "area_entered",
+                  "region": "nuannuan",
+                  "owner": "faction_france",
+                  "pop": 5
+                },
+                {
+                  "type": "not",
+                  "condition": {
+                    "type": "area_entered",
+                    "region": "nuannuan",
+                    "owner": "faction_qing84",
+                    "pop": 1
+                  }
+                }
+              ]
+            }
+          }
+        ]
+      },
+      "do": [
+        {
+          "type": "fail_mission",
+          "faction": "faction_qing84",
+          "reasonKey": "sf2.end.crushed",
+          "keepOpen": true
+        },
+        {
+          "type": "win_mission",
+          "faction": "faction_france",
+          "rating": "victory",
+          "reasonKey": "sf2.end.crushed"
+        }
+      ]
+    },
+    {
+      "id": "sf2_history",
+      "when": {
+        "type": "all_of",
+        "conditions": [
+          {
+            "type": "flag",
+            "name": "heights"
+          },
+          {
+            "type": "timer_expired",
+            "id": "push"
+          }
+        ]
+      },
+      "do": [
+        {
+          "type": "win_mission",
+          "faction": "faction_france",
+          "rating": "victory",
+          "reasonKey": "sf2.end.history"
+        }
+      ]
+    },
+    {
+      "id": "sf2_lin",
+      "when": {
+        "type": "unit_dead",
+        "unitTag": "lin_chaodong"
+      },
+      "do": [
+        {
+          "type": "show_message",
+          "textKey": "sf2.msg.lin",
+          "kind": "warn"
+        }
+      ]
+    },
+    {
+      "id": "sf2_repulsed",
+      "when": {
+        "type": "all_of",
+        "conditions": [
+          {
+            "type": "time_elapsed",
+            "seconds": 60
+          },
+          {
+            "type": "army_pop_below",
+            "owner": "faction_france",
+            "pop": 8
+          }
+        ]
+      },
+      "do": [
+        {
+          "type": "win_mission",
+          "faction": "faction_qing84",
+          "rating": "victory",
+          "reasonKey": "sf2.end.repulsed"
+        }
+      ]
+    },
+    {
+      "id": "sf2_held",
+      "when": {
+        "type": "time_elapsed",
+        "seconds": 900
+      },
+      "do": [
+        {
+          "type": "win_mission",
+          "faction": "faction_qing84",
+          "rating": "victory",
+          "reasonKey": "sf2.end.held"
+        }
+      ]
+    }
+  ]
+}

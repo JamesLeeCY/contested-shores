@@ -127,8 +127,11 @@ export function isVisibleTo(world: World, owner: Owner, e: Entity): boolean {
     const cfg = (world.rules.combat.traits as unknown as Record<string, { revealDistance: number; smokeSpotDistance?: number }>)[
       traits.includes('mountain_stealth') ? 'mountain_stealth' : 'forest_stealth'
     ];
-    // Gun smoke betrays the shooter, but only to someone close enough to make out where it rose.
-    const spot = (e.revealedUntil ?? -1) > world.tick ? Math.max(cfg.revealDistance, cfg.smokeSpotDistance ?? Infinity) : cfg.revealDistance;
+    // Gun smoke betrays the shooter: in the mountains only to someone close enough to make out where it
+    // rose (smokeSpotDistance), in the forest to anyone who can see the spot (forest_stealth has none).
+    const smoking = (e.revealedUntil ?? -1) > world.tick;
+    if (smoking && cfg.smokeSpotDistance === undefined) return true;
+    const spot = smoking ? Math.max(cfg.revealDistance, cfg.smokeSpotDistance!) : cfg.revealDistance;
     return world.unitsNear(e.x, e.y, spot + 0.5).some((o) => o.owner === owner);
   }
   return true;
