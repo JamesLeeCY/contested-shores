@@ -34,6 +34,8 @@ const BUILDING_HEIGHT: Record<string, number> = {
   lower_town_wall: 16,
   village_center: 20,
   farm: 2,
+  // Earthworks, not walls.
+  trench: 4,
 };
 
 export class EntityRenderer {
