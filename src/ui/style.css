@@ -230,3 +230,18 @@ html, body { margin: 0; height: 100%; overflow: hidden; background: var(--bg); c
 /* Latin script needs less letter-spacing than CJK. */
 :lang(en) .menu-game { letter-spacing: 2px; }
 :lang(en) .menu-title { letter-spacing: 1px; }
+/* Timeline of all chapters (main menu). */
+.timeline { max-height: 90vh; overflow-y: auto; }
+.tl-line { position: relative; margin: 8px 0 14px 10px; padding-left: 18px; border-left: 2px solid var(--panel-border); }
+.tl-campaign { margin: 12px 0 4px -18px; padding-left: 18px; color: var(--accent); font-weight: bold; letter-spacing: 1px; }
+.tl-item { position: relative; display: flex; align-items: baseline; gap: 10px; width: 100%; text-align: left; background: none; border: none; color: var(--text); padding: 4px 6px; cursor: pointer; border-radius: 3px; }
+.tl-item:hover { background: rgba(255,255,255,.06); }
+.tl-dot { position: absolute; left: -25px; top: 9px; width: 10px; height: 10px; border-radius: 50%; background: var(--panel-border); }
+.tl-date { min-width: 12em; color: var(--muted); font-size: 12px; }
+.tl-name { font-weight: bold; }
+.tl-rating { margin-left: auto; font-size: 12px; }
+@media (max-width: 700px) { .tl-date { min-width: 0; } .tl-item { flex-wrap: wrap; gap: 2px 8px; } }
+.tl-dot.rating-victory { background: #aed581; } .tl-dot.rating-historical { background: #e0a84a; } .tl-dot.rating-defeat { background: #ff8a80; }
+.result-lost { margin-left: auto; color: var(--muted); font-size: 12px; }
+.result-time { color: var(--muted); font-size: 12px; margin: 4px 0; }
+.result-real { font-size: 13px; border-left: 3px solid var(--accent); padding-left: 8px; }

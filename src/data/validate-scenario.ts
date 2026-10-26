@@ -1,4 +1,6 @@
-// Cross-reference checks for data/scenarios/*.json and data/cutscenes.json.
+// Cross-reference checks for data/scenarios/*.json and data/cutscenes.json, and (given the shapes read
+// from the engine's types, see scenario-shape.ts) unknown or missing fields.
+import { checkShape, type ScenarioShapes } from './scenario-shape';
 
 const CONDITIONS = new Set([
   'time_elapsed', 'game_day', 'unit_hp_below', 'unit_dead', 'building_captured', 'area_entered', 'favor_reached',
@@ -23,6 +25,7 @@ interface Ctx {
   regions: Set<string>;
   cutscenes: Record<string, { titleKey: string; lines: string[] }>;
   i18n: Record<string, string>;
+  shapes?: ScenarioShapes;
 }
 
 type Obj = Record<string, unknown>;
@@ -64,6 +67,38 @@ export function validateScenario(name: string, sc: Obj, ctx: Ctx): string[] {
     if (a.region && !ctx.regions.has(a.region as string)) e(`${where}: unknown region "${a.region}"`);
     if (a.type === 'convert_units') for (const u of [a.from, a.to]) if (!ctx.units.has(u as string)) e(`${where}: unknown unit "${u}"`);
   };
+  const sh = ctx.shapes;
+  if (sh) {
+    const shape = (o: unknown, s: Record<string, boolean>, where: string) => errors.push(...checkShape(o as Obj, s, `${name}: ${where}`));
+    // global.json holds only the 1661 global rules (triggers), not a whole scenario.
+    if (name !== 'global.json') shape(sc, sh.scenario, 'scenario');
+    for (const [i, u] of ((sc.units as Obj[]) ?? []).entries()) shape(u, sh.unit, `units[${i}]`);
+    for (const [i, b] of ((sc.buildings as Obj[]) ?? []).entries()) shape(b, sh.building, `buildings[${i}]`);
+    for (const [i, f] of ((sc.fleets as Obj[]) ?? []).entries()) shape(f, sh.fleet, `fleets[${i}]`);
+    for (const [i, g] of ((sc.garrisons as Obj[]) ?? []).entries()) shape(g, { ...sh.unit, in: true }, `garrisons[${i}]`);
+    for (const [i, c] of ((sc.carry as Obj[]) ?? []).entries()) for (const u of (c.units as Obj[]) ?? []) shape(u, sh.unit, `carry[${i}].units`);
+    for (const [o, a] of Object.entries((sc.ai as Record<string, Obj>) ?? {})) shape(a, sh.ai, `ai.${o}`);
+    const cond = (c: Obj, where: string) => {
+      const s = sh.conditions[c.type as string];
+      if (s) shape(c, s, `${where} (${c.type})`);
+      for (const x of (c.conditions as Obj[]) ?? []) cond(x, where);
+      if (c.condition) cond(c.condition as Obj, where);
+    };
+    const act = (a: Obj, where: string) => {
+      const s = sh.actions[a.type as string];
+      if (s) shape(a, s, `${where} (${a.type})`);
+      for (const u of (a.units as Obj[]) ?? []) shape(u, sh.unit, `${where} (${a.type}).units`);
+    };
+    for (const t of (sc.triggers as Obj[]) ?? []) {
+      shape(t, sh.trigger, `trigger ${t.id}`);
+      cond(t.when as Obj, `trigger ${t.id}`);
+      for (const a of (t.do as Obj[]) ?? []) act(a, `trigger ${t.id}`);
+    }
+    for (const c of (sc.choices as Obj[]) ?? []) {
+      if (c.while) cond(c.while as Obj, `choice ${c.id}`);
+      for (const a of (c.do as Obj[]) ?? []) act(a, `choice ${c.id}`);
+    }
+  }
   const ids = new Set<string>();
   for (const t of (sc.triggers as Obj[]) ?? []) {
     const where = `trigger ${t.id}`;

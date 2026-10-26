@@ -2,7 +2,7 @@
 // screen → next scenario of the campaign, carrying the campaign state; the 1661 campaign ends with
 // one of six endings (spec §7, §11 stage 7). Campaigns: 大員之圍 1661, 施琅攻臺 1683, 牡丹社事件 1874, 乙未戰爭 1895.
 import type { Application } from 'pixi.js';
-import { loadMap } from '../data/map';
+import { loadMap, preloadMap } from '../data/map';
 import { CAMPAIGNS, SCENARIOS, campaignOf, scenarioById, scenariosOf } from '../data/scenarios';
 import type { World } from '../sim/world';
 import { buildSave, downloadSave, loadSave, pickSaveFile, sameBuild, readStoredSave, storeSave, type SaveFile, type SaveMeta } from './save';
@@ -15,7 +15,7 @@ import type { GameMap } from '../sim/map';
 import { HISTORY_CARDS, endingKey, loadCampaign, recordChapter, saveCampaign, type StoredCampaign } from './campaign';
 import { playCutscene } from './cutscene';
 import { el } from './dom';
-import { t } from './i18n';
+import { hasKey, t } from './i18n';
 import { ObjectivePanel } from './objectives';
 import { runTutorial, setupTutorial } from './tutorial';
 import { Session } from './session';
@@ -168,12 +168,12 @@ export class GameApp {
     const save = readStoredSave();
     if (save) {
       const load = el('button', 'menu-btn primary', extra, t('menu.load'));
-      load.onclick = () => this.loadGame(save);
+      load.onclick = () => void this.loadGame(save);
     }
     const imp = el('button', 'menu-btn', extra, t('menu.import'));
     imp.onclick = async () => {
       const f = await pickSaveFile();
-      if (f) this.loadGame(f);
+      if (f) await this.loadGame(f);
     };
     // The sandboxes use the 1661 map and armies.
     if (cid === 'koxinga') {
@@ -182,6 +182,8 @@ export class GameApp {
       const eco = el('button', 'menu-btn', extra, t('menu.sandbox_economy'));
       eco.onclick = () => this.startSandbox('economy', player);
     }
+    const tl = el('button', 'menu-btn', extra, t('menu.timeline'));
+    tl.onclick = () => this.showTimeline();
     const reset = el('button', 'menu-btn', extra, t('menu.reset'));
     reset.onclick = () => {
       this.setCampaign(cid, {});
@@ -192,6 +194,43 @@ export class GameApp {
       end.onclick = () => this.showEnding();
     }
     for (const fn of this.menuHooks) fn(card, this);
+  }
+
+  /**
+   * Every chapter of every campaign on one line through the years, with the best result won there
+   * (either side); picking one opens its campaign's tab, where the side is chosen.
+   */
+  showTimeline() {
+    this.clear();
+    const m = (this.menu = el('div', 'menu', this.overlay));
+    const card = el('div', 'menu-card timeline', m);
+    el('h2', 'menu-title', card, t('timeline.title'));
+    el('div', 'menu-sub', card, t('timeline.sub'));
+    const line = el('div', 'tl-line', card);
+    const rank: Record<string, number> = { victory: 3, historical: 2, defeat: 1 };
+    for (const c of CAMPAIGNS) {
+      el('div', 'tl-campaign', line, t(`campaign.${c.id}.name`));
+      for (const sc of scenariosOf(c.id)) {
+        const got = Object.values(this.campaign(c.id).ratings?.[sc.id] ?? {}) as Rating[];
+        const best = got.sort((x, y) => (rank[y] ?? 0) - (rank[x] ?? 0))[0];
+        const row = el('button', 'tl-item', line);
+        el('span', 'tl-dot' + (best ? ` rating-${best}` : ''), row);
+        el('span', 'tl-date', row, t(sc.dateKey));
+        el('span', 'tl-name', row, t(sc.nameKey));
+        if (best) el('span', `tl-rating rating-${best}`, row, t(`rating.${best}`));
+        row.onclick = () => {
+          this.menuCampaign = c.id;
+          try {
+            localStorage.setItem(MENU_CAMPAIGN_KEY, c.id);
+          } catch {
+            // remembered for this page only
+          }
+          this.showMenu();
+        };
+      }
+    }
+    const back = el('button', 'menu-btn primary', card, t('menu.back_menu'));
+    back.onclick = () => this.showMenu();
   }
 
   /** Extra menu entries (codex, settings, load) added by later modules. */
@@ -257,10 +296,11 @@ export class GameApp {
   readonly gameMenuHooks: ((bar: HTMLElement, app: GameApp) => void)[] = [];
 
   /** Restores a save and continues it; a save from another game version asks how first. */
-  loadGame(file: SaveFile, replay?: boolean) {
+  async loadGame(file: SaveFile, replay?: boolean) {
     if (replay === undefined && !sameBuild(file)) return this.askHowToLoad(file);
     let w: World;
     try {
+      await preloadMap(file.map ?? 'taijiang');
       w = loadSave(file, this.data, loadMap, scenarioById, replay ?? true);
     } catch (e) {
       alert(`${t('msg.load_failed')}\n${String(e)}`);
@@ -283,7 +323,7 @@ export class GameApp {
     const row = el('div', 'menu-extra', card);
     const go = (replay: boolean) => {
       m.remove();
-      this.loadGame(file, replay);
+      void this.loadGame(file, replay);
     };
     el('button', 'menu-btn primary', row, t('save.mismatch.snapshot')).onclick = () => go(false);
     el('button', 'menu-btn', row, t('save.mismatch.replay')).onclick = () => go(true);
@@ -299,6 +339,7 @@ export class GameApp {
     const allowed = sc.playable ?? factionsOf(sc);
     const player = allowed.includes(mapped) ? mapped : allowed[0];
     const opts: StartOptions = { ...o, scenario: sc.id, chapter: sc.chapter, player };
+    await preloadMap(sc.map ?? 'taijiang');
     const s = (this.session = new Session(this.app, this.ui, {
       data: this.data,
       map: loadMap(sc.map ?? 'taijiang'),
@@ -345,7 +386,16 @@ export class GameApp {
         el('span', '', row, t(`faction.${f}.name`));
         const r = s.world.ext.flags[`outcome:${f}`] as Rating;
         el('span', `rating-${r}`, row, t(`rating.${r}`));
+        // Units lost in this battle (every `lost:<side>:<type>` counter).
+        const lost = Object.entries(s.world.ext.flags)
+          .filter(([k]) => k.startsWith(`lost:${f}:`))
+          .reduce((n, [, v]) => n + Number(v), 0);
+        el('span', 'result-lost', row, t('result.lost', { n: lost }));
       }
+      const secs = Math.floor(s.world.tick / s.world.ticksPerSecond);
+      el('p', 'result-time', card, t('result.time', { m: Math.floor(secs / 60), s: String(secs % 60).padStart(2, '0') }));
+      // The real losses, where the sources give them (the game's armies are scaled down).
+      if (hasKey(`history.${sc.id}.losses`)) el('p', 'result-real', card, t(`history.${sc.id}.losses`));
       el('p', 'result-history', card, t(sc.historyKey ?? HISTORY_CARDS[sc.chapter - 1]));
       const bar = el('div', 'result-bar', card);
       const list = scenariosOf(cid);

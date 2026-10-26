@@ -3,6 +3,7 @@ import { readdirSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { validateData } from '../src/data/validate';
 import { validateCutscenes, validateScenario } from '../src/data/validate-scenario';
+import { scenarioShapes } from '../src/data/scenario-shape';
 
 const root = join(import.meta.dirname, '..');
 const read = (p: string) => JSON.parse(readFileSync(join(root, p), 'utf8'));
@@ -30,6 +31,7 @@ const ctx = {
   regions: new Set<string>(),
   cutscenes,
   i18n,
+  shapes: scenarioShapes(readFileSync(join(root, 'src/sim/scenario/types.ts'), 'utf8'), readFileSync(join(root, 'src/sim/scenario/triggers.ts'), 'utf8')),
 };
 for (const f of readdirSync(join(root, 'data/scenarios'))) {
   const sc = read(`data/scenarios/${f}`);

@@ -1,6 +1,7 @@
 // Balance sweep: applies JSON-path overrides to the data, plays a chapter AI vs AI for N seeds,
 // and prints the Zheng success rate (same metric as headless-battle).
 //   tsx scripts/dev/sweep.ts 2 8 'buildings.provintia_fort.hp=4000' 'units.light_cannon.range=7'
+//   HARD=faction_france tsx scripts/dev/sweep.ts sf2 10   (one side on hard)
 import { loadGameData } from '../../src/data/load';
 import { loadMap } from '../../src/data/map';
 import { scenarioById } from '../../src/data/scenarios';
@@ -41,8 +42,10 @@ let wins = 0;
 const lines: string[] = [];
 for (let seed = 101; seed < 101 + N; seed++) {
   const w = new World(data, map, { seed, factions: sc.factions });
+  // HARD=<faction>: that side's AI plays on hard (its army scaled and hard tactics), the other on normal.
+  if (process.env.HARD) w.ext.flags[`armyMul:${process.env.HARD}`] = data.rules.difficulty.hard.scriptedArmyMul;
   applyScenario(w, sc);
-  for (const [o, s] of Object.entries(sc.ai ?? {})) enableAi(w, o, s as never);
+  for (const [o, s] of Object.entries(sc.ai ?? {})) enableAi(w, o, s as never, o === process.env.HARD ? 'hard' : 'normal');
   const limit = sc.timerMinutes * 60 * 20 + 10;
   let won = false;
   let t = 0;

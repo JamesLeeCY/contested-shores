@@ -1549,5 +1549,19 @@
   "codex.sf_numbers.history": "French: about 2,250 landed at Keelung, rising to about 4,000 by January 1885; about 600 sailors landed at Tamsui and about 400 men at Penghu. Qing: about 5,000 in northern Taiwan by late July 1884 and about 25,000 by year's end (another count: 16,000 soldiers and 20,000 local braves island-wide); about 1,000 at Tamsui (other estimates 2,000–4,000); about 2,400 on Penghu.",
   "codex.sf_numbers.design": "The game scales forces at roughly 1:20.",
   "codex.sf_numbers.dispute": "Disputed: French and Qing figures often differ widely, especially for the Tamsui garrison.",
-  "sf3.end.rout": "Makung fell and its defenders were all but wiped out. Worse than in history."
+  "sf3.end.rout": "Makung fell and its defenders were all but wiped out. Worse than in history.",
+  "menu.timeline": "Timeline",
+  "timeline.title": "Wars in Taiwan, 1661–1930",
+  "timeline.sub": "Six campaigns and nineteen chapters in order of time. Pick one to go to its campaign and choose a side.",
+  "menu.back_menu": "Back to the main menu",
+  "result.lost": "{n} units lost",
+  "result.time": "Time {m}:{s}",
+  "history.mudan1.losses": "Real losses: about a dozen Paiwan dead (Aruqu and his son among them) and about a dozen Japanese killed; some 560 Japanese reportedly died of disease. (The game's armies are scaled down; for comparison only.)",
+  "history.penghu2.losses": "Real losses (the whole Penghu battle): Shi Lang reported 329 Qing dead and 1,800 wounded; about 12,000 Zheng dead and over 190 ships lost. (The game's armies are scaled down; for comparison only.)",
+  "history.sf1.losses": "Real losses: French 17 dead, 49 wounded; Qing about 80 dead, 200 wounded. (The game's armies are scaled down; for comparison only.)",
+  "history.sf2.losses": "Real losses: in January, French 21 dead and 62 wounded, Qing at least 2,000; in March, French 41 dead and 157 wounded, Qing about 1,500 killed and wounded. In the whole Keelung campaign 600–700 French died, most of disease. (The game's armies are scaled down; for comparison only.)",
+  "history.sf3.losses": "Real losses: French 5 dead, 12 wounded; Qing about 300 dead, 400–500 wounded. (The game's armies are scaled down; for comparison only.)",
+  "history.yiwei5.losses": "Real losses: about 364 Japanese killed and wounded (138 police, 226 soldiers); Truku losses were never recorded. (The game's armies are scaled down; for comparison only.)",
+  "history.wushe1.losses": "Real losses: on 27 October 134 Japanese died (women and children among them) and 215 were wounded, and two Han Taiwanese were killed by mistake; Seediq losses that day are unknown. (The game's armies are scaled down; for comparison only.)",
+  "history.wushe2.losses": "Real losses: about 644 Seediq died (296 of them by suicide); 22 Japanese soldiers, 6 police and 22 allied indigenous fighters died. (The game's armies are scaled down; for comparison only.)"
 }
