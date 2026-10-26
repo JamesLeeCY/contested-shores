@@ -2,6 +2,9 @@
 import { clearMove, isMoving, moveUnitTo } from './movement';
 import type { World } from '../world';
 
+/** Tides only matter on the sea maps (臺江, 澎湖, the 淡水河 mouth); elsewhere they run unseen. */
+export const tidesMatter = (world: World) => ['taijiang', 'penghu', 'tamsui'].includes(world.map.id);
+
 export function tideSystem(world: World) {
   const phases = world.rules.tide.phases;
   world.tideTick++;

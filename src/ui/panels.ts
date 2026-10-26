@@ -3,6 +3,7 @@ import type { ResourceId } from '../data/schema';
 import { popCap, popUsed, unitStat } from '../sim/stats';
 import { hasPowder } from '../sim/systems/combat';
 import { capacityOf, cargoPop } from '../sim/systems/transport';
+import { tidesMatter } from '../sim/systems/tide';
 import type { Entity, SimEvent } from '../sim/types';
 import type { World } from '../sim/world';
 import { el, setText } from './dom';
@@ -71,7 +72,7 @@ export function eventMessage(world: World, player: string, ev: SimEvent): [strin
     case 'built':
       return e.owner === player ? [t('msg.built', { name: t(world.data.buildings.get(e.building as string)!.nameKey) }), 'good'] : null;
     case 'tide':
-      return [t('msg.tide', { name: t('tide.' + (e.phase as string)) }), 'info'];
+      return tidesMatter(world) ? [t('msg.tide', { name: t('tide.' + (e.phase as string)) }), 'info'] : null;
     case 'stranded': {
       const u = world.get(e.id as number);
       return u?.owner === player ? [t('msg.stranded'), 'warn'] : null;

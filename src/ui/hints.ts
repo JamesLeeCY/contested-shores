@@ -27,14 +27,29 @@ export function installHints(s: Session, parent: HTMLElement) {
   const hints = s.world.scenario?.hints ?? [];
   if (!hints.length || s.opts.spectate) return;
   const box = el('div', 'hints', parent);
-  const show = (textKey: string) => {
-    if (seen(textKey)) return;
-    markSeen(textKey);
+  // One card at a time (a small screen has no room for a stack): the next waits for "got it".
+  const queue: string[] = [];
+  let title: HTMLElement | null = null;
+  const retitle = () => title && (title.textContent = t('hint.title') + (queue.length ? ` (+${queue.length})` : ''));
+  const next = () => {
+    if (box.childElementCount || !queue.length) return;
+    const textKey = queue.shift()!;
     const card = el('div', 'hint-card panel', box);
-    el('div', 'hint-title', card, t('hint.title'));
+    title = el('div', 'hint-title', card, '');
+    retitle();
     el('div', 'hint-text', card, t(textKey));
     const ok = el('button', 'hint-ok', card, t('hint.ok'));
-    ok.addEventListener('click', () => card.remove());
+    ok.addEventListener('click', () => {
+      card.remove();
+      next();
+    });
+  };
+  const show = (textKey: string) => {
+    if (seen(textKey) || queue.includes(textKey)) return;
+    markSeen(textKey);
+    queue.push(textKey);
+    next();
+    retitle();
   };
   for (const h of hints) if (!h.on) show(h.textKey);
   const pending = hints.filter((h) => h.on);

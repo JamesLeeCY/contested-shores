@@ -1,5 +1,5 @@
 // Clock group (top right, spec §9.1): tide ring, game day, chapter timer, speed/pause.
-import { tideSecondsLeft } from '../sim/systems/tide';
+import { tideSecondsLeft, tidesMatter } from '../sim/systems/tide';
 import { windVector } from '../sim/systems/wind';
 import type { World } from '../sim/world';
 import { t } from './i18n';
@@ -54,8 +54,8 @@ export class ClockHud {
     this.root.appendChild(this.ring);
     const info = el('div', 'clock-info', this.root);
     this.tideText = el('div', 'tide-text', info);
-    // Tides only matter on the sea maps (臺江, 澎湖); the land campaigns hide the dial.
-    if (!['taijiang', 'penghu'].includes(world.map.id)) {
+    // The land campaigns hide the dial.
+    if (!tidesMatter(world)) {
       this.ring.style.display = 'none';
       this.tideText.style.display = 'none';
     }

@@ -223,7 +223,10 @@ html, body { margin: 0; height: 100%; overflow: hidden; background: var(--bg); c
 .hint-card { padding: 8px 10px; font-size: 13px; line-height: 1.5; border-left: 3px solid var(--accent, #d4a24c); }
 .hint-title { font-weight: bold; color: var(--accent, #d4a24c); margin-bottom: 2px; }
 .hint-ok { margin-top: 6px; float: right; }
-@media (max-width: 700px) { .hints { top: auto; bottom: 150px; width: calc(100% - 20px); } }
+@media (max-width: 700px) {
+  .hints { top: auto; bottom: 150px; left: 10px; right: 10px; width: auto; }
+  .hint-card { font-size: 12px; padding: 6px 8px; line-height: 1.4; }
+}
 /* Latin script needs less letter-spacing than CJK. */
 :lang(en) .menu-game { letter-spacing: 2px; }
 :lang(en) .menu-title { letter-spacing: 1px; }

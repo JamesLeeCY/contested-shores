@@ -482,7 +482,8 @@
       "skirmish:kalapau_t/12/gorge",
       "harass:kbayang/3",
       "harass:sakahen/3",
-      "harass:kalapau/3"
+      "harass:kalapau/3",
+      "fallback:refuge_t/kalapau/99/0.25"
     ]
   },
   {
@@ -564,7 +565,8 @@
       "skirmish:mahebu_t/12/cave",
       "hold_line:cave/10",
       "harass:truwan/3",
-      "harass:mahebu/3"
+      "harass:mahebu/3",
+      "fallback:refuge/cave/99/0.25"
     ]
   },
   {
@@ -652,7 +654,8 @@
     ],
     "steps": [
       "hold_line:landing/10",
-      "hold_line:makung/16"
+      "hold_line:makung/16",
+      "fallback:retreat/makung/99/0.25"
     ]
   }
 ]
