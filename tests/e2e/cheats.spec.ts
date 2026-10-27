@@ -30,7 +30,10 @@ test('cheat line: Enter, "how do you turn this on", Enter → a blue sports car 
   await expect(page.locator('.msg').last()).toContainText('藍色跑車');
 
   // Phones: five taps on the clock panel open the same line.
-  for (let i = 0; i < 5; i++) await page.locator('.clocks').click();
+  await page.evaluate(() => {
+    const c = document.querySelector('.clocks')!;
+    for (let i = 0; i < 5; i++) c.dispatchEvent(new PointerEvent('pointerup', { bubbles: true }));
+  });
   await expect(page.locator('.cheat-input')).toBeFocused();
   await page.keyboard.press('Escape');
   await expect(page.locator('.cheat-input')).toBeHidden();

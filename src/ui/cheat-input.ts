@@ -9,7 +9,8 @@ import { on } from './lifecycle';
 import type { Session } from './session';
 
 const TAPS = 5;
-const TAP_WINDOW_MS = 3000;
+/** Longest pause between two taps of the five. */
+const TAP_GAP_MS = 1000;
 
 export function installCheatInput(s: Session, ui: HTMLElement) {
   if (!s.player) return;
@@ -48,12 +49,14 @@ export function installCheatInput(s: Session, ui: HTMLElement) {
   });
 
   // Phones have no Enter key: five quick taps on the clock panel.
-  let taps: number[] = [];
+  let taps = 0;
+  let last = -Infinity;
   s.clocks.root.addEventListener('pointerup', () => {
     const now = performance.now();
-    taps = [...taps.filter((x) => now - x < TAP_WINDOW_MS), now];
-    if (taps.length >= TAPS) {
-      taps = [];
+    taps = now - last < TAP_GAP_MS ? taps + 1 : 1;
+    last = now;
+    if (taps >= TAPS) {
+      taps = 0;
       open();
     }
   });
