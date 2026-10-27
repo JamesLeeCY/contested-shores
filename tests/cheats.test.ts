@@ -44,6 +44,14 @@ describe('cheats (Age of Empires II tribute)', () => {
     expect(w.events.some((e) => e.type === 'message' && e.textKey === 'cheat.ok.cobra')).toBe(true);
   });
 
+  it('no car and no cheat mark when there is nowhere to park', () => {
+    const w = makeWorld();
+    cheat(w, 'cobra');
+    expect(vehicles(w, 'cobra_car')).toHaveLength(0);
+    expect(w.ext.flags[`cheated:${Z}`]).toBeUndefined();
+    expect(w.events.some((e) => e.type === 'message' && e.textKey === 'cheat.no_room')).toBe(true);
+  });
+
   it('unknown codes do nothing', () => {
     const w = withLaborer();
     cheat(w, 'nuke');

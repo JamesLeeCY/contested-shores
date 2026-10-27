@@ -11,6 +11,8 @@ import type { Session } from './session';
 const TAPS = 5;
 /** Longest pause between two taps of the five. */
 const TAP_GAP_MS = 1000;
+/** After a horn, selecting a vehicle again stays quiet this long. */
+const HORN_QUIET_MS = 5000;
 
 export function installCheatInput(s: Session, ui: HTMLElement) {
   if (!s.player) return;
@@ -61,15 +63,21 @@ export function installCheatInput(s: Session, ui: HTMLElement) {
     }
   });
 
-  // Horn when a vehicle arrives or is selected.
-  s.eventHooks.push((ss, ev) => ev.type === 'horn' && ev.owner === ss.player && audio.horn());
+  // Horn when a vehicle arrives or is selected; selecting it again within a few seconds (box-selecting
+  // the army over and over) stays quiet.
+  let lastHorn = -Infinity;
+  const honk = () => {
+    lastHorn = performance.now();
+    audio.horn();
+  };
+  s.eventHooks.push((ss, ev) => ev.type === 'horn' && ev.owner === ss.player && honk());
   let hadVehicle = false;
   s.frameHooks.push((ss) => {
     const has = [...ss.selected].some((id) => {
       const e = ss.world.get(id);
       return !!e && e.kind === 'unit' && ss.world.data.units.get(e.type)!.traits.includes('cheat');
     });
-    if (has && !hadVehicle) audio.horn();
+    if (has && !hadVehicle && performance.now() - lastHorn > HORN_QUIET_MS) honk();
     hadVehicle = has;
   });
 }

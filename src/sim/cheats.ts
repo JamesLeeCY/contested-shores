@@ -37,18 +37,20 @@ function anchor(world: World, owner: Owner): Entity | undefined {
 
 registerCommand('cheat', (world, cmd) => {
   if (!CODES.has(cmd.code) || !world.faction(cmd.owner)) return;
-  world.ext.flags[`cheated:${cmd.owner}`] = true;
   const f = world.faction(cmd.owner)!;
   let key = `cheat.ok.${cmd.code}`;
   switch (cmd.code) {
     case 'cobra':
     case 'truck': {
+      // No car and no cheat mark when there is nowhere to park it.
       const a = anchor(world, cmd.owner);
-      if (!a) return;
-      const ox = a.kind === 'building' ? a.x + a.w! / 2 + 1 : a.x + 1;
-      const oy = a.kind === 'building' ? a.y + a.h! / 2 + 1 : a.y + 1;
-      const p = nearestPassable(world.nav, 'foot', Math.floor(ox), Math.floor(oy), 12);
-      if (!p) return;
+      const ox = a && (a.kind === 'building' ? a.x + a.w! / 2 + 1 : a.x + 1);
+      const oy = a && (a.kind === 'building' ? a.y + a.h! / 2 + 1 : a.y + 1);
+      const p = a && nearestPassable(world.nav, 'foot', Math.floor(ox!), Math.floor(oy!), 12);
+      if (!p) {
+        world.emit({ type: 'message', to: cmd.owner, textKey: 'cheat.no_room', kind: 'warn' });
+        return;
+      }
       const u = world.spawnUnit(cmd.code === 'cobra' ? 'cobra_car' : 'fatsai_truck', cmd.owner, p[0] + 0.5, p[1] + 0.5);
       world.emit({ type: 'horn', id: u.id, owner: cmd.owner, x: u.x, y: u.y });
       break;
@@ -67,5 +69,6 @@ registerCommand('cheat', (world, cmd) => {
       break;
     }
   }
+  world.ext.flags[`cheated:${cmd.owner}`] = true;
   world.emit({ type: 'message', to: cmd.owner, textKey: key, kind: 'good' });
 });
