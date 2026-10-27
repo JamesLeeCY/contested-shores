@@ -1182,5 +1182,21 @@
       "src.ls_zh",
       "src.ls_en"
     ]
+  },
+  {
+    "id": "cobra_car",
+    "category": "eggs",
+    "dispute": false,
+    "sources": [
+      "src.aoe2"
+    ]
+  },
+  {
+    "id": "fatsai_truck",
+    "category": "eggs",
+    "dispute": false,
+    "sources": [
+      "src.aoe2"
+    ]
   }
 ]

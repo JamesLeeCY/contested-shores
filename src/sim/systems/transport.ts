@@ -66,7 +66,8 @@ registerCommand('embark', (world, cmd) => {
   const ship = world.get(cmd.target);
   if (!ship || ship.owner !== cmd.owner || !capacityOf(world, ship)) return;
   for (const u of ownedUnits(world, cmd.owner, cmd.ids)) {
-    if (u.moveClass !== 'foot') continue;
+    // Foot units only; a truck (transport_4) carries soldiers but never rides in anything itself.
+    if (u.moveClass !== 'foot' || capacityOf(world, u) || world.data.units.get(u.type)!.traits.includes('cheat')) continue;
     clearMove(world, u);
     u.order = { type: 'embark', target: ship.id };
   }

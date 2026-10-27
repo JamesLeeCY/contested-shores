@@ -81,6 +81,12 @@ export function updateFog(world: World) {
     const fog = fogOf(world, owner);
     if (!fog) continue;
     fog.visible.fill(0);
+    // Cheat `marco`: the whole map in view.
+    if (world.ext.flags[`cheat:reveal:${owner}`]) {
+      fog.visible.fill(1);
+      fog.explored.fill(1);
+      continue;
+    }
     for (const e of world.all()) {
       if (e.owner !== owner || e.kind === 'resource') continue;
       if (e.kind === 'unit' && e.insideOf) {

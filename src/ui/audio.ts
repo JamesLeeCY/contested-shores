@@ -126,6 +126,15 @@ class AudioEngine {
     this.tone(base * (zheng ? 1.5 : 1.25), 0.1, 0.05, zheng ? 'triangle' : 'square', 0.07);
   }
 
+  /** Car horn, two short blasts (cheat vehicles). */
+  horn() {
+    if (this.throttle('horn', 500)) return;
+    for (const when of [0, 0.22]) {
+      this.tone(415, 0.16, 0.09, 'square', when);
+      this.tone(523, 0.16, 0.07, 'square', when);
+    }
+  }
+
   musket(vol: number) {
     if (this.throttle('musket', 40)) return;
     this.burst(0.18, 2400, 0.25 * vol, 'highpass');

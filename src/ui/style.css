@@ -245,3 +245,9 @@ html, body { margin: 0; height: 100%; overflow: hidden; background: var(--bg); c
 .result-lost { margin-left: auto; color: var(--muted); font-size: 12px; }
 .result-time { color: var(--muted); font-size: 12px; margin: 4px 0; }
 .result-real { font-size: 13px; border-left: 3px solid var(--accent); padding-left: 8px; }
+
+/* Cheat line (src/ui/cheat-input.ts) and the "cheated" marks. */
+.cheat-line { position: absolute; left: 50%; bottom: 150px; transform: translateX(-50%); width: min(420px, calc(100vw - 32px)); z-index: 30; }
+.cheat-input { width: 100%; box-sizing: border-box; padding: 8px 10px; font-size: 16px; color: #fff; background: rgba(20, 16, 10, 0.88); border: 1px solid #d4a017; border-radius: 4px; outline: none; }
+.cheat-badge { color: #ff6b6b; font-weight: bold; font-size: 11px; }
+.result-cheat { color: #ff6b6b; font-weight: bold; margin: 4px 0; }

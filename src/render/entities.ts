@@ -5,7 +5,7 @@ import type { World } from '../sim/world';
 import { hasKey, t } from '../ui/i18n';
 import { colorOf, ownerColors } from './colors';
 import { TILE_H, toScreen } from './iso';
-import { crenellate, drawFigure, drawGun, drawShipArt } from './art';
+import { crenellate, drawFigure, drawGun, drawShipArt, drawVehicle } from './art';
 
 const FORTS = new Set(['zeelandia_castle', 'bastion', 'utrecht_redoubt', 'provintia_fort', 'lower_town_wall']);
 /** Indigenous villages: a thatched pyramid roof over low walls. */
@@ -93,6 +93,18 @@ export class EntityRenderer {
       v.root.zIndex = e.kind === 'building' ? (e.tx! + e.w! + e.ty! + e.h!) - 1 : x + y;
       v.root.visible = !this.hidden(e);
       const sel = selected.has(e.id);
+      // Cheat vehicles face where they drive (screen x grows with x − y); the 發財 plate stays readable.
+      if (e.kind === 'unit' && e.moveClass === 'foot' && this.data.units.get(e.type)!.traits.includes('cheat')) {
+        const dx = e.x - e.px - (e.y - e.py);
+        if (Math.abs(dx) > 1e-3) {
+          const s = dx < 0 ? -1 : 1;
+          v.body.scale.x = s;
+          for (const c of v.body.children) {
+            c.scale.x = s;
+            c.x = s > 0 ? -17 : -5;
+          }
+        }
+      }
       if (e.kind === 'unit' && (e.facing !== v.lastFacing || e.stranded !== v.lastStranded) && e.moveClass !== 'foot') {
         this.drawShip(v, e);
         v.lastFacing = e.facing ?? 0;
@@ -129,7 +141,14 @@ export class EntityRenderer {
       if (naval) this.drawShip(v, e);
       else {
         const def = this.data.units.get(e.type)!;
-        if (def.class === 'siege') drawGun(body, e.type, c1);
+        if (def.traits.includes('cheat')) {
+          drawVehicle(body, e.type, c1);
+          if (e.type === 'fatsai_truck') {
+            const plate = new Text({ text: t('art.fatsai'), style: { fontSize: 7, fill: 0xb22222, fontWeight: 'bold' }, resolution: 4 });
+            plate.position.set(-17, -15.5);
+            body.addChild(plate);
+          }
+        } else if (def.class === 'siege') drawGun(body, e.type, c1);
         else drawFigure(body, e.type, c1, c2, def.traits.includes('hero'));
       }
     } else if (e.kind === 'building') {

@@ -8,6 +8,7 @@ import { buildSystem } from './build';
 import { diplomacySystem } from './diplomacy';
 import './disease';
 import './sandbox';
+import '../cheats';
 import { supplySystem } from './supply';
 import { weatherSystem } from './weather';
 import { windSystem } from './wind';

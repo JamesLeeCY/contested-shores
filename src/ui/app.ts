@@ -378,6 +378,7 @@ export class GameApp {
       const card = el('div', 'result-card', box);
       const mine = s.world.ext.flags[`outcome:${o.player}`] as Rating;
       el('div', `result-rating rating-${mine}`, card, t(`rating.${mine}`));
+      if (Object.keys(s.world.ext.flags).some((k) => k.startsWith('cheated:'))) el('p', 'result-cheat', card, t('cheat.result'));
       el('h2', 'result-title', card, t(sc.nameKey));
       el('p', 'result-reason', card, t(String(s.world.ext.flags[`outcomeReason:${o.player}`] ?? '')));
       const table = el('div', 'result-table', card);

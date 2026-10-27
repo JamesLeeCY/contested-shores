@@ -129,7 +129,8 @@ export function buildSystem(world: World) {
     const b = world.get(id)!;
     const def = world.data.buildings.get(b.type)!;
     const eff = 1 + (n - 1) * world.rules.build.extraBuilderEfficiency;
-    const dp = (eff * world.rules.build.builderSpeedMul) / (Math.max(1, def.buildTime) * hz);
+    // Cheat `aegis`: the first touch finishes the building.
+    const dp = world.ext.flags[`cheat:instant:${b.owner}`] ? 1 : (eff * world.rules.build.builderSpeedMul) / (Math.max(1, def.buildTime) * hz);
     const before = b.built ?? 0;
     b.built = Math.min(1, before + dp);
     b.hp = Math.min(b.maxHp, b.hp + b.maxHp * (1 - world.rules.build.startHpFraction) * (b.built - before));

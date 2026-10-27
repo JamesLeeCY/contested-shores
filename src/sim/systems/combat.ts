@@ -11,6 +11,7 @@ import type { World } from '../world';
 import { ejectAll } from './production';
 import { isVisibleTo } from './fog';
 import { clearMove, isMoving, moveGroup, moveUnitTo } from './movement';
+import { unloadAll } from './transport';
 
 // --- relations ---------------------------------------------------------------------------------
 
@@ -194,7 +195,8 @@ export function killEntity(world: World, e: Entity, killer?: Entity) {
   if (e.dead) return;
   world.emit({ type: 'death', id: e.id, unitType: e.type, owner: e.owner, x: e.x, y: e.y, kind: e.kind, killer: killer?.owner });
   if (e.kind === 'building') ejectAll(world, e);
-  // Cargo goes down with the ship.
+  // Cargo goes down with the ship; a land vehicle's passengers climb out.
+  if (e.cargo?.length && e.moveClass === 'foot') unloadAll(world, e);
   for (const id of e.cargo ?? []) {
     const c = world.entities.get(id);
     if (c) {

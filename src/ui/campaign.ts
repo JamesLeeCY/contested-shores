@@ -33,6 +33,8 @@ export function saveCampaign(campaign: string, c: StoredCampaign) {
 
 /** Folds a finished chapter into the campaign state. */
 export function recordChapter(c: StoredCampaign, sc: Scenario, w: World): StoredCampaign {
+  // A game played with cheats (src/sim/cheats.ts) records nothing.
+  if (Object.keys(w.ext.flags).some((k) => k.startsWith('cheated:'))) return c;
   const chapterId = sc.id;
   const out: StoredCampaign = { ...c, ratings: { ...(c.ratings ?? {}) }, reasons: { ...(c.reasons ?? {}) } };
   const r: Record<string, Rating> = {};

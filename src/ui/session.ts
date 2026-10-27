@@ -31,6 +31,7 @@ import type { CampaignState, Scenario } from '../sim/scenario/types';
 import type { Difficulty } from '../sim/state';
 import { applyScenario } from '../sim/scenario/setup';
 import { installHints } from './hints';
+import { installCheatInput } from './cheat-input';
 import { enableAi } from '../sim/ai';
 import { timerSecondsLeft } from '../sim/scenario/runtime';
 
@@ -183,6 +184,7 @@ export class Session implements ControlHost {
     });
     installCampaignUi(this);
     installHints(this, ui);
+    if (!opts.spectate) installCheatInput(this, ui);
     this.eventHooks.push((s, ev) => s.soundFor(ev));
     this.fpsEl = document.createElement('div');
     this.fpsEl.className = 'fps';

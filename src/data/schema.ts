@@ -11,6 +11,7 @@ export const KNOWN_TRAITS = [
   'naval', 'small_craft', 'transport_10', 'transport_6', 'suicide', 'hero', 'aura_koxinga', 'aura_coyett',
   'aura_pedel', 'diplomat', 'volley', 'anti_charge', 'splash_1', 'broadside', 'forest_stealth',
   'fast_terrain', 'non_combat', 'aura_sakuma', 'aura_aruqu', 'civilian', 'mountain_stealth', 'aura_admiral', 'aura_captain',
+  'transport_4', 'cheat',
 ] as const;
 
 export const CostSchema = z.object({

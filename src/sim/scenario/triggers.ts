@@ -149,6 +149,7 @@ export function regionPop(world: World, region: string, owner: Owner, unitTag?: 
     if (!regionContains(r, Math.floor(e.x), Math.floor(e.y))) continue;
     const def = world.data.units.get(e.type)!;
     if (!unitTag && def.traits.includes('civilian')) continue;
+    if (def.traits.includes('cheat')) continue;
     pop += countUnits ? 1 : Math.max(1, def.pop);
   }
   return pop;

@@ -11,7 +11,7 @@ interface Entry {
   sources: string[];
 }
 const ENTRIES = codex as Entry[];
-const CATEGORIES = ['units', 'buildings', 'people', 'places', 'disputes'];
+const CATEGORIES = ['units', 'buildings', 'people', 'places', 'disputes', 'eggs'];
 
 export function openCodex(parent: HTMLElement, onClose?: () => void, startAt?: string) {
   const root = el('div', 'codex', parent);

@@ -228,6 +228,40 @@ export function drawFigure(g: Graphics, type: string, c1: number, c2: number, he
   }
 }
 
+/**
+ * Cheat vehicles (src/sim/cheats.ts), drawn side-on facing right (the renderer mirrors them).
+ * cobra_car: the Age of Empires II blue sports car, white racing stripes, a machine gun on the roof.
+ * fatsai_truck: a small 發財車 pickup with a machine gun in the bed. Team colour on the headlight flag.
+ */
+export function drawVehicle(g: Graphics, type: string, c1: number) {
+  const tyre = (x: number) => g.circle(x, -4, 4).fill(0x1a1a1a).circle(x, -4, 1.8).fill(0xc0c0c0);
+  g.ellipse(0, -1, 22, 5).fill({ color: 0x000000, alpha: 0.25 });
+  if (type === 'cobra_car') {
+    const BLUE = 0x1e4fd8;
+    g.poly([-20, -6, -20, -12, -8, -14, -3, -20, 7, -20, 12, -14, 21, -12, 21, -6]).fill(BLUE).stroke(LINE);
+    g.poly([-2, -19, 6, -19, 10, -14, -6, -14]).fill(0x9fd3f0).stroke({ color: DARK, width: 0.8 });
+    g.rect(-20, -11, 41, 1.6).fill(0xffffff);
+    g.rect(-20, -8.6, 41, 1.6).fill(0xffffff);
+    // Roof machine gun.
+    g.rect(0, -24, 3, 4).fill(IRON);
+    g.rect(1, -25, 13, 2).fill(DARK);
+    tyre(-12);
+    tyre(13);
+  } else {
+    const WHITE = 0xe8ecef;
+    g.rect(-20, -16, 25, 10).fill(WHITE).stroke(LINE);
+    g.poly([5, -6, 5, -22, 14, -22, 20, -14, 20, -6]).fill(WHITE).stroke(LINE);
+    g.poly([7, -20, 13, -20, 17, -14, 7, -14]).fill(0x9fd3f0).stroke({ color: DARK, width: 0.8 });
+    g.rect(-20, -8, 40, 2).fill(0x2f5fa8);
+    // Machine gun on a post in the bed.
+    g.rect(-9, -24, 2, 8).fill(IRON);
+    g.rect(-9, -26, 13, 2).fill(DARK);
+    tyre(-12);
+    tyre(12);
+  }
+  g.poly([19, -14, 26, -12, 19, -10]).fill(c1).stroke({ color: DARK, width: 0.8 });
+}
+
 /** A gun on its carriage. */
 export function drawGun(g: Graphics, type: string, c1: number) {
   const heavy = type === 'heavy_cannon';

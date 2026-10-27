@@ -33,7 +33,8 @@ type BaseCommand =
       action: 'gift_grain' | 'gift_deerskin' | 'pacify' | 'request_warriors' | 'raid' | 'requisition';
     }
   | { type: 'sandbox'; owner: Owner; action: string; arg?: string | number }
-  | { type: 'choice'; owner: Owner; id: string };
+  | { type: 'choice'; owner: Owner; id: string }
+  | { type: 'cheat'; owner: Owner; code: string };
 
 export type CommandHandler<C extends Command = Command> = (world: World, cmd: C) => void;
 const handlers = new Map<string, CommandHandler>();

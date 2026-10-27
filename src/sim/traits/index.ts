@@ -34,6 +34,9 @@ export const TRAITS: Record<(typeof KNOWN_TRAITS)[number] | 'grapeshot', TraitHa
   mountain_stealth: passive,
   aura_admiral: passive,
   aura_captain: passive,
+  transport_4: passive,
+  // Cheat vehicles (src/sim/cheats.ts): left out of army counts and scenario triggers.
+  cheat: passive,
   block_arrow_30,
   cleave_2,
   volley,

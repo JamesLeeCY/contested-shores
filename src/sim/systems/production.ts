@@ -160,7 +160,7 @@ export function canGarrison(world: World, u: Entity, b: Entity): boolean {
   if ((world.data.buildings.get(b.type) as { capturable?: boolean }).capturable && b.hp <= b.maxHp * world.rules.capture.ejectBelowHpFraction)
     return false;
   const def = world.data.units.get(u.type)!;
-  if (def.traits.includes('hero')) return false;
+  if (def.traits.includes('hero') || def.traits.includes('cheat')) return false;
   if (b.type === 'tuntian') return def.class === 'infantry' && def.faction === 'faction_zheng';
   if (b.type === 'bastion') return def.atkType === 'musket';
   return garrisonCapacity(world, b) > 0;
@@ -273,6 +273,8 @@ export function productionSystem(world: World) {
       item.started = true;
     }
     item.remaining--;
+    // Cheat `aegis`: production and research finish at once.
+    if (world.ext.flags[`cheat:instant:${b.owner}`]) item.remaining = Math.min(item.remaining, 0);
     if (item.remaining > 0) continue;
     b.queue.shift();
     if (item.kind === 'tech') {

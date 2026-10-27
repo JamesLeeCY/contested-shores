@@ -29,6 +29,8 @@ export function difficultyOf(world: World, ai: AiState) {
 
 const isWorkerType = (world: World, type: string) => world.data.units.get(type)!.traits.includes('gatherer');
 const isCivilian = (world: World, type: string) => world.data.units.get(type)!.traits.includes('civilian');
+/** Cheat vehicles never count towards a side's army (scenario triggers, AI force ratios). */
+const isCheat = (world: World, type: string) => world.data.units.get(type)!.traits.includes('cheat');
 
 export function units(world: World, owner: Owner, pred: (e: Entity) => boolean = () => true): Entity[] {
   const out: Entity[] = [];
@@ -42,7 +44,7 @@ export function workers(world: World, owner: Owner) {
 
 /** Foot soldiers, guns and heroes (not workers, not ships). */
 export function army(world: World, owner: Owner, includeInside = false) {
-  return units(world, owner, (e) => e.moveClass === 'foot' && !isWorkerType(world, e.type) && !isCivilian(world, e.type) && (includeInside || !e.insideOf));
+  return units(world, owner, (e) => e.moveClass === 'foot' && !isWorkerType(world, e.type) && !isCivilian(world, e.type) && !isCheat(world, e.type) && (includeInside || !e.insideOf));
 }
 
 export function ships(world: World, owner: Owner) {

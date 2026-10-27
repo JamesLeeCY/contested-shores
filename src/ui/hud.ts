@@ -22,6 +22,7 @@ export class ClockHud {
   private windText: HTMLDivElement;
   private timerText: HTMLDivElement;
   private speedText: HTMLDivElement;
+  private cheatText: HTMLDivElement;
   readonly extra: HTMLDivElement;
 
   constructor(parent: HTMLElement, world: World) {
@@ -63,6 +64,9 @@ export class ClockHud {
     this.dayText = el('div', 'day-text', info);
     this.timerText = el('div', 'timer-text', info);
     this.speedText = el('div', 'speed-text', info);
+    this.cheatText = el('div', 'cheat-badge', info);
+    this.cheatText.textContent = t('cheat.badge');
+    this.cheatText.style.display = 'none';
     this.extra = el('div', 'clock-extra', parent);
   }
 
@@ -87,6 +91,8 @@ export class ClockHud {
     this.timerText.textContent = timerSeconds === null ? '' : formatTime(timerSeconds);
     this.speedText.textContent = paused ? t('ui.paused') : t('ui.speed', { n: speed });
     this.speedText.classList.toggle('paused', paused);
+    const cheated = Object.keys(world.ext.flags).some((k) => k.startsWith('cheated:'));
+    this.cheatText.style.display = cheated ? '' : 'none';
   }
 }
 

@@ -3476,5 +3476,72 @@
     ],
     "naval": false,
     "smallCraft": false
+  },
+  {
+    "id": "cobra_car",
+    "faction": "faction_neutral",
+    "nameKey": "unit.cobra_car.name",
+    "class": "infantry",
+    "hp": 2000,
+    "atk": 12,
+    "atkType": "musket",
+    "atkInterval": 0.4,
+    "armor": 2,
+    "armorType": "cuirass",
+    "range": 7,
+    "sight": 10,
+    "speed": 5.4,
+    "hitChance": 0.7,
+    "powderPerShot": 0,
+    "producible": false,
+    "cost": {
+      "grain": 0,
+      "wood": 0,
+      "powder": 0,
+      "deerskin": 0
+    },
+    "buildTime": 0,
+    "pop": 0,
+    "stage": 1,
+    "producedAt": [],
+    "traits": [
+      "cheat"
+    ],
+    "naval": false,
+    "smallCraft": false
+  },
+  {
+    "id": "fatsai_truck",
+    "faction": "faction_neutral",
+    "nameKey": "unit.fatsai_truck.name",
+    "class": "infantry",
+    "hp": 2500,
+    "atk": 12,
+    "atkType": "musket",
+    "atkInterval": 0.5,
+    "armor": 2,
+    "armorType": "cuirass",
+    "range": 6,
+    "sight": 10,
+    "speed": 3.6,
+    "hitChance": 0.7,
+    "powderPerShot": 0,
+    "producible": false,
+    "cost": {
+      "grain": 0,
+      "wood": 0,
+      "powder": 0,
+      "deerskin": 0
+    },
+    "buildTime": 0,
+    "pop": 0,
+    "stage": 1,
+    "producedAt": [],
+    "traits": [
+      "cheat",
+      "transport_4"
+    ],
+    "naval": false,
+    "smallCraft": false
   }
 ]
