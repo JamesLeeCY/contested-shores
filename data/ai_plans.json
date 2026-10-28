@@ -721,13 +721,22 @@
     ],
     "steps": [
       "wait_flag:ls3_march",
+      "column:army/bgs_nw",
+      "column:militia/bgs_nw",
+      "column:pingpu/bgs_nw",
+      "wait:245",
+      "drop:column/army",
+      "drop:column/militia",
+      "drop:column/pingpu",
       "column:army/baguashan",
-      "column:militia/changhua",
+      "column:militia/baguashan",
       "column:pingpu/baguashan",
       "wait_flag:occ_baguashan",
       "drop:column/army",
+      "drop:column/militia",
       "drop:column/pingpu",
       "column:army/changhua",
+      "column:militia/changhua",
       "column:pingpu/changhua",
       "wait_flag:occ_changhua",
       "drop:column/army",
@@ -743,8 +752,10 @@
       3
     ],
     "steps": [
-      "guard:baguashan/16",
-      "hold_line:baguashan/12",
+      "hold_line:baguashan/67",
+      "hold_region:changhua",
+      "wait_flag:occ_baguashan",
+      "fallback:changhua/baguashan/0",
       "hold_region:changhua",
       "fallback:refuge_e/changhua/99/0.25"
     ]

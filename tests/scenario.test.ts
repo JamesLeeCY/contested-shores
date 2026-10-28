@@ -1439,21 +1439,25 @@ describe('1786–88 林爽文事件', () => {
     expect(outcomeOf(c, L)).toBe('defeat');
   });
 
-  it('福康安渡臺: Baguashan and Changhua taken (historical, or a rout); or the Qing worn down, or 15 minutes held', () => {
+  it('福康安渡臺: Baguashan, then Changhua (historical, or a rout); or the Qing worn down, or 15 minutes held', () => {
     const w = open('ls3');
     killTag(w, 'lin_shuangwen');
-    hold(w, L, 'td_brave', 'refuge_e', 4);
+    hold(w, L, 'td_brave', 'refuge_e', 8);
+    hold(w, Q, 'q87_soldier', 'changhua', 6);
+    run(w, 62 * 20);
+    expect(w.ext.flags.occ_changhua).toBeUndefined(); // the city does not count while the hill holds
     hold(w, Q, 'q87_soldier', 'baguashan', 6);
+    run(w, 62 * 20);
+    expect(w.ext.flags.occ_baguashan).toBe(true);
     hold(w, Q, 'q87_soldier', 'changhua', 6);
     run(w, 62 * 20);
     collect(w);
     expect(w.ext.flags[`outcomeReason:${L}`]).toBe('ls3.end.history');
     expect(outcomeOf(w, L)).toBe('historical');
     const b = open('ls3');
-    keep(b, L, 2);
-    hold(b, Q, 'q87_soldier', 'baguashan', 6);
-    hold(b, Q, 'q87_soldier', 'changhua', 6);
-    run(b, 62 * 20);
+    at(b, 241);
+    keep(b, L, 1);
+    run(b, 10);
     collect(b);
     expect(b.ext.flags[`outcomeReason:${L}`]).toBe('ls3.end.rout');
     expect(outcomeOf(b, L)).toBe('defeat');

@@ -135,9 +135,9 @@
       ]
     },
     {
-      "type": "td_brave",
+      "type": "td_musket",
       "owner": "faction_tiandihui",
-      "count": 30,
+      "count": 45,
       "at": [
         68,
         20
@@ -211,6 +211,13 @@
       "y": 40,
       "w": 16,
       "h": 11
+    },
+    {
+      "id": "bgs_nw",
+      "x": 60,
+      "y": 11,
+      "w": 6,
+      "h": 3
     }
   ],
   "remove": [
@@ -236,7 +243,7 @@
     "faction_qing1787": []
   },
   "rules": {
-    "combat.uphillUnitDamageMul": 0.7
+    "combat.uphillUnitDamageMul": 0.5
   },
   "buildings": [
     {
@@ -320,7 +327,7 @@
             {
               "type": "q87_soldier",
               "owner": "faction_qing1787",
-              "count": 12,
+              "count": 11,
               "at": [
                 20,
                 24
@@ -430,6 +437,10 @@
           "type": "all_of",
           "conditions": [
             {
+              "type": "flag",
+              "name": "occ_baguashan"
+            },
+            {
               "type": "area_entered",
               "region": "changhua",
               "owner": "faction_qing1787",
@@ -531,15 +542,39 @@
     {
       "id": "ls3_history",
       "when": {
-        "type": "all_of",
+        "type": "any_of",
         "conditions": [
           {
-            "type": "flag",
-            "name": "occ_baguashan"
+            "type": "all_of",
+            "conditions": [
+              {
+                "type": "flag",
+                "name": "occ_baguashan"
+              },
+              {
+                "type": "flag",
+                "name": "occ_changhua"
+              }
+            ]
           },
           {
-            "type": "flag",
-            "name": "occ_changhua"
+            "type": "all_of",
+            "conditions": [
+              {
+                "type": "time_elapsed",
+                "seconds": 300
+              },
+              {
+                "type": "held_for",
+                "id": "td_spent",
+                "seconds": 90,
+                "condition": {
+                  "type": "army_pop_below",
+                  "owner": "faction_tiandihui",
+                  "pop": 8
+                }
+              }
+            ]
           }
         ]
       },
@@ -586,6 +621,16 @@
                 "type": "army_pop_below",
                 "owner": "faction_qing1787",
                 "pop": 4
+              },
+              {
+                "type": "held_for",
+                "id": "qing_spent",
+                "seconds": 90,
+                "condition": {
+                  "type": "army_pop_below",
+                  "owner": "faction_qing1787",
+                  "pop": 10
+                }
               }
             ]
           }
