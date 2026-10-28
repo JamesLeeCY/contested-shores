@@ -256,7 +256,7 @@
             {
               "type": "fr_sailor",
               "owner": "faction_france",
-              "count": 28,
+              "count": 16,
               "at": [
                 30,
                 28
@@ -283,10 +283,68 @@
       ]
     },
     {
+      "id": "sf1_land2",
+      "when": {
+        "type": "time_elapsed",
+        "seconds": 270
+      },
+      "do": [
+        {
+          "type": "spawn_units",
+          "units": [
+            {
+              "type": "fr_sailor",
+              "owner": "faction_france",
+              "count": 10,
+              "at": [
+                30,
+                28
+              ],
+              "tag": "landing"
+            }
+          ]
+        },
+        {
+          "type": "show_message",
+          "textKey": "sf1.msg.land2",
+          "kind": "warn"
+        }
+      ]
+    },
+    {
+      "id": "sf1_land3",
+      "when": {
+        "type": "time_elapsed",
+        "seconds": 390
+      },
+      "do": [
+        {
+          "type": "spawn_units",
+          "units": [
+            {
+              "type": "fr_sailor",
+              "owner": "faction_france",
+              "count": 5,
+              "at": [
+                30,
+                28
+              ],
+              "tag": "landing"
+            }
+          ]
+        },
+        {
+          "type": "show_message",
+          "textKey": "sf1.msg.land3",
+          "kind": "warn"
+        }
+      ]
+    },
+    {
       "id": "sf1_reserve",
       "when": {
         "type": "time_elapsed",
-        "seconds": 170
+        "seconds": 240
       },
       "do": [
         {
@@ -393,7 +451,7 @@
         "conditions": [
           {
             "type": "time_elapsed",
-            "seconds": 170
+            "seconds": 420
           },
           {
             "type": "army_pop_below",
@@ -424,7 +482,7 @@
         "conditions": [
           {
             "type": "time_elapsed",
-            "seconds": 170
+            "seconds": 420
           },
           {
             "type": "army_pop_below",

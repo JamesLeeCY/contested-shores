@@ -10,7 +10,7 @@
   "chapter": 1,
   "nameKey": "scenario.mudan1.name",
   "dateKey": "scenario.mudan1.date",
-  "timerMinutes": 8,
+  "timerMinutes": 10,
   "stage": {
     "faction_paiwan": 1,
     "faction_japan": 1
@@ -40,7 +40,7 @@
     {
       "type": "japan_infantry",
       "owner": "faction_japan",
-      "count": 24,
+      "count": 20,
       "at": [
         34,
         44
@@ -615,7 +615,7 @@
         "conditions": [
           {
             "type": "time_elapsed",
-            "seconds": 60
+            "seconds": 330
           },
           {
             "type": "army_pop_below",
@@ -648,7 +648,7 @@
       "id": "m1_held",
       "when": {
         "type": "time_elapsed",
-        "seconds": 480
+        "seconds": 600
       },
       "do": [
         {

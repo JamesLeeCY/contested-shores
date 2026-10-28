@@ -12,5 +12,6 @@
 | `deaths.ts <章> <秒數>` | 一方人口損失的原因分類。 |
 | `replay-check.ts [tick 數]` | 存檔重播檢查：只重播玩家指令，印出第一個分歧的 tick。 |
 | `profile-chapter.ts <章> <tick 數>` / `profile-systems.ts` | 各模擬系統的耗時。 |
+| `ai-timing.ts [劇本…] [--seeds N]` | 各劇本 AI 決策耗時（p50／p99／最大值，以及最慢的一次是哪一層、在第幾秒）。 |
 | `bench-site.ts` | 效能基準。 |
 | `playthrough.mjs <網址>` | 在部署好的網站上自動跑一輪。 |

@@ -596,7 +596,7 @@ const mine: Handler = (ctx, arg) => {
   return 'running';
 };
 
-export const STEP_HANDLERS: Record<string, Handler> = {
+const OWN_STEPS: Record<string, Handler> = {
   strike,
   mine,
   wait_tide_high: (ctx) => (ctx.world.tidePhaseId === 'rising' ? 'done' : 'running'),
@@ -620,6 +620,12 @@ export const STEP_HANDLERS: Record<string, Handler> = {
   hold,
   sortie,
   counter_mine,
-  ...MOUNTAIN_STEPS,
-  ...NAVAL_STEPS,
 };
+
+/** Every step verb, from all three tables. A verb defined twice would silently replace the other. */
+export const STEP_HANDLERS: Record<string, Handler> = { ...OWN_STEPS };
+for (const table of [MOUNTAIN_STEPS, NAVAL_STEPS])
+  for (const [verb, fn] of Object.entries(table)) {
+    if (verb in STEP_HANDLERS) throw new Error(`AI step "${verb}" is defined twice`);
+    STEP_HANDLERS[verb] = fn;
+  }

@@ -88,7 +88,7 @@
     {
       "type": "q87_soldier",
       "owner": "faction_qing1787",
-      "count": 18,
+      "count": 8,
       "at": [
         22,
         26
@@ -124,16 +124,6 @@
         28
       ],
       "tag": "militia"
-    },
-    {
-      "type": "q87_pingpu",
-      "owner": "faction_qing1787",
-      "count": 8,
-      "at": [
-        24,
-        22
-      ],
-      "tag": "pingpu"
     },
     {
       "type": "lin_shuangwen",
@@ -318,11 +308,84 @@
       ]
     },
     {
+      "id": "ls3_wave2",
+      "when": {
+        "type": "time_elapsed",
+        "seconds": 90
+      },
+      "do": [
+        {
+          "type": "spawn_units",
+          "units": [
+            {
+              "type": "q87_soldier",
+              "owner": "faction_qing1787",
+              "count": 12,
+              "at": [
+                20,
+                24
+              ],
+              "tag": "army"
+            }
+          ]
+        },
+        {
+          "type": "show_message",
+          "textKey": "ls3.msg.wave2",
+          "kind": "info"
+        }
+      ]
+    },
+    {
+      "id": "ls3_pingpu",
+      "when": {
+        "type": "time_elapsed",
+        "seconds": 180
+      },
+      "do": [
+        {
+          "type": "spawn_units",
+          "units": [
+            {
+              "type": "q87_pingpu",
+              "owner": "faction_qing1787",
+              "count": 8,
+              "at": [
+                24,
+                22
+              ],
+              "tag": "pingpu"
+            },
+            {
+              "type": "q87_soldier",
+              "owner": "faction_qing1787",
+              "count": 2,
+              "at": [
+                20,
+                24
+              ],
+              "tag": "army"
+            }
+          ]
+        },
+        {
+          "type": "show_message",
+          "textKey": "ls3.msg.pingpu",
+          "kind": "info"
+        },
+        {
+          "type": "set_flag",
+          "name": "ls3_march",
+          "value": true
+        }
+      ]
+    },
+    {
       "id": "ls3_occ_bgs",
       "when": {
         "type": "held_for",
         "id": "occ_baguashan",
-        "seconds": 45,
+        "seconds": 60,
         "condition": {
           "type": "all_of",
           "conditions": [
@@ -362,7 +425,7 @@
       "when": {
         "type": "held_for",
         "id": "occ_changhua",
-        "seconds": 45,
+        "seconds": 60,
         "condition": {
           "type": "all_of",
           "conditions": [
@@ -477,7 +540,7 @@
         "conditions": [
           {
             "type": "time_elapsed",
-            "seconds": 60
+            "seconds": 240
           },
           {
             "type": "army_pop_below",

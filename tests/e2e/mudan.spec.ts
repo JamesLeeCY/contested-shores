@@ -16,7 +16,7 @@ test('1874: menu → 石門之役 as the expedition → cutscene → played to a
     const g = (window as any).__game;
     const w = g.world;
     g.stepper.paused = true;
-    while (!w.ext.flags.missionOver && w.tick < 9 * 60 * 20) {
+    while (!w.ext.flags.missionOver && w.tick < 11 * 60 * 20) {
       for (let i = 0; i < 400 && !w.ext.flags.missionOver; i++) {
         (window as any).__step(w);
         for (const ev of w.events) for (const h of g.eventHooks) h(g, ev);

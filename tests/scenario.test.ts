@@ -421,16 +421,17 @@ describe('1874 石門之役', () => {
     expect(outcomeOf(w, J)).toBe('victory');
   });
 
-  it('the heights hold for 8 minutes, or the expedition breaks: the defenders win', () => {
+  it('the heights hold for 10 minutes, or the expedition breaks: the defenders win', () => {
     const a = shimen();
-    at(a, 480);
+    at(a, 600);
     collect(a);
     expect(outcomeOf(a, P)).toBe('victory');
     expect(outcomeOf(a, J)).toBe('defeat');
     const b = shimen();
-    at(b, 61);
+    // Only once the main body is in (5:30) does a broken expedition count as repulsed.
+    at(b, 331);
     b.rebuildSpatial();
-    for (const e of [...b.all()].filter((u) => u.owner === J && u.kind === 'unit').slice(0, 30)) killEntity(b, e);
+    for (const e of [...b.all()].filter((u) => u.owner === J && u.kind === 'unit')) killEntity(b, e);
     run(b, 5);
     collect(b);
     expect(b.ext.flags[`outcomeReason:${P}`]).toBe('mudan1.end.repulsed');
@@ -550,7 +551,7 @@ describe('1683 澎湖海戰', () => {
   it('八罩: the second wave arrives; 施琅 wounded → the Qing fall back (historical)', () => {
     const w = sea('penghu1');
     expect(w.ext.wind?.from).toBe(0);
-    at(w, 120);
+    at(w, 221);
     expect(tagged(w, 'second')).toHaveLength(14);
     wound(w, 'lin_sheng', 0.4);
     wound(w, 'shi_lang', 0.4);
@@ -561,12 +562,13 @@ describe('1683 澎湖海戰', () => {
 
   it('八罩: the Zheng line broken, the Qing repulsed, or time runs out', () => {
     const a = sea('penghu1');
-    sink(a, N, 20);
+    at(a, 261); // after the ships from 娘媽宮 join
+    sink(a, N, 29);
     collect(a);
     expect(outcomeOf(a, Q)).toBe('victory');
     expect(outcomeOf(a, N)).toBe('defeat');
     const b = sea('penghu1');
-    sink(b, Q, 15);
+    sink(b, Q, 19);
     collect(b);
     expect(b.ext.flags[`outcomeReason:${N}`]).toBe('penghu1.end.repulsed');
     const c = sea('penghu1');
@@ -720,11 +722,12 @@ describe('1895 乙未戰爭', () => {
     expect(w.ext.flags.carts_lost).toBe(true);
     occupy(w, 'hsinchu', 6);
     cartsInto(w, 'hsinchu', 3);
-    run(w, 22 * 20);
+    run(w, 32 * 20);
     expect(w.ext.flags.hsinchu_taken).toBe(true);
     expect(w.buildings().some((b) => b.tag === 'hsinchu_depot')).toBe(true);
+    at(w, 391); // the last militia from the south are in
     occupy(w, 'miaoli', 6);
-    run(w, 32 * 20);
+    run(w, 62 * 20);
     collect(w);
     expect(w.ext.flags[`outcomeReason:${F}`]).toBe('yiwei2.end.history');
   });
@@ -733,9 +736,9 @@ describe('1895 乙未戰爭', () => {
     const takeBoth = (w: World) => {
       occupy(w, 'hsinchu', 6);
       cartsInto(w, 'hsinchu', 3);
-      run(w, 22 * 20);
-      occupy(w, 'miaoli', 6);
       run(w, 32 * 20);
+      occupy(w, 'miaoli', 6);
+      run(w, 62 * 20);
     };
     const a = land('yiwei2');
     takeBoth(a);
@@ -747,7 +750,7 @@ describe('1895 乙未戰爭', () => {
     collect(b);
     expect(outcomeOf(b, F)).toBe('defeat');
     const c = land('yiwei2');
-    at(c, 61);
+    at(c, 331); // the relief is in
     killSide(c, J, 8);
     run(c, 5);
     collect(c);
@@ -771,7 +774,8 @@ describe('1895 乙未戰爭', () => {
     spawnIn(w, F, 'fm_regular', 3, 30, 60); // survivors who fall back to 嘉義: not a rout
     destroy(w, 'baguashan');
     occupy(w, 'changhua', 6);
-    run(w, 32 * 20);
+    run(w, 92 * 20);
+    at(w, 421); // 彰化 counts as taken once the last reinforcements have come
     collect(w);
     expect(outcomeOf(w, F)).toBe('historical');
   });
@@ -781,11 +785,14 @@ describe('1895 乙未戰爭', () => {
     killSide(a, F);
     destroy(a, 'baguashan');
     occupy(a, 'changhua', 6);
-    run(a, 32 * 20);
+    run(a, 92 * 20);
+    at(a, 405);
+    killSide(a, F); // the reinforcements too
+    at(a, 421);
     collect(a);
     expect(outcomeOf(a, F)).toBe('defeat');
     const b = land('yiwei3');
-    at(b, 61);
+    at(b, 361);
     killSide(b, J, 10);
     run(b, 5);
     collect(b);
@@ -1132,7 +1139,7 @@ describe('1930 霧社事件', () => {
     hold(w, J, 'jp14_infantry', 'truwan', 5);
     hold(w, J, 'jp14_infantry', 'mahebu', 5);
     hold(w, J, 'jp14_infantry', 'cave', 5);
-    run(w, 47 * 20);
+    run(w, 62 * 20);
     collect(w);
     expect(w.ext.flags[`outcomeReason:${S}`]).toBe('wushe2.end.history');
     expect(outcomeOf(w, S)).toBe('historical');
@@ -1141,7 +1148,7 @@ describe('1930 霧社事件', () => {
     hold(b, J, 'jp14_infantry', 'truwan', 5);
     hold(b, J, 'jp14_infantry', 'mahebu', 5);
     hold(b, J, 'jp14_infantry', 'cave', 5);
-    run(b, 47 * 20);
+    run(b, 62 * 20);
     collect(b);
     expect(b.ext.flags[`outcomeReason:${S}`]).toBe('wushe2.end.rout');
     expect(outcomeOf(b, S)).toBe('defeat');
@@ -1149,7 +1156,7 @@ describe('1930 霧社事件', () => {
 
   it('馬赫坡: the Japanese worn down, or 15 minutes held', () => {
     const a = open('wushe2');
-    at(a, 61);
+    at(a, 421); // after the last reinforcements
     killSide(a, J, 15);
     run(a, 10);
     collect(a);
@@ -1192,15 +1199,17 @@ describe('1884–85 清法戰爭', () => {
       }
   };
 
-  it('滬尾: the ships bombard, the sailors land at 2:30 under naval gunfire, the reserve comes; rounds run low', () => {
+  it('滬尾: the ships bombard, the sailors land in three waves under naval gunfire, the reserve comes; rounds run low', () => {
     const w = open('sf1');
     expect(w.buildings().some((b) => b.tag === 'krupp_battery')).toBe(false);
     at(w, 151);
-    expect(tagged(w, 'landing').length).toBe(28);
-    at(w, 171);
-    expect(tagged(w, 'reserve').length).toBe(12);
+    expect(tagged(w, 'landing').length).toBe(16);
     at(w, 181);
     expect(w.ext.raids?.length).toBe(1);
+    at(w, 241);
+    expect(tagged(w, 'reserve').length).toBe(12);
+    at(w, 391);
+    expect(tagged(w, 'landing').length).toBeGreaterThan(16);
     w.faction(F)!.resources.powder = 100;
     run(w, 10);
     expect(w.ext.flags['fired:sf1_rounds']).toBe(true);
@@ -1218,14 +1227,14 @@ describe('1884–85 清法戰爭', () => {
     expect(a.ext.flags[`outcomeReason:${F}`]).toBe('sf1.end.taken');
     expect(outcomeOf(a, Q)).toBe('defeat');
     const b = open('sf1');
-    at(b, 171);
+    at(b, 421); // all the sailors are ashore
     keep(b, F, 5);
     run(b, 10);
     collect(b);
     expect(b.ext.flags[`outcomeReason:${Q}`]).toBe('sf1.end.history');
     expect(outcomeOf(b, F)).toBe('historical');
     const c = open('sf1');
-    at(c, 171);
+    at(c, 421);
     keep(c, F, 1);
     run(c, 10);
     collect(c);
@@ -1353,24 +1362,24 @@ describe('1786–88 林爽文事件', () => {
   };
   const tagOf = (w: World, tag: string) => w.buildings().find((b) => b.tag === tag);
 
-  it('彰化起事: the 1787 town (renamed), help from Lukang at 2:20; Changhua taken (historical for the Qing) or crushed', () => {
+  it('彰化起事: the 1787 town (renamed), help from Lukang at 4:30; Changhua taken (historical for the Qing) or crushed', () => {
     const w = open('ls1');
     expect(tagOf(w, 'changhua_1787')).toBeTruthy();
     expect(w.buildings().some((b) => b.type === 'fm_fort')).toBe(false);
-    at(w, 141);
-    expect(tagged(w, 'relief').length).toBe(14);
+    at(w, 271);
+    expect(tagged(w, 'relief').length).toBe(11);
     killTag(w, 'lin_shuangwen');
     hold(w, Q, 'q87_soldier', 'lukang', 4);
     hold(w, L, 'td_brave', 'changhua', 8);
-    run(w, 62 * 20);
+    run(w, 92 * 20);
     collect(w);
     expect(w.ext.flags[`outcomeReason:${L}`]).toBe('ls1.end.history');
     expect(outcomeOf(w, Q)).toBe('historical');
     const b = open('ls1');
-    at(b, 251);
+    at(b, 421);
     keep(b, Q, 2);
     hold(b, L, 'td_brave', 'changhua', 8);
-    run(b, 62 * 20);
+    run(b, 92 * 20);
     collect(b);
     expect(b.ext.flags[`outcomeReason:${Q}`]).toBe('ls1.end.crushed');
     expect(outcomeOf(b, Q)).toBe('defeat');
@@ -1378,7 +1387,7 @@ describe('1786–88 林爽文事件', () => {
 
   it('彰化起事: the rising breaks up, or the town holds for 10 minutes', () => {
     const a = open('ls1');
-    at(a, 31);
+    at(a, 181);
     keep(a, L, 4);
     run(a, 10);
     collect(a);
@@ -1415,12 +1424,12 @@ describe('1786–88 林爽文事件', () => {
     expect(outcomeOf(w, L)).toBe('historical');
     const b = open('ls2');
     hold(b, L, 'td_brave', 'chiayi', 8);
-    run(b, 62 * 20);
+    run(b, 92 * 20);
     collect(b);
     expect(b.ext.flags[`outcomeReason:${L}`]).toBe('ls2.end.fallen');
     expect(outcomeOf(b, Q)).toBe('defeat');
     const c = open('ls2');
-    at(c, 61);
+    at(c, 241);
     keep(c, L, 6);
     run(c, 10);
     collect(c);
@@ -1434,7 +1443,7 @@ describe('1786–88 林爽文事件', () => {
     hold(w, L, 'td_brave', 'refuge_e', 4);
     hold(w, Q, 'q87_soldier', 'baguashan', 6);
     hold(w, Q, 'q87_soldier', 'changhua', 6);
-    run(w, 47 * 20);
+    run(w, 62 * 20);
     collect(w);
     expect(w.ext.flags[`outcomeReason:${L}`]).toBe('ls3.end.history');
     expect(outcomeOf(w, L)).toBe('historical');
@@ -1442,12 +1451,12 @@ describe('1786–88 林爽文事件', () => {
     keep(b, L, 2);
     hold(b, Q, 'q87_soldier', 'baguashan', 6);
     hold(b, Q, 'q87_soldier', 'changhua', 6);
-    run(b, 47 * 20);
+    run(b, 62 * 20);
     collect(b);
     expect(b.ext.flags[`outcomeReason:${L}`]).toBe('ls3.end.rout');
     expect(outcomeOf(b, L)).toBe('defeat');
     const c = open('ls3');
-    at(c, 61);
+    at(c, 241);
     keep(c, Q, 8);
     run(c, 10);
     collect(c);

@@ -40,7 +40,23 @@ export function enableAi(world: World, owner: Owner, spec: AiSpec, difficulty: D
 }
 
 /** Wall-clock cost of AI decisions, measured outside the simulation by the headless runner. */
-export const aiTiming = { enabled: false, samples: [] as number[], now: () => 0, lastTactical: 0 };
+export const aiTiming = {
+  enabled: false,
+  samples: [] as number[],
+  now: () => 0,
+  lastTactical: 0,
+  /** The slowest single layer call seen, for finding what to speed up. */
+  worst: { ms: 0, layer: '', owner: '', tick: 0 },
+};
+
+function timed(layer: string, owner: Owner, tick: number, fn: () => void) {
+  if (!aiTiming.enabled) return fn();
+  const t = aiTiming.now();
+  fn();
+  const ms = aiTiming.now() - t;
+  if (ms > aiTiming.worst.ms) aiTiming.worst = { ms, layer, owner, tick };
+  if (layer === 'tactical') aiTiming.lastTactical = ms;
+}
 
 export function aiSystem(world: World) {
   for (const owner of Object.keys(world.ext.ai).sort()) {
@@ -51,13 +67,11 @@ export function aiSystem(world: World) {
     const t0 = aiTiming.enabled ? aiTiming.now() : 0;
     if (world.tick - ai.lastStrategic >= interval) {
       ai.lastStrategic = world.tick;
-      strategic(ctx);
+      timed('strategic', owner, world.tick, () => strategic(ctx));
     }
     if (world.tick - ai.lastTactical >= world.rules.ai.tacticalSeconds * hz) {
       ai.lastTactical = world.tick;
-      const t1 = aiTiming.enabled ? aiTiming.now() : 0;
-      tactical(ctx);
-      if (aiTiming.enabled) aiTiming.lastTactical = aiTiming.now() - t1;
+      timed('tactical', owner, world.tick, () => tactical(ctx));
     }
     if (aiTiming.enabled) {
       const dt = aiTiming.now() - t0;

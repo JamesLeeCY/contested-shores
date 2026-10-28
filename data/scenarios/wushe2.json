@@ -149,7 +149,7 @@
     {
       "type": "jp14_infantry",
       "owner": "faction_sotokufu",
-      "count": 14,
+      "count": 10,
       "at": [
         34,
         48
@@ -169,7 +169,7 @@
     {
       "type": "jp14_police",
       "owner": "faction_sotokufu",
-      "count": 12,
+      "count": 9,
       "at": [
         40,
         52
@@ -276,7 +276,7 @@
         {
           "type": "start_timer",
           "id": "raid",
-          "seconds": 60
+          "seconds": 80
         },
         {
           "type": "show_message",
@@ -286,11 +286,93 @@
       ]
     },
     {
+      "id": "w2_wave2",
+      "when": {
+        "type": "time_elapsed",
+        "seconds": 180
+      },
+      "do": [
+        {
+          "type": "spawn_units",
+          "units": [
+            {
+              "type": "jp14_infantry",
+              "owner": "faction_sotokufu",
+              "count": 4,
+              "at": [
+                34,
+                48
+              ],
+              "tag": "army"
+            }
+          ]
+        },
+        {
+          "type": "show_message",
+          "textKey": "wushe2.msg.wave2",
+          "kind": "good",
+          "to": "faction_sotokufu"
+        },
+        {
+          "type": "show_message",
+          "textKey": "wushe2.msg.wave2_enemy",
+          "kind": "warn",
+          "to": "faction_seediq"
+        }
+      ]
+    },
+    {
+      "id": "w2_wave3",
+      "when": {
+        "type": "time_elapsed",
+        "seconds": 330
+      },
+      "do": [
+        {
+          "type": "spawn_units",
+          "units": [
+            {
+              "type": "jp14_infantry",
+              "owner": "faction_sotokufu",
+              "count": 4,
+              "at": [
+                34,
+                48
+              ],
+              "tag": "army"
+            },
+            {
+              "type": "jp14_police",
+              "owner": "faction_sotokufu",
+              "count": 3,
+              "at": [
+                40,
+                52
+              ],
+              "tag": "police"
+            }
+          ]
+        },
+        {
+          "type": "show_message",
+          "textKey": "wushe2.msg.wave3",
+          "kind": "good",
+          "to": "faction_sotokufu"
+        },
+        {
+          "type": "show_message",
+          "textKey": "wushe2.msg.wave3_enemy",
+          "kind": "warn",
+          "to": "faction_seediq"
+        }
+      ]
+    },
+    {
       "id": "w2_occ_truwan",
       "when": {
         "type": "held_for",
         "id": "occ_truwan",
-        "seconds": 45,
+        "seconds": 60,
         "condition": {
           "type": "all_of",
           "conditions": [
@@ -330,7 +412,7 @@
       "when": {
         "type": "held_for",
         "id": "occ_mahebu",
-        "seconds": 45,
+        "seconds": 60,
         "condition": {
           "type": "all_of",
           "conditions": [
@@ -370,7 +452,7 @@
       "when": {
         "type": "held_for",
         "id": "occ_cave",
-        "seconds": 30,
+        "seconds": 60,
         "condition": {
           "type": "all_of",
           "conditions": [
@@ -503,16 +585,26 @@
     {
       "id": "w2_repulsed",
       "when": {
-        "type": "all_of",
+        "type": "any_of",
         "conditions": [
           {
-            "type": "time_elapsed",
-            "seconds": 60
+            "type": "all_of",
+            "conditions": [
+              {
+                "type": "time_elapsed",
+                "seconds": 420
+              },
+              {
+                "type": "army_pop_below",
+                "owner": "faction_sotokufu",
+                "pop": 20
+              }
+            ]
           },
           {
             "type": "army_pop_below",
             "owner": "faction_sotokufu",
-            "pop": 20
+            "pop": 8
           }
         ]
       },

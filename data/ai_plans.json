@@ -221,10 +221,10 @@
       "sail:vanguard+lan_li+shi_lang/bay_mouth",
       "encircle:vanguard+lan_li+shi_lang/4",
       "fire_attack:main",
-      "wait:30",
+      "wait:60",
       "sail:main/bay_mouth",
       "encircle:main/5",
-      "wait:125",
+      "wait:225",
       "sail:second/bay_mouth",
       "encircle:second/5"
     ]
@@ -321,6 +321,7 @@
       "column:carts/hsinchu",
       "column:escort/hsinchu",
       "wait_flag:hsinchu_taken",
+      "wait:330",
       "drop:column/troops",
       "drop:column/kitashirakawa",
       "column:troops/miaoli",
@@ -505,10 +506,10 @@
       1
     ],
     "steps": [
-      "strike:g1/post_mahebu,post_gungu,post_sakura/wushe_e",
-      "strike:g2/post_nengao,post_boarung,post_tunbara/wushe_e",
-      "strike:g3/post_sakura/wushe_e",
-      "strike:mona_rudao/post_gungu/wushe_e",
+      "strike_posts:g1/post_mahebu,post_gungu,post_sakura/wushe_e",
+      "strike_posts:g2/post_nengao,post_boarung,post_tunbara/wushe_e",
+      "strike_posts:g3/post_sakura/wushe_e",
+      "strike_posts:mona_rudao/post_gungu/wushe_e",
       "wait:210",
       "drop:strike/g1",
       "drop:strike/g2",
@@ -551,7 +552,9 @@
       "drop:column/toda",
       "push:cave",
       "flank:cave/14",
-      "hold_region:cave"
+      "hold_region:cave",
+      "column:army/cave",
+      "column:police/cave"
     ]
   },
   {
@@ -665,6 +668,7 @@
       1
     ],
     "steps": [
+      "wait_flag:ls1_march",
       "push:changhua",
       "hold_region:changhua"
     ]
@@ -688,6 +692,7 @@
     ],
     "steps": [
       "column:raiders/amb_north",
+      "wait_flag:ls2_assault",
       "push:chiayi",
       "hold_region:chiayi"
     ]
@@ -712,6 +717,7 @@
       3
     ],
     "steps": [
+      "wait_flag:ls3_march",
       "column:army/baguashan",
       "column:militia/changhua",
       "column:pingpu/baguashan",

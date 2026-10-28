@@ -79,7 +79,7 @@
     {
       "type": "td_brave",
       "owner": "faction_tiandihui",
-      "count": 17,
+      "count": 9,
       "at": [
         78,
         6
@@ -89,7 +89,7 @@
     {
       "type": "td_musket",
       "owner": "faction_tiandihui",
-      "count": 8,
+      "count": 4,
       "at": [
         80,
         4
@@ -211,10 +211,93 @@
       ]
     },
     {
+      "id": "ls1_wave2",
+      "when": {
+        "type": "time_elapsed",
+        "seconds": 75
+      },
+      "do": [
+        {
+          "type": "spawn_units",
+          "units": [
+            {
+              "type": "td_brave",
+              "owner": "faction_tiandihui",
+              "count": 7,
+              "at": [
+                78,
+                6
+              ],
+              "tag": "main"
+            },
+            {
+              "type": "td_musket",
+              "owner": "faction_tiandihui",
+              "count": 3,
+              "at": [
+                80,
+                4
+              ],
+              "tag": "main"
+            }
+          ]
+        },
+        {
+          "type": "show_message",
+          "textKey": "ls1.msg.wave2",
+          "kind": "info"
+        }
+      ]
+    },
+    {
+      "id": "ls1_wave3",
+      "when": {
+        "type": "time_elapsed",
+        "seconds": 180
+      },
+      "do": [
+        {
+          "type": "spawn_units",
+          "units": [
+            {
+              "type": "td_brave",
+              "owner": "faction_tiandihui",
+              "count": 7,
+              "at": [
+                78,
+                6
+              ],
+              "tag": "main"
+            },
+            {
+              "type": "td_musket",
+              "owner": "faction_tiandihui",
+              "count": 3,
+              "at": [
+                80,
+                4
+              ],
+              "tag": "main"
+            }
+          ]
+        },
+        {
+          "type": "show_message",
+          "textKey": "ls1.msg.wave3",
+          "kind": "info"
+        },
+        {
+          "type": "set_flag",
+          "name": "ls1_march",
+          "value": true
+        }
+      ]
+    },
+    {
       "id": "ls1_relief",
       "when": {
         "type": "time_elapsed",
-        "seconds": 140
+        "seconds": 270
       },
       "do": [
         {
@@ -223,7 +306,7 @@
             {
               "type": "q87_soldier",
               "owner": "faction_qing1787",
-              "count": 8,
+              "count": 7,
               "at": [
                 20,
                 25
@@ -233,7 +316,7 @@
             {
               "type": "q87_quanzhou",
               "owner": "faction_qing1787",
-              "count": 6,
+              "count": 4,
               "at": [
                 20,
                 27
@@ -271,7 +354,7 @@
           {
             "type": "held_for",
             "id": "changhua_c",
-            "seconds": 60,
+            "seconds": 90,
             "condition": {
               "type": "all_of",
               "conditions": [
@@ -295,7 +378,7 @@
           },
           {
             "type": "time_elapsed",
-            "seconds": 250
+            "seconds": 420
           },
           {
             "type": "army_pop_below",
@@ -324,7 +407,7 @@
       "when": {
         "type": "held_for",
         "id": "changhua",
-        "seconds": 60,
+        "seconds": 90,
         "condition": {
           "type": "all_of",
           "conditions": [
@@ -362,7 +445,7 @@
         "conditions": [
           {
             "type": "time_elapsed",
-            "seconds": 30
+            "seconds": 180
           },
           {
             "type": "army_pop_below",

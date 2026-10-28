@@ -79,7 +79,7 @@
     {
       "type": "td_brave",
       "owner": "faction_tiandihui",
-      "count": 21,
+      "count": 12,
       "at": [
         58,
         46
@@ -89,7 +89,7 @@
     {
       "type": "td_musket",
       "owner": "faction_tiandihui",
-      "count": 11,
+      "count": 5,
       "at": [
         62,
         46
@@ -243,6 +243,89 @@
       ]
     },
     {
+      "id": "ls2_wave2",
+      "when": {
+        "type": "time_elapsed",
+        "seconds": 120
+      },
+      "do": [
+        {
+          "type": "spawn_units",
+          "units": [
+            {
+              "type": "td_brave",
+              "owner": "faction_tiandihui",
+              "count": 6,
+              "at": [
+                58,
+                42
+              ],
+              "tag": "siege"
+            },
+            {
+              "type": "td_musket",
+              "owner": "faction_tiandihui",
+              "count": 3,
+              "at": [
+                60,
+                42
+              ],
+              "tag": "siege"
+            }
+          ]
+        },
+        {
+          "type": "show_message",
+          "textKey": "ls2.msg.wave2",
+          "kind": "info"
+        }
+      ]
+    },
+    {
+      "id": "ls2_wave3",
+      "when": {
+        "type": "time_elapsed",
+        "seconds": 240
+      },
+      "do": [
+        {
+          "type": "spawn_units",
+          "units": [
+            {
+              "type": "td_brave",
+              "owner": "faction_tiandihui",
+              "count": 6,
+              "at": [
+                62,
+                42
+              ],
+              "tag": "siege"
+            },
+            {
+              "type": "td_musket",
+              "owner": "faction_tiandihui",
+              "count": 3,
+              "at": [
+                64,
+                42
+              ],
+              "tag": "siege"
+            }
+          ]
+        },
+        {
+          "type": "show_message",
+          "textKey": "ls2.msg.wave3",
+          "kind": "info"
+        },
+        {
+          "type": "set_flag",
+          "name": "ls2_assault",
+          "value": true
+        }
+      ]
+    },
+    {
       "id": "ls2_relief1",
       "when": {
         "type": "time_elapsed",
@@ -376,7 +459,7 @@
       "when": {
         "type": "held_for",
         "id": "chiayi",
-        "seconds": 60,
+        "seconds": 90,
         "condition": {
           "type": "all_of",
           "conditions": [
@@ -414,7 +497,7 @@
         "conditions": [
           {
             "type": "time_elapsed",
-            "seconds": 60
+            "seconds": 240
           },
           {
             "type": "army_pop_below",

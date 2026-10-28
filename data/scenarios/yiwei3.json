@@ -259,6 +259,117 @@
       ]
     },
     {
+      "id": "y3_fm_wave2",
+      "when": {
+        "type": "time_elapsed",
+        "seconds": 270
+      },
+      "do": [
+        {
+          "type": "spawn_units",
+          "units": [
+            {
+              "type": "fm_blackflag",
+              "owner": "faction_formosa",
+              "count": 4,
+              "at": [
+                81,
+                23
+              ]
+            },
+            {
+              "type": "fm_militia",
+              "owner": "faction_formosa",
+              "count": 3,
+              "at": [
+                81,
+                27
+              ]
+            }
+          ]
+        },
+        {
+          "type": "show_message",
+          "textKey": "yiwei3.msg.fm_wave2",
+          "kind": "good",
+          "to": "faction_formosa"
+        },
+        {
+          "type": "show_message",
+          "textKey": "yiwei3.msg.fm_wave2_enemy",
+          "kind": "warn",
+          "to": "faction_japan_1895"
+        }
+      ]
+    },
+    {
+      "id": "y3_jp_wave3",
+      "when": {
+        "type": "time_elapsed",
+        "seconds": 300
+      },
+      "do": [
+        {
+          "type": "spawn_units",
+          "units": [
+            {
+              "type": "jp95_guard",
+              "owner": "faction_japan_1895",
+              "count": 8,
+              "at": [
+                44,
+                3
+              ]
+            }
+          ]
+        },
+        {
+          "type": "show_message",
+          "textKey": "yiwei3.msg.jp_wave3",
+          "kind": "good",
+          "to": "faction_japan_1895"
+        }
+      ]
+    },
+    {
+      "id": "y3_fm_wave3",
+      "when": {
+        "type": "time_elapsed",
+        "seconds": 400
+      },
+      "do": [
+        {
+          "type": "spawn_units",
+          "units": [
+            {
+              "type": "fm_militia",
+              "owner": "faction_formosa",
+              "count": 4,
+              "at": [
+                81,
+                27
+              ]
+            },
+            {
+              "type": "fm_blackflag",
+              "owner": "faction_formosa",
+              "count": 2,
+              "at": [
+                81,
+                23
+              ]
+            }
+          ]
+        },
+        {
+          "type": "show_message",
+          "textKey": "yiwei3.msg.fm_wave3",
+          "kind": "good",
+          "to": "faction_formosa"
+        }
+      ]
+    },
+    {
       "id": "y3_wu_tangxing",
       "when": {
         "type": "unit_dead",
@@ -323,7 +434,7 @@
               {
                 "type": "held_for",
                 "id": "changhua",
-                "seconds": 30,
+                "seconds": 90,
                 "condition": {
                   "type": "all_of",
                   "conditions": [
@@ -351,6 +462,10 @@
             "type": "army_pop_below",
             "owner": "faction_formosa",
             "pop": 2
+          },
+          {
+            "type": "time_elapsed",
+            "seconds": 420
           }
         ]
       },
@@ -392,7 +507,7 @@
           {
             "type": "held_for",
             "id": "changhua",
-            "seconds": 30,
+            "seconds": 90,
             "condition": {
               "type": "all_of",
               "conditions": [
@@ -413,6 +528,10 @@
                 }
               ]
             }
+          },
+          {
+            "type": "time_elapsed",
+            "seconds": 420
           }
         ]
       },
@@ -443,7 +562,7 @@
         "conditions": [
           {
             "type": "time_elapsed",
-            "seconds": 60
+            "seconds": 360
           },
           {
             "type": "army_pop_below",

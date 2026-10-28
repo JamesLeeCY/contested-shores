@@ -57,7 +57,7 @@
     {
       "type": "jp95_guard",
       "owner": "faction_japan_1895",
-      "count": 20,
+      "count": 14,
       "at": [
         42,
         55
@@ -271,6 +271,109 @@
       ]
     },
     {
+      "id": "y2_jp_wave2",
+      "when": {
+        "type": "time_elapsed",
+        "seconds": 150
+      },
+      "do": [
+        {
+          "type": "spawn_units",
+          "units": [
+            {
+              "type": "jp95_guard",
+              "owner": "faction_japan_1895",
+              "count": 6,
+              "at": [
+                45,
+                52
+              ],
+              "tag": "troops"
+            }
+          ]
+        },
+        {
+          "type": "show_message",
+          "textKey": "yiwei2.msg.jp_wave2",
+          "kind": "good",
+          "to": "faction_japan_1895"
+        }
+      ]
+    },
+    {
+      "id": "y2_fm_wave2",
+      "when": {
+        "type": "time_elapsed",
+        "seconds": 210
+      },
+      "do": [
+        {
+          "type": "spawn_units",
+          "units": [
+            {
+              "type": "fm_militia",
+              "owner": "faction_formosa",
+              "count": 6,
+              "at": [
+                30,
+                99
+              ]
+            },
+            {
+              "type": "fm_regular",
+              "owner": "faction_formosa",
+              "count": 3,
+              "at": [
+                33,
+                100
+              ]
+            }
+          ]
+        },
+        {
+          "type": "show_message",
+          "textKey": "yiwei2.msg.fm_wave2",
+          "kind": "good",
+          "to": "faction_formosa"
+        },
+        {
+          "type": "show_message",
+          "textKey": "yiwei2.msg.fm_wave2_enemy",
+          "kind": "warn",
+          "to": "faction_japan_1895"
+        }
+      ]
+    },
+    {
+      "id": "y2_fm_wave3",
+      "when": {
+        "type": "time_elapsed",
+        "seconds": 390
+      },
+      "do": [
+        {
+          "type": "spawn_units",
+          "units": [
+            {
+              "type": "fm_militia",
+              "owner": "faction_formosa",
+              "count": 6,
+              "at": [
+                30,
+                99
+              ]
+            }
+          ]
+        },
+        {
+          "type": "show_message",
+          "textKey": "yiwei2.msg.fm_wave3",
+          "kind": "good",
+          "to": "faction_formosa"
+        }
+      ]
+    },
+    {
       "id": "y2_relief",
       "when": {
         "type": "time_elapsed",
@@ -342,7 +445,7 @@
       "when": {
         "type": "held_for",
         "id": "hsinchu_front",
-        "seconds": 20,
+        "seconds": 30,
         "condition": {
           "type": "all_of",
           "conditions": [
@@ -447,7 +550,7 @@
               {
                 "type": "held_for",
                 "id": "miaoli",
-                "seconds": 30,
+                "seconds": 60,
                 "condition": {
                   "type": "all_of",
                   "conditions": [
@@ -519,7 +622,7 @@
               {
                 "type": "held_for",
                 "id": "miaoli",
-                "seconds": 30,
+                "seconds": 60,
                 "condition": {
                   "type": "all_of",
                   "conditions": [
@@ -581,7 +684,7 @@
           {
             "type": "held_for",
             "id": "miaoli",
-            "seconds": 30,
+            "seconds": 60,
             "condition": {
               "type": "all_of",
               "conditions": [
@@ -628,16 +731,26 @@
     {
       "id": "y2_repulsed",
       "when": {
-        "type": "all_of",
+        "type": "any_of",
         "conditions": [
           {
-            "type": "time_elapsed",
-            "seconds": 60
+            "type": "all_of",
+            "conditions": [
+              {
+                "type": "time_elapsed",
+                "seconds": 330
+              },
+              {
+                "type": "army_pop_below",
+                "owner": "faction_japan_1895",
+                "pop": 20
+              }
+            ]
           },
           {
             "type": "army_pop_below",
             "owner": "faction_japan_1895",
-            "pop": 18
+            "pop": 6
           }
         ]
       },

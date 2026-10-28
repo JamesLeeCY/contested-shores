@@ -4,7 +4,7 @@
 //   Both:       evacuate:<tag>/<region>
 //   1895:       escort:<cart tag>/<troop tag>  raid:<region>/<n>/<target type>  hold_line:<region>/<n>
 //   Any:        storm:<building type|tag>  defend:<building type>/<r>  wait_flag:<flag>
-//   1930:       strike:<unit tag>/<building tag,...>/<region>
+//   1930:       strike_posts:<unit tag>/<building tag,...>/<region>
 //   Defenders:  ambush:<region>/<n>/<facing region>  skirmish:<region>/<n>/<facing region>  harass:<region>/<n>  guard:<region>/<n>  fallback:<region>/<enemy region>/<pop>
 // Units belong to at most one named group (kept in ai.mem); everyone else is the main body.
 import { T, TERRAIN_IDS } from '../map';
@@ -414,7 +414,7 @@ const storm: Handler = (ctx, type) => {
  * A tagged war party takes a list of buildings in turn (1930: the police posts), fighting
  * whatever it meets; with all of them gone it gathers in `then` (a region), if given.
  */
-const strike: Handler = (ctx, arg) => {
+const strike_posts: Handler = (ctx, arg) => {
   const w = ctx.world;
   const [tag, list, then] = arg.split('/');
   const party = army(w, ctx.owner).filter((u) => u.tag === tag && !isMoving(u) && u.attackTarget === undefined && u.order?.type !== 'attack');
@@ -477,4 +477,4 @@ const defend: Handler = (ctx, arg) => {
 /** Holds the plan until a scenario flag is set. */
 const wait_flag: Handler = (ctx, flag) => (ctx.world.ext.flags[flag] ? 'done' : 'running');
 
-export const MOUNTAIN_STEPS: Record<string, Handler> = { push, flank, hold_region, column, evacuate, ambush, skirmish, harass, guard, fallback, escort, raid, hold_line, wait_flag, storm, defend, strike };
+export const MOUNTAIN_STEPS: Record<string, Handler> = { push, flank, hold_region, column, evacuate, ambush, skirmish, harass, guard, fallback, escort, raid, hold_line, wait_flag, storm, defend, strike_posts };
