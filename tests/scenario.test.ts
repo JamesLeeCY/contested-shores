@@ -775,7 +775,9 @@ describe('1895 乙未戰爭', () => {
     destroy(w, 'baguashan');
     occupy(w, 'changhua', 6);
     run(w, 92 * 20);
-    at(w, 421); // 彰化 counts as taken once the last reinforcements have come
+    at(w, 401); // the last reinforcements come and counterattack
+    killSide(w, F, 3); // beaten off; a few fall back
+    run(w, 5);
     collect(w);
     expect(outcomeOf(w, F)).toBe('historical');
   });
@@ -1207,7 +1209,7 @@ describe('1884–85 清法戰爭', () => {
     at(w, 181);
     expect(w.ext.raids?.length).toBe(1);
     at(w, 241);
-    expect(tagged(w, 'reserve').length).toBe(12);
+    expect(tagged(w, 'reserve').length).toBe(13);
     at(w, 391);
     expect(tagged(w, 'landing').length).toBeGreaterThan(16);
     w.faction(F)!.resources.powder = 100;

@@ -367,7 +367,10 @@
     "steps": [
       "ambush:baguashan/26/daduxi",
       "guard:baguashan/6",
-      "hold_line:changhua/8"
+      "hold_line:changhua/8",
+      "wait_flag:fm_last",
+      "fallback:baguashan/changhua/0",
+      "push:changhua"
     ]
   },
   {

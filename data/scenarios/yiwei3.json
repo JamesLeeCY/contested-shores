@@ -328,6 +328,16 @@
           "textKey": "yiwei3.msg.jp_wave3",
           "kind": "good",
           "to": "faction_japan_1895"
+        },
+        {
+          "type": "mark_army",
+          "owner": "faction_japan_1895",
+          "mark": "last_wave"
+        },
+        {
+          "type": "set_flag",
+          "name": "jp_last",
+          "value": true
         }
       ]
     },
@@ -366,6 +376,22 @@
           "textKey": "yiwei3.msg.fm_wave3",
           "kind": "good",
           "to": "faction_formosa"
+        },
+        {
+          "type": "show_message",
+          "textKey": "yiwei3.msg.fm_wave3_enemy",
+          "kind": "warn",
+          "to": "faction_japan_1895"
+        },
+        {
+          "type": "mark_army",
+          "owner": "faction_formosa",
+          "mark": "last_wave"
+        },
+        {
+          "type": "set_flag",
+          "name": "fm_last",
+          "value": true
         }
       ]
     },
@@ -459,13 +485,13 @@
             ]
           },
           {
+            "type": "flag",
+            "name": "fm_last"
+          },
+          {
             "type": "army_pop_below",
             "owner": "faction_formosa",
             "pop": 2
-          },
-          {
-            "type": "time_elapsed",
-            "seconds": 420
           }
         ]
       },
@@ -530,8 +556,24 @@
             }
           },
           {
-            "type": "time_elapsed",
-            "seconds": 420
+            "type": "flag",
+            "name": "fm_last"
+          },
+          {
+            "type": "any_of",
+            "conditions": [
+              {
+                "type": "losses_since",
+                "owner": "faction_formosa",
+                "mark": "last_wave",
+                "pop": 5
+              },
+              {
+                "type": "army_pop_below",
+                "owner": "faction_formosa",
+                "pop": 4
+              }
+            ]
           }
         ]
       },
@@ -558,16 +600,36 @@
     {
       "id": "y3_repulsed",
       "when": {
-        "type": "all_of",
+        "type": "any_of",
         "conditions": [
           {
-            "type": "time_elapsed",
-            "seconds": 360
+            "type": "all_of",
+            "conditions": [
+              {
+                "type": "flag",
+                "name": "jp_last"
+              },
+              {
+                "type": "losses_since",
+                "owner": "faction_japan_1895",
+                "mark": "last_wave",
+                "pop": 24
+              }
+            ]
           },
           {
-            "type": "army_pop_below",
-            "owner": "faction_japan_1895",
-            "pop": 14
+            "type": "all_of",
+            "conditions": [
+              {
+                "type": "flag",
+                "name": "jp_last"
+              },
+              {
+                "type": "army_pop_below",
+                "owner": "faction_japan_1895",
+                "pop": 6
+              }
+            ]
           }
         ]
       },

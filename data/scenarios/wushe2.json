@@ -364,6 +364,16 @@
           "textKey": "wushe2.msg.wave3_enemy",
           "kind": "warn",
           "to": "faction_seediq"
+        },
+        {
+          "type": "mark_army",
+          "owner": "faction_sotokufu",
+          "mark": "last_wave"
+        },
+        {
+          "type": "set_flag",
+          "name": "last_wave",
+          "value": true
         }
       ]
     },
@@ -591,13 +601,14 @@
             "type": "all_of",
             "conditions": [
               {
-                "type": "time_elapsed",
-                "seconds": 420
+                "type": "flag",
+                "name": "last_wave"
               },
               {
-                "type": "army_pop_below",
+                "type": "losses_since",
                 "owner": "faction_sotokufu",
-                "pop": 20
+                "mark": "last_wave",
+                "pop": 2
               }
             ]
           },

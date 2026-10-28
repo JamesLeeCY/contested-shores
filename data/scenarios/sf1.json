@@ -314,8 +314,27 @@
     {
       "id": "sf1_land3",
       "when": {
-        "type": "time_elapsed",
-        "seconds": 390
+        "type": "any_of",
+        "conditions": [
+          {
+            "type": "time_elapsed",
+            "seconds": 390
+          },
+          {
+            "type": "all_of",
+            "conditions": [
+              {
+                "type": "time_elapsed",
+                "seconds": 270
+              },
+              {
+                "type": "army_pop_below",
+                "owner": "faction_france",
+                "pop": 6
+              }
+            ]
+          }
+        ]
       },
       "do": [
         {
@@ -337,6 +356,16 @@
           "type": "show_message",
           "textKey": "sf1.msg.land3",
           "kind": "warn"
+        },
+        {
+          "type": "mark_army",
+          "owner": "faction_france",
+          "mark": "last_wave"
+        },
+        {
+          "type": "set_flag",
+          "name": "last_landing",
+          "value": true
         }
       ]
     },
@@ -353,7 +382,7 @@
             {
               "type": "q84_brave",
               "owner": "faction_qing84",
-              "count": 12,
+              "count": 13,
               "at": [
                 70,
                 50
@@ -421,7 +450,7 @@
               "type": "area_entered",
               "region": "heights",
               "owner": "faction_france",
-              "pop": 8
+              "pop": 6
             },
             {
               "type": "not",
@@ -450,8 +479,8 @@
         "type": "all_of",
         "conditions": [
           {
-            "type": "time_elapsed",
-            "seconds": 420
+            "type": "flag",
+            "name": "last_landing"
           },
           {
             "type": "army_pop_below",
@@ -481,13 +510,29 @@
         "type": "all_of",
         "conditions": [
           {
-            "type": "time_elapsed",
-            "seconds": 420
+            "type": "flag",
+            "name": "last_landing"
           },
           {
-            "type": "army_pop_below",
-            "owner": "faction_france",
-            "pop": 8
+            "type": "any_of",
+            "conditions": [
+              {
+                "type": "losses_since",
+                "owner": "faction_france",
+                "mark": "last_wave",
+                "pop": 3
+              },
+              {
+                "type": "held_for",
+                "id": "fr_spent",
+                "seconds": 30,
+                "condition": {
+                  "type": "army_pop_below",
+                  "owner": "faction_france",
+                  "pop": 8
+                }
+              }
+            ]
           }
         ]
       },
