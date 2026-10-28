@@ -349,7 +349,7 @@
             {
               "type": "q87_pingpu",
               "owner": "faction_qing1787",
-              "count": 8,
+              "count": 7,
               "at": [
                 24,
                 22
@@ -477,20 +477,39 @@
     {
       "id": "ls3_rout",
       "when": {
-        "type": "all_of",
+        "type": "any_of",
         "conditions": [
           {
-            "type": "flag",
-            "name": "occ_baguashan"
+            "type": "all_of",
+            "conditions": [
+              {
+                "type": "flag",
+                "name": "occ_baguashan"
+              },
+              {
+                "type": "flag",
+                "name": "occ_changhua"
+              },
+              {
+                "type": "army_pop_below",
+                "owner": "faction_tiandihui",
+                "pop": 3
+              }
+            ]
           },
           {
-            "type": "flag",
-            "name": "occ_changhua"
-          },
-          {
-            "type": "army_pop_below",
-            "owner": "faction_tiandihui",
-            "pop": 3
+            "type": "all_of",
+            "conditions": [
+              {
+                "type": "time_elapsed",
+                "seconds": 240
+              },
+              {
+                "type": "army_pop_below",
+                "owner": "faction_tiandihui",
+                "pop": 2
+              }
+            ]
           }
         ]
       },
@@ -543,9 +562,32 @@
             "seconds": 240
           },
           {
-            "type": "army_pop_below",
-            "owner": "faction_qing1787",
-            "pop": 10
+            "type": "any_of",
+            "conditions": [
+              {
+                "type": "all_of",
+                "conditions": [
+                  {
+                    "type": "army_pop_below",
+                    "owner": "faction_qing1787",
+                    "pop": 10
+                  },
+                  {
+                    "type": "not",
+                    "condition": {
+                      "type": "army_pop_below",
+                      "owner": "faction_tiandihui",
+                      "pop": 8
+                    }
+                  }
+                ]
+              },
+              {
+                "type": "army_pop_below",
+                "owner": "faction_qing1787",
+                "pop": 4
+              }
+            ]
           }
         ]
       },
