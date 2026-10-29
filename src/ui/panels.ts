@@ -98,7 +98,7 @@ export function displayName(world: World, e: Entity): string {
 export class SelectionPanel {
   readonly root: HTMLDivElement;
   private body: HTMLDivElement;
-  private lastKey = '';
+  private lastKey = '-';
   onPick?: (id: number) => void;
   onCancel?: (building: number, index: number) => void;
 
@@ -112,6 +112,7 @@ export class SelectionPanel {
     const key = ents.map((e) => e.id).join(',');
     if (key !== this.lastKey) {
       this.lastKey = key;
+      this.root.classList.toggle('idle', ents.length === 0);
       this.body.replaceChildren();
       if (ents.length === 1) this.buildSingle(world, ents[0]);
       else if (ents.length > 1) this.buildMulti(world, ents);

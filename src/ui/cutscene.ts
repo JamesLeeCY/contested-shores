@@ -2,6 +2,7 @@
 import cutscenes from '../../data/cutscenes.json';
 import { el } from './dom';
 import { t } from './i18n';
+import { cutArtSvg } from './cut-art';
 
 interface CutsceneDef {
   titleKey: string;
@@ -17,7 +18,7 @@ export function playCutscene(parent: HTMLElement, id: string): Promise<void> {
   return new Promise((resolve) => {
     const root = el('div', 'cutscene', parent);
     const card = el('div', 'cut-card', root);
-    el('div', `cut-art art-${def.art}`, card);
+    el('div', `cut-art art-${def.art}`, card).innerHTML = cutArtSvg(def.art);
     el('h2', 'cut-title', card, t(def.titleKey));
     const text = el('div', 'cut-text', card);
     const bar = el('div', 'cut-bar', card);

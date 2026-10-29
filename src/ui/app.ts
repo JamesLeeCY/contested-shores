@@ -19,6 +19,7 @@ import { hasKey, t } from './i18n';
 import { ObjectivePanel } from './objectives';
 import { runTutorial, setupTutorial } from './tutorial';
 import { Session } from './session';
+import { menuBackdropSvg } from './menu-art';
 
 function tutorialDone() {
   try {
@@ -94,6 +95,7 @@ export class GameApp {
   showMenu() {
     this.clear();
     const m = (this.menu = el('div', 'menu', this.overlay));
+    m.innerHTML = menuBackdropSvg();
     const card = el('div', 'menu-card', m);
     const cid = this.menuCampaign;
     const camp = CAMPAIGNS.find((c) => c.id === cid)!;

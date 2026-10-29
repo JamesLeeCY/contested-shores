@@ -102,6 +102,8 @@ export class CommandPanel {
     const ctx = this.context();
     if (!ctx.units.length && !ctx.buildings.length) this.mode = 'root';
     const buttons = buttonProviders.flatMap((p) => p(ctx)).slice(0, 12);
+    // Nothing to command: get out of the way of the battlefield.
+    this.root.classList.toggle('idle', buttons.length === 0);
     const sig = buttons.map((b) => `${b.id}:${b.disabled ? 0 : 1}:${b.active ? 1 : 0}:${b.label}`).join('|');
     this.buttons = buttons;
     if (sig === this.sig) return;

@@ -200,7 +200,7 @@
   },
   "ls1_intro": {
     "titleKey": "cut.ls1_intro.title",
-    "art": "fort",
+    "art": "city",
     "lines": [
       "cut.ls1_intro.1",
       "cut.ls1_intro.2",
@@ -209,7 +209,7 @@
   },
   "ls2_intro": {
     "titleKey": "cut.ls2_intro.title",
-    "art": "fort",
+    "art": "city",
     "lines": [
       "cut.ls2_intro.1",
       "cut.ls2_intro.2",
@@ -218,7 +218,7 @@
   },
   "ls3_intro": {
     "titleKey": "cut.ls3_intro.title",
-    "art": "fort",
+    "art": "city",
     "lines": [
       "cut.ls3_intro.1",
       "cut.ls3_intro.2",

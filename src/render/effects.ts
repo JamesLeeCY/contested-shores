@@ -41,6 +41,7 @@ export class Effects {
         if (this.visibleAt(x, y)) this.tracer(x, y, tx, ty, 0xfff2b0, 0.12);
       } else if (e.atkType === 'cannon') {
         this.puff(x, y, 0xdddddd, 12, 1.4);
+        this.haze(x, y);
         this.ball(x, y, tx, ty);
         const water = world.map.terrain[Math.floor(ty) * world.map.width + Math.floor(tx)] <= T.tidal_flat;
         if (e.hit) this.burst(tx, ty, 0xffa040, 10, 0.45);
@@ -86,7 +87,8 @@ export class Effects {
   private puff(x: number, y: number, color: number, size: number, life: number) {
     this.add(
       life,
-      (g) => g.circle(0, 0, size).fill({ color, alpha: 0.7 }),
+      // A small cloud of three puffs rather than one disc.
+      (g) => g.circle(0, 0, size).circle(size * 0.6, -size * 0.3, size * 0.7).circle(-size * 0.55, -size * 0.2, size * 0.6).fill({ color, alpha: 0.7 }),
       (fx, f) => {
         fx.g.alpha = 0.7 * (1 - f);
         fx.g.scale.set(1 + f * 1.5);
@@ -95,6 +97,23 @@ export class Effects {
       x,
       y,
       -14,
+    );
+  }
+
+  /** Gun smoke that hangs over a battery for a few seconds, drifting slowly. */
+  private haze(x: number, y: number) {
+    this.add(
+      5,
+      (g) => g.circle(0, 0, 14).circle(12, -4, 11).circle(-11, -3, 10).fill({ color: 0xd8d8d0, alpha: 1 }),
+      (fx, f) => {
+        fx.g.alpha = 0.32 * Math.sin(Math.PI * Math.min(1, f * 1.3));
+        fx.g.scale.set(1 + f * 1.2);
+        fx.g.x += 0.15;
+        fx.g.y -= 0.08;
+      },
+      x,
+      y,
+      -18,
     );
   }
 

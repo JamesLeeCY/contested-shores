@@ -15,6 +15,8 @@ import { CommandPanel, economyContextOrder } from './commands';
 import { CoverageOverlay, combatContextOrder } from './combat-ui';
 import { Effects } from '../render/effects';
 import { FogRenderer } from '../render/fog';
+import { WaterGlints } from '../render/water';
+import { Atmosphere } from '../render/atmosphere';
 import { fogOf, isVisibleTo } from '../sim/systems/fog';
 import { Messages, ResourceBar, SelectionPanel, eventMessage } from './panels';
 import { Placement } from './placement';
@@ -71,6 +73,8 @@ export class Session implements ControlHost {
   readonly placement: Placement;
   readonly effects = new Effects();
   readonly fogRenderer: FogRenderer;
+  private glints: WaterGlints;
+  private atmosphere: Atmosphere;
   readonly coverage: CoverageOverlay;
   private fogTick = -1;
   /** Hooks for later stages (HUD panels, fog, effects) called every frame. */
@@ -142,12 +146,16 @@ export class Session implements ControlHost {
     const colors = Object.fromEntries(Object.entries(this.world.rules.terrain.types).map(([k, v]) => [k, v.color]));
     app.stage.addChild(this.worldLayer);
     this.worldLayer.addChild(buildTerrain(map, colors));
+    this.glints = new WaterGlints(map);
+    this.worldLayer.addChild(this.glints.layer);
     this.entities = new EntityRenderer(data);
     this.worldLayer.addChild(this.entities.layer);
     this.worldLayer.addChild(this.effects.layer);
     this.fogRenderer = new FogRenderer(map.width, map.height);
     this.worldLayer.addChild(this.fogRenderer.sprite);
     this.worldLayer.addChild(this.overlayLayer);
+    this.atmosphere = new Atmosphere(opts.scenario?.night);
+    app.stage.addChild(this.atmosphere.layer);
     this.entities.hidden = (e) => !isVisibleTo(this.world, this.player, e);
     this.effects.visibleAt = (x, y) => {
       const f = fogOf(this.world, this.player);
@@ -212,6 +220,8 @@ export class Session implements ControlHost {
       this.camera.resize(app.screen.width, app.screen.height);
       this.cameraInput.update(dt);
       this.camera.apply(this.worldLayer);
+      this.glints.update(dt, this.camera);
+      this.atmosphere.update(this.world, app.screen.width, app.screen.height);
       // Drop selections of dead entities.
       for (const id of this.selected) if (!this.world.get(id)) this.selected.delete(id);
       this.entities.sync(this.world, this.stepper.paused ? 1 : this.stepper.alpha, this.selected);

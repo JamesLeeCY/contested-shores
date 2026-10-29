@@ -1,0 +1,41 @@
+<!doctype html>
+<!-- Dev page: every building type and terrain prop on one screen. Open /scripts/dev/art-gallery.html under `npm run dev`. -->
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Art gallery</title>
+    <style>
+      body { margin: 0; background: #7f9a55; }
+    </style>
+  </head>
+  <body>
+    <script type="module">
+      import { Application, Container, Graphics, Text } from 'pixi.js';
+      import { drawBuildingArt } from '/src/render/buildings.ts';
+      import buildings from '/data/buildings.json';
+
+      const app = new Application();
+      await app.init({ resizeTo: window, background: '#8aa35a', antialias: true });
+      document.body.appendChild(app.canvas);
+      const zoom = Number(new URLSearchParams(location.search).get('zoom') ?? 1.2);
+      const root = new Container();
+      root.scale.set(zoom);
+      app.stage.addChild(root);
+      const only = new URLSearchParams(location.search).get('only')?.split(',');
+      const list = (Array.isArray(buildings) ? buildings : Object.values(buildings)).filter((b) => !only || only.includes(b.id));
+      const cols = Math.floor(window.innerWidth / zoom / 260);
+      list.forEach((b, i) => {
+        const g = new Graphics();
+        drawBuildingArt(g, b.id, b.size, 0xc0392b, 0x5d4037, 1);
+        const x = 130 + (i % cols) * 260;
+        const y = 160 + Math.floor(i / cols) * 230;
+        g.position.set(x, y);
+        root.addChild(g);
+        const t = new Text({ text: b.id, style: { fontSize: 12, fill: 0xffffff } });
+        t.anchor.set(0.5, 0);
+        t.position.set(x, y + b.size * 16 + 6);
+        root.addChild(t);
+      });
+    </script>
+  </body>
+</html>

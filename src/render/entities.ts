@@ -5,13 +5,8 @@ import type { World } from '../sim/world';
 import { hasKey, t } from '../ui/i18n';
 import { colorOf, ownerColors } from './colors';
 import { TILE_H, toScreen } from './iso';
-import { crenellate, drawFigure, drawGun, drawShipArt, drawVehicle } from './art';
-
-const FORTS = new Set(['zeelandia_castle', 'bastion', 'utrecht_redoubt', 'provintia_fort', 'lower_town_wall']);
-/** Indigenous villages: a thatched pyramid roof over low walls. */
-const HUTS = new Set(['paiwan_village', 'truku_village', 'sdq_village']);
-/** Japanese police posts and offices: white walls under a grey tiled hip roof. */
-const POSTS = new Set(['jp14_post', 'jp14_camp', 'sdq_post', 'sdq_branch', 'wushe_school']);
+import { drawFigure, drawGun, drawShipArt, drawVehicle } from './art';
+import { BUILDING_TOP, drawBuildingArt } from './buildings';
 
 interface View {
   root: Container;
@@ -24,19 +19,11 @@ interface View {
   lastSel: boolean;
   lastFacing: number;
   lastStranded: boolean;
+  /** Construction progress the building was last drawn at (in fifths). */
+  lastBuilt: number;
+  /** Foot soldiers bob as they walk (cheat vehicles do not). */
+  walker: boolean;
 }
-
-const BUILDING_HEIGHT: Record<string, number> = {
-  zeelandia_castle: 46,
-  bastion: 26,
-  utrecht_redoubt: 28,
-  provintia_fort: 34,
-  lower_town_wall: 16,
-  village_center: 20,
-  farm: 2,
-  // Earthworks, not walls.
-  trench: 4,
-};
 
 export class EntityRenderer {
   readonly layer = new Container();
@@ -76,6 +63,7 @@ export class EntityRenderer {
 
   sync(world: World, alpha: number, selected: Set<number>) {
     this.playable = world.playable;
+    const now = performance.now();
     const seen = new Set<number>();
     for (const e of world.all()) {
       if (e.insideOf) continue;
@@ -92,6 +80,17 @@ export class EntityRenderer {
       v.root.position.set(p.x, p.y);
       v.root.zIndex = e.kind === 'building' ? (e.tx! + e.w! + e.ty! + e.h!) - 1 : x + y;
       v.root.visible = !this.hidden(e);
+      if (e.kind === 'building') {
+        const b = e.built === undefined ? 1 : Math.floor(e.built * 5) / 5;
+        if (b !== v.lastBuilt) {
+          // Buildings are hundreds of small shapes: draw once into a texture rather than re-batching every frame.
+          v.body.cacheAsTexture(false);
+          v.body.clear();
+          drawBuildingArt(v.body, e.type, e.w!, ...colorOf(this.colors, e.owner), b);
+          v.body.cacheAsTexture({ resolution: 2, antialias: true });
+          v.lastBuilt = b;
+        }
+      }
       const sel = selected.has(e.id);
       // Cheat vehicles face where they drive (screen x grows with x − y); the 發財 plate stays readable.
       if (e.kind === 'unit' && e.moveClass === 'foot' && this.data.units.get(e.type)!.traits.includes('cheat')) {
@@ -104,6 +103,13 @@ export class EntityRenderer {
             c.x = s > 0 ? -17 : -5;
           }
         }
+      }
+      if (v.walker) {
+        // Walking: a small bob and sway while the unit moved this tick.
+        const moving = Math.abs(e.x - e.px) + Math.abs(e.y - e.py) > 1e-4;
+        const ph = now * 0.012 + e.id * 1.7;
+        v.body.y = moving ? -Math.abs(Math.sin(ph)) * 1.6 : 0;
+        v.body.rotation = moving ? Math.sin(ph) * 0.05 : 0;
       }
       if (e.kind === 'unit' && (e.facing !== v.lastFacing || e.stranded !== v.lastStranded) && e.moveClass !== 'foot') {
         this.drawShip(v, e);
@@ -131,8 +137,13 @@ export class EntityRenderer {
     const ring = new Graphics();
     const body = new Graphics();
     const bar = new Graphics();
-    root.addChild(ring, body, bar);
-    const v: View = { root, body, ring, bar, kind: e.kind, lastHp: -1, lastSel: false, lastFacing: NaN, lastStranded: false };
+    root.addChild(ring);
+    if (e.kind === 'unit' && e.moveClass === 'foot') {
+      // A shadow to stand on, rimmed in the owner's colour so mixed melees stay readable.
+      body.ellipse(0, 0, 8, 3.4).fill({ color: 0x000000, alpha: 0.28 }).stroke({ color: colorOf(this.colors, e.owner)[0], width: 1.2, alpha: 0.75 });
+    }
+    root.addChild(body, bar);
+    const v: View = { root, body, ring, bar, kind: e.kind, lastHp: -1, lastSel: false, lastFacing: NaN, lastStranded: false, lastBuilt: -1, walker: false };
     const [c1, c2] = colorOf(this.colors, e.owner);
     if (e.kind === 'unit') {
       const naval = e.moveClass !== 'foot';
@@ -150,9 +161,10 @@ export class EntityRenderer {
           }
         } else if (def.class === 'siege') drawGun(body, e.type, c1);
         else drawFigure(body, e.type, c1, c2, def.traits.includes('hero'));
+        v.walker = !def.traits.includes('cheat') && def.class !== 'siege';
       }
     } else if (e.kind === 'building') {
-      this.drawBuilding(v, e, c1, c2);
+      this.drawBuilding(v, e);
     } else {
       // Deer herd.
       for (const [dx, dy] of [[-6, -2], [5, -4], [0, 3]]) body.ellipse(dx, dy, 5, 3).fill(0x8b5a2b);
@@ -171,11 +183,10 @@ export class EntityRenderer {
     drawShipArt(g, e.type, e.facing ?? 0, len, c1, c2, !!e.stranded);
   }
 
-  private drawBuilding(v: View, e: Entity, c1: number, c2: number) {
-    const g = v.body;
+  private drawBuilding(v: View, e: Entity) {
     const w = e.w!;
     const h = e.h!;
-    // Footprint corners relative to the centre.
+    // Footprint corners relative to the centre, for the selection ring.
     const c = toScreen(e.x, e.y);
     const corner = (tx: number, ty: number) => {
       const p = toScreen(tx, ty);
@@ -185,37 +196,6 @@ export class EntityRenderer {
     const [ex, ey] = corner(e.tx! + w, e.ty!);
     const [sx, sy] = corner(e.tx! + w, e.ty! + h);
     const [wx, wy] = corner(e.tx!, e.ty! + h);
-    const H = (BUILDING_HEIGHT[e.type] ?? 18) * (e.built !== undefined && e.built < 1 ? 0.3 + 0.7 * e.built : 1);
-    if (e.type === 'farm') {
-      g.poly([nx, ny, ex, ey, sx, sy, wx, wy]).fill(0xc8b45a).stroke({ color: 0x7a6a2a, width: 1 });
-      for (let i = 1; i < 4; i++) {
-        const f = i / 4;
-        g.moveTo(nx + (wx - nx) * f, ny + (wy - ny) * f).lineTo(ex + (sx - ex) * f, ey + (sy - ey) * f);
-      }
-      g.stroke({ color: 0x8a7a3a, width: 1 });
-      return;
-    }
-    const inset = 0.12;
-    const lerp = (a: number, b: number) => a + (b - a) * inset;
-    const top = [lerp(nx, sx), lerp(ny, sy) - H, lerp(ex, wx), lerp(ey, wy) - H, lerp(sx, nx), lerp(sy, ny) - H, lerp(wx, ex), lerp(wy, ey) - H];
-    const base = [lerp(nx, sx), lerp(ny, sy), lerp(ex, wx), lerp(ey, wy), lerp(sx, nx), lerp(sy, ny), lerp(wx, ex), lerp(wy, ey)];
-    // Left and right visible walls, then roof.
-    const wall = POSTS.has(e.type) ? 0xe8e2d4 : HUTS.has(e.type) ? 0x8a6a42 : c2;
-    g.poly([base[6], base[7], base[4], base[5], top[4], top[5], top[6], top[7]]).fill(shade(wall, 1.1));
-    g.poly([base[4], base[5], base[2], base[3], top[2], top[3], top[4], top[5]]).fill(shade(wall, 0.8));
-    if (HUTS.has(e.type) || POSTS.has(e.type)) {
-      // Pyramid (thatch) or hip (tile) roof rising from the wall tops; a strip of the side colour on the eaves.
-      const ax = (top[0] + top[4]) / 2;
-      const ay = (top[1] + top[5]) / 2 - H * (HUTS.has(e.type) ? 1.1 : 0.7);
-      const roof = HUTS.has(e.type) ? 0xb08a4a : 0x55595e;
-      g.poly([top[0], top[1], top[2], top[3], ax, ay]).fill(shade(roof, 0.75));
-      g.poly([top[6], top[7], top[0], top[1], ax, ay]).fill(shade(roof, 0.9));
-      g.poly([top[6], top[7], top[4], top[5], ax, ay]).fill(shade(roof, 1.1)).stroke({ color: 0x1a1a1a, width: 1 });
-      g.poly([top[4], top[5], top[2], top[3], ax, ay]).fill(shade(roof, 0.85)).stroke({ color: 0x1a1a1a, width: 1 });
-      g.moveTo(top[6], top[7]).lineTo(top[4], top[5]).lineTo(top[2], top[3]).stroke({ color: c1, width: 2 });
-    } else g.poly(top).fill(e.built !== undefined && e.built < 1 ? 0x9a8a6a : c1).stroke({ color: 0x1a1a1a, width: 1 });
-    if (FORTS.has(e.type) && (e.built ?? 1) >= 1) crenellate(g, top, shade(c2, 0.9));
-    if (e.type === 'battery' || e.type === 'trench') g.poly(top).fill({ color: 0x6b5a3a, alpha: 0.6 });
     v.ring.poly([nx, ny, ex, ey, sx, sy, wx, wy]).stroke({ color: 0x7CFC00, width: 2 });
     const named = !!e.tag && hasKey(`place.${e.tag}`);
     if (w >= 3 || named) {
@@ -223,7 +203,7 @@ export class EntityRenderer {
       const name = named ? t(`place.${e.tag}`) : t(this.data.buildings.get(e.type)?.nameKey ?? e.type);
       const label = new Text({ text: name, style: { fontSize: 12, fill: 0xffffff, stroke: { color: 0x000000, width: 3 } } });
       label.anchor.set(0.5);
-      label.position.set(0, -H - TILE_H / 2);
+      label.position.set(0, -topOf(e.type) - TILE_H / 2);
       v.root.addChild(label);
       v.label = label;
     }
@@ -234,16 +214,12 @@ export class EntityRenderer {
     g.clear();
     if (!sel && e.hp >= e.maxHp) return;
     const w = e.kind === 'building' ? 40 : 22;
-    const yOff = e.kind === 'building' ? -(BUILDING_HEIGHT[e.type] ?? 18) - 28 : e.moveClass !== 'foot' ? -34 : -30;
+    const yOff = e.kind === 'building' ? -topOf(e.type) - 28 : e.moveClass !== 'foot' ? -34 : -30;
     const f = Math.max(0, e.hp / e.maxHp);
     g.rect(-w / 2, yOff, w, 4).fill(0x000000);
     g.rect(-w / 2, yOff, w * f, 4).fill(f > 0.5 ? 0x4caf50 : f > 0.25 ? 0xffc107 : 0xf44336);
   }
 }
 
-function shade(hex: number, f: number) {
-  const r = Math.min(255, Math.round(((hex >> 16) & 255) * f));
-  const g = Math.min(255, Math.round(((hex >> 8) & 255) * f));
-  const b = Math.min(255, Math.round((hex & 255) * f));
-  return (r << 16) | (g << 8) | b;
-}
+const topOf = (type: string) => BUILDING_TOP[type] ?? 30;
+

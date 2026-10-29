@@ -74,6 +74,8 @@ html, body { margin: 0; height: 100%; overflow: hidden; background: var(--bg); c
 
 /* --- command panel (bottom right, 3×4) --- */
 .cmdpanel { position: absolute; right: 8px; bottom: 8px; width: 244px; height: 150px; padding: 6px; }
+.selpanel, .cmdpanel { transition: opacity .15s, transform .15s; }
+.selpanel.idle, .cmdpanel.idle { opacity: 0; transform: translateY(12px); pointer-events: none; }
 .cmd-grid { display: grid; grid-template-columns: repeat(4, 1fr); grid-template-rows: repeat(3, 1fr); gap: 4px; height: 100%; }
 .cmd-btn { position: relative; background: #3a3024; border: 1px solid var(--panel-border); color: var(--text); font-size: 12px;
   border-radius: 3px; cursor: pointer; padding: 2px; display: flex; align-items: center; justify-content: center; text-align: center; line-height: 1.1; }
@@ -121,6 +123,8 @@ html, body { margin: 0; height: 100%; overflow: hidden; background: var(--bg); c
 #overlay > * { pointer-events: auto; }
 .menu, .cutscene, .result { position: absolute; inset: 0; display: grid; place-items: center; padding: 16px;
   background: radial-gradient(ellipse at center, rgba(20,30,40,.75), rgba(5,8,12,.95)); overflow: auto; }
+.menu-bg { position: fixed; inset: 0; width: 100%; height: 100%; z-index: -1; }
+.menu { isolation: isolate; }
 .menu-card, .cut-card, .result-card { width: min(720px, 100%); background: var(--panel); border: 1px solid var(--panel-border);
   border-radius: 6px; padding: 24px; box-shadow: 0 8px 30px rgba(0,0,0,.6); }
 .menu-title { margin: 0; font-size: 34px; letter-spacing: 4px; color: var(--accent); text-align: center; }
@@ -141,7 +145,7 @@ html, body { margin: 0; height: 100%; overflow: hidden; background: var(--bg); c
 .rating-victory { color: #aed581; } .rating-historical { color: #e0a84a; } .rating-defeat { color: #ff8a80; }
 .ending-text, .history-card { line-height: 1.7; }
 .history-card { color: var(--muted); font-size: 13px; border-left: 3px solid var(--panel-border); padding-left: 10px; }
-.cut-art { height: 180px; border-radius: 4px; margin-bottom: 12px; background-size: cover; }
+.cut-art { overflow: hidden; height: 180px; border-radius: 4px; margin-bottom: 12px; background-size: cover; }
 .art-sea { background: linear-gradient(180deg, #2b4a63 0%, #3f6f86 55%, #c9b27a 56%, #a08a5c 100%); }
 .art-mountain { background: linear-gradient(170deg, #4d5a4a 0%, #6f7a5c 40%, #3e5233 41%, #556b3c 70%, #5d9aa6 71%, #7fb3bc 100%); }
 .art-fort { background: linear-gradient(180deg, #4a5560 0%, #6d7a83 50%, #d9c58f 51%, #b8a26a 100%); }
