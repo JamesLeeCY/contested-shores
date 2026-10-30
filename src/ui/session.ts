@@ -153,7 +153,8 @@ export class Session implements ControlHost {
     this.worldLayer.addChild(this.glints.layer);
     this.entities = new EntityRenderer(data);
     for (const band of terrain.tall) this.entities.layer.addChild(band);
-    this.worldLayer.addChild(this.entities.layer);
+    this.entities.setCover(terrain.cover, map.width);
+    this.worldLayer.addChild(this.entities.layer, this.entities.overhead);
     this.worldLayer.addChild(this.effects.layer);
     this.fogRenderer = new FogRenderer(map.width, map.height);
     this.worldLayer.addChild(this.fogRenderer.sprite);

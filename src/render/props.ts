@@ -226,6 +226,8 @@ export interface PropLayers {
   ground: Container;
   /** Tall props in depth bands of BAND tiles, each with a zIndex to sort among units and buildings. */
   bands: Container[];
+  /** Tiles where a unit can stand behind a tall prop (1 = covered), W × H. */
+  cover: Uint8Array;
 }
 
 /** Depth (x + y) covered by one band of tall props. */
@@ -293,6 +295,7 @@ export function buildProps(map: GameMap): PropLayers {
   const ground = new Container();
   ground.eventMode = 'none';
   const bands = new Map<number, Container>();
+  const cover = new Uint8Array(W * H);
   for (const q of placed) {
     const sp = new Sprite(q.p.tex);
     sp.anchor.set(q.p.ax, q.p.ay);
@@ -304,6 +307,11 @@ export function buildProps(map: GameMap): PropLayers {
       ground.addChild(sp);
       continue;
     }
+    // A tall prop hides whatever stands on its own tile or the three tiles behind it.
+    const ix = Math.floor(q.x);
+    const iy = Math.floor(q.y);
+    for (const [dx, dy] of [[0, 0], [-1, 0], [0, -1], [-1, -1]])
+      if (ix + dx >= 0 && iy + dy >= 0) cover[(iy + dy) * W + ix + dx] = 1;
     const b = Math.floor((q.x + q.y) / BAND);
     let band = bands.get(b);
     if (!band) {
@@ -315,5 +323,5 @@ export function buildProps(map: GameMap): PropLayers {
     }
     band.addChild(sp);
   }
-  return { ground, bands: [...bands.values()] };
+  return { ground, bands: [...bands.values()], cover };
 }

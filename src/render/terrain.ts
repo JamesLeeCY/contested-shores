@@ -15,14 +15,14 @@ const R = 10;
 const isWater = (t: number) => t === T.deep_water || t === T.shallow;
 
 /** The ground (with low props) as one static layer, plus the tall props for the depth-sorted entity layer. */
-export function buildTerrain(map: GameMap, colors: Record<string, string>): { root: Container; tall: Container[] } {
+export function buildTerrain(map: GameMap, colors: Record<string, string>): { root: Container; tall: Container[]; cover: Uint8Array } {
   const root = new Container();
   // Nothing in here moves: let Pixi keep the instruction set between frames.
   root.isRenderGroup = true;
   root.addChild(buildGround(map, colors));
   const props = buildProps(map);
   root.addChild(props.ground);
-  return { root, tall: props.bands };
+  return { root, tall: props.bands, cover: props.cover };
 }
 
 /** Tile distance (4-neighbour steps, capped) to the nearest tile where `src` holds. */

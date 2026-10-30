@@ -16,28 +16,52 @@ interface View {
   label?: Text;
   kind: Entity['kind'];
   lastHp: number;
-  lastSel: boolean;
   lastFacing: number;
   lastStranded: boolean;
   /** Construction progress the building was last drawn at (in fifths). */
   lastBuilt: number;
   /** Foot soldiers bob as they walk (cheat vehicles do not). */
   walker: boolean;
+  /** See-through copy drawn over the trees while the unit stands behind them. */
+  ghost?: Graphics;
 }
+
+/** Opacity of a unit's silhouette over the trees that hide it. */
+const GHOST_ALPHA = 0.4;
 
 export class EntityRenderer {
   readonly layer = new Container();
+  /** Above the depth-sorted layer: selection rings, health bars and silhouettes stay visible in a forest. */
+  readonly overhead = new Container();
   private views = new Map<number, View>();
   private colors: Map<string, [number, number]>;
   /** Entities hidden by fog of war (set by the fog renderer); not drawn. */
   hidden: (e: Entity) => boolean = () => false;
   private colorblind = false;
+  private cover?: { mask: Uint8Array; width: number };
+
+  /** Tiles where tall props can hide a unit (from the terrain builder). */
+  setCover(mask: Uint8Array, width: number) {
+    this.cover = { mask, width };
+  }
+
+  private covered(x: number, y: number) {
+    const c = this.cover;
+    return !!c && x >= 0 && y >= 0 && x < c.width && !!c.mask[Math.floor(y) * c.width + Math.floor(x)];
+  }
+
+  private drop(v: View) {
+    v.root.destroy({ children: true });
+    v.ring.destroy();
+    v.bar.destroy();
+    v.ghost?.destroy();
+  }
 
   /** Colour-blind mode adds a faction-specific flag shape to every unit (spec §9.3). */
   setColorblind(on: boolean) {
     if (on === this.colorblind) return;
     this.colorblind = on;
-    for (const v of this.views.values()) v.root.destroy({ children: true });
+    for (const v of this.views.values()) this.drop(v);
     this.views.clear();
   }
 
@@ -55,6 +79,7 @@ export class EntityRenderer {
 
   constructor(private readonly data: SimData) {
     this.layer.sortableChildren = true;
+    this.overhead.eventMode = 'none';
     this.colors = ownerColors(data);
   }
 
@@ -73,6 +98,7 @@ export class EntityRenderer {
         v = this.create(e);
         this.views.set(e.id, v);
         this.layer.addChild(v.root);
+        this.overhead.addChild(v.ring, v.bar);
       }
       const x = e.px + (e.x - e.px) * alpha;
       const y = e.py + (e.y - e.py) * alpha;
@@ -80,6 +106,9 @@ export class EntityRenderer {
       v.root.position.set(p.x, p.y);
       v.root.zIndex = e.kind === 'building' ? (e.tx! + e.w! + e.ty! + e.h!) - 1 : x + y;
       v.root.visible = !this.hidden(e);
+      v.ring.position.set(p.x, p.y);
+      v.bar.position.set(p.x, p.y);
+      v.bar.visible = v.root.visible;
       if (e.kind === 'building') {
         const b = e.built === undefined ? 1 : Math.floor(e.built * 5) / 5;
         if (b !== v.lastBuilt) {
@@ -111,15 +140,23 @@ export class EntityRenderer {
         v.body.y = moving ? -Math.abs(Math.sin(ph)) * 1.6 : 0;
         v.body.rotation = moving ? Math.sin(ph) * 0.05 : 0;
       }
+      if (v.walker && v.root.visible && this.covered(x, y)) {
+        // Behind the trees: a faint copy of the figure (sharing its drawing) shows through them.
+        if (!v.ghost) {
+          v.ghost = new Graphics(v.body.context);
+          v.ghost.alpha = GHOST_ALPHA;
+          this.overhead.addChildAt(v.ghost, 0);
+        }
+        v.ghost.visible = true;
+        v.ghost.position.set(p.x, p.y + v.body.y);
+        v.ghost.rotation = v.body.rotation;
+      } else if (v.ghost) v.ghost.visible = false;
       if (e.kind === 'unit' && (e.facing !== v.lastFacing || e.stranded !== v.lastStranded) && e.moveClass !== 'foot') {
         this.drawShip(v, e);
         v.lastFacing = e.facing ?? 0;
         v.lastStranded = !!e.stranded;
       }
-      if (sel !== v.lastSel) {
-        v.ring.visible = sel;
-        v.lastSel = sel;
-      }
+      v.ring.visible = sel && v.root.visible;
       if (e.hp !== v.lastHp || sel) {
         this.drawBar(v, e, sel);
         v.lastHp = e.hp;
@@ -127,7 +164,7 @@ export class EntityRenderer {
     }
     for (const [id, v] of this.views)
       if (!seen.has(id)) {
-        v.root.destroy({ children: true });
+        this.drop(v);
         this.views.delete(id);
       }
   }
@@ -137,13 +174,12 @@ export class EntityRenderer {
     const ring = new Graphics();
     const body = new Graphics();
     const bar = new Graphics();
-    root.addChild(ring);
     if (e.kind === 'unit' && e.moveClass === 'foot') {
       // A shadow to stand on, rimmed in the owner's colour so mixed melees stay readable.
       body.ellipse(0, 0, 8, 3.4).fill({ color: 0x000000, alpha: 0.28 }).stroke({ color: colorOf(this.colors, e.owner)[0], width: 1.2, alpha: 0.75 });
     }
-    root.addChild(body, bar);
-    const v: View = { root, body, ring, bar, kind: e.kind, lastHp: -1, lastSel: false, lastFacing: NaN, lastStranded: false, lastBuilt: -1, walker: false };
+    root.addChild(body);
+    const v: View = { root, body, ring, bar, kind: e.kind, lastHp: -1, lastFacing: NaN, lastStranded: false, lastBuilt: -1, walker: false };
     const [c1, c2] = colorOf(this.colors, e.owner);
     if (e.kind === 'unit') {
       const naval = e.moveClass !== 'foot';
