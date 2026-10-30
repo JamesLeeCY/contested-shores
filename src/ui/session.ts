@@ -145,10 +145,14 @@ export class Session implements ControlHost {
 
     const colors = Object.fromEntries(Object.entries(this.world.rules.terrain.types).map(([k, v]) => [k, v.color]));
     app.stage.addChild(this.worldLayer);
-    this.worldLayer.addChild(buildTerrain(map, colors));
+    // The camera only moves this layer: as a render group, panning does not touch every child's transform.
+    this.worldLayer.isRenderGroup = true;
+    const terrain = buildTerrain(map, colors);
+    this.worldLayer.addChild(terrain.root);
     this.glints = new WaterGlints(map);
     this.worldLayer.addChild(this.glints.layer);
     this.entities = new EntityRenderer(data);
+    for (const band of terrain.tall) this.entities.layer.addChild(band);
     this.worldLayer.addChild(this.entities.layer);
     this.worldLayer.addChild(this.effects.layer);
     this.fogRenderer = new FogRenderer(map.width, map.height);

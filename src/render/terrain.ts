@@ -1,4 +1,5 @@
-// Static terrain: one painted ground texture under the whole map plus a layer of props (trees, rocks).
+// Static terrain: one painted ground texture under the whole map plus props (trees, rocks); tall
+// props are handed back to be depth-sorted with units so a tree can hide a soldier behind it.
 // The ground is painted at R texels per tile and mapped onto the isometric grid with an affine
 // transform (like the fog), so terrain boundaries are soft, wavy lines instead of tile diamonds;
 // hills and mountains get a hillshade lit from the upper left.
@@ -13,13 +14,15 @@ const R = 10;
 
 const isWater = (t: number) => t === T.deep_water || t === T.shallow;
 
-export function buildTerrain(map: GameMap, colors: Record<string, string>): Container {
+/** The ground (with low props) as one static layer, plus the tall props for the depth-sorted entity layer. */
+export function buildTerrain(map: GameMap, colors: Record<string, string>): { root: Container; tall: Container[] } {
   const root = new Container();
   // Nothing in here moves: let Pixi keep the instruction set between frames.
   root.isRenderGroup = true;
   root.addChild(buildGround(map, colors));
-  root.addChild(buildProps(map));
-  return root;
+  const props = buildProps(map);
+  root.addChild(props.ground);
+  return { root, tall: props.bands };
 }
 
 /** Tile distance (4-neighbour steps, capped) to the nearest tile where `src` holds. */

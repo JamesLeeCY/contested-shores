@@ -221,8 +221,20 @@ function props() {
   });
 }
 
+/** Ground props (grass, rocks, reeds) lie under everything; tall ones (trees, crags) must be able to hide a unit behind them. */
+export interface PropLayers {
+  ground: Container;
+  /** Tall props in depth bands of BAND tiles, each with a zIndex to sort among units and buildings. */
+  bands: Container[];
+}
+
+/** Depth (x + y) covered by one band of tall props. */
+const BAND = 0.5;
+/** Props taller than this (world px) go in the depth-sorted bands. */
+const TALL = 16;
+
 /** Scatter props over the map, sorted back to front. Tiles under map objects stay clear. */
-export function buildProps(map: GameMap): Container {
+export function buildProps(map: GameMap): PropLayers {
   const { width: W, height: H, terrain } = map;
   const P = props();
   const blocked = new Uint8Array(W * H);
@@ -278,8 +290,9 @@ export function buildProps(map: GameMap): Container {
       }
     }
   placed.sort((a, b) => a.x + a.y - (b.x + b.y));
-  const layer = new Container();
-  layer.eventMode = 'none';
+  const ground = new Container();
+  ground.eventMode = 'none';
+  const bands = new Map<number, Container>();
   for (const q of placed) {
     const sp = new Sprite(q.p.tex);
     sp.anchor.set(q.p.ax, q.p.ay);
@@ -287,7 +300,20 @@ export function buildProps(map: GameMap): Container {
     sp.tint = q.tint;
     const pos = toScreen(q.x, q.y);
     sp.position.set(pos.x, pos.y);
-    layer.addChild(sp);
+    if (q.p.tex.height / SS <= TALL) {
+      ground.addChild(sp);
+      continue;
+    }
+    const b = Math.floor((q.x + q.y) / BAND);
+    let band = bands.get(b);
+    if (!band) {
+      band = new Container();
+      band.eventMode = 'none';
+      // Units deeper than the band's middle are drawn over it, shallower ones under it.
+      band.zIndex = (b + 0.5) * BAND;
+      bands.set(b, band);
+    }
+    band.addChild(sp);
   }
-  return layer;
+  return { ground, bands: [...bands.values()] };
 }
